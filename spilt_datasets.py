@@ -5,13 +5,7 @@ import shutil
 from torchvision import datasets, transforms
 from torch.utils.data import random_split
 
-transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
-])
-
-dataset = datasets.ImageFolder(root='./pngData', transform=transform)
+dataset = datasets.ImageFolder(root='./pngData')
 
 total_size = len(dataset)
 train_size = int(0.8 * total_size)
