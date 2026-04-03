@@ -1,4 +1,4 @@
-conda list
+Environment:
 # Name                    Version                   Build  Channel
 matplotlib                3.10.8                   pypi_0    pypi
 numpy                     2.4.3                    pypi_0    pypi
@@ -17,3 +17,5 @@ torchaudio                2.11.0+cpu               pypi_0    pypi
 torchvision               0.27.0.dev20260331+cu128          pypi_0    pypi
 tqdm                      4.67.3                   pypi_0    pypi
 
+Dateset: Spilt the `PngData` data into 8:1:1 using `spilt_datasets.py`. 
+Result: The test accuracy can reach 93.78% after 20 epoches.
