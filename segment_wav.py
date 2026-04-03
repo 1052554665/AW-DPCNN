@@ -1,5 +1,5 @@
-# This script is used to split wav files with overlapping segments.
-# It reads wav files from the input folder, splits them into segments of specified length with
+# This script is used to segment wav files with overlapping segments.
+# It reads wav files from the input folder, segment them into segments of specified length with
 # a certain overlap ratio, and saves the segments to the output folder.
 # The script also handles audio resampling and channel conversion to ensure consistency in the output segments.
 import os
