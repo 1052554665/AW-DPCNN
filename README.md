@@ -1,2 +1,3 @@
-# RESEARCH-FOR-ACOUSTICS
-This repository is build for recording my research process and future research.
+# About the repository
+- AW-DPCNN is the fusion mechanism
+- MSCA-VGG16 is the proposed network
