@@ -1,0 +1,19 @@
+conda list
+# Name                    Version                   Build  Channel
+matplotlib                3.10.8                   pypi_0    pypi
+numpy                     2.4.3                    pypi_0    pypi
+pandas                    3.0.2                    pypi_0    pypi
+pillow                    12.1.1                   pypi_0    pypi
+pip                       26.0.1             pyh8b19718_0    https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge
+python                    3.12.13         hd63d673_0_cpython    https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge
+scikit-learn              1.8.0                    pypi_0    pypi
+scipy                     1.17.1                   pypi_0    pypi
+seaborn                   0.13.2                   pypi_0    pypi
+soundfile                 0.13.1                   pypi_0    pypi
+sympy                     1.14.0                   pypi_0    pypi
+tensorboard               2.20.0                   pypi_0    pypi
+torch                     2.12.0.dev20260331+cu128          pypi_0    pypi
+torchaudio                2.11.0+cpu               pypi_0    pypi
+torchvision               0.27.0.dev20260331+cu128          pypi_0    pypi
+tqdm                      4.67.3                   pypi_0    pypi
+
