@@ -20,3 +20,32 @@
 5. 主入口一键运行  
 给出了默认输入/输出路径和参数，当前默认是彩色输出（output_mode='rgb'）。
 
+# Mel
+## 主要功能
+
+1. 单文件处理  
+- 模式：single  
+- 支持训练图风格（无坐标轴）和论文图风格（含坐标轴、色条、标题）
+
+2. 批量处理  
+- 模式：batch  
+- 递归遍历目录、保持子目录结构、支持多进程并行
+
+3. Mel 曲线绘制  
+- 模式：curve  
+- 直接生成 Mel 频率尺度曲线图，替代原独立脚本功能
+
+4. 参数统一可配  
+- 采样率、n_fft、hop_length、n_mels、fmax、cmap、图像尺寸、并行进程数都可命令行设置
+
+## 可直接运行示例
+
+1. 批量生成训练图（无坐标轴）
+python mel_unified.py --mode batch --style dataset --input-dir /home/220242215063/pycharm_project_legion/data5 --output-dir /home/220242215063/pycharm_project_legion/data5_mel --workers 16
+
+2. 单文件生成论文图（含坐标轴和色条）
+python mel_unified.py --mode single --style paper --input-wav Normal_part0.wav --output-image Mel_spectrogram.png --sr 0 --n-mels 128 --fmax 8000
+
+3. 绘制 Mel 频率曲线
+python mel_unified.py --mode curve --curve-save Mel_filter_curve.png
+
