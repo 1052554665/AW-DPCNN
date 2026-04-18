@@ -1,5 +1,5 @@
 experiment_name: exp1_resnet18_se
-
+device: cuda
 model:
   name: resnet18_se
   num_classes: 10
