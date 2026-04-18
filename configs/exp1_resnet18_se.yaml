@@ -1,0 +1,24 @@
+experiment_name: exp1_resnet18_se
+
+model:
+  name: resnet18_se
+  num_classes: 10
+  pretrained: true
+
+train:
+  epochs: 30
+  lr: 0.00005
+  optimizer: adamw
+  weight_decay: 0.0005
+
+scheduler:
+  type: cosine
+  t_max: 40
+  eta_min: 0.000001
+
+visualization:
+  tsne: true
+
+output:
+  root_dir: ./experiments/runs_exp1_resnet18_se
+

@@ -1,0 +1,28 @@
+experiment_name: exp2_vit
+
+model:
+  name: vit
+  num_classes: 10
+  in_channels: 3
+  img_size: 224
+  patch_size: 16
+  embed_dim: 384
+  depth: 6
+  num_heads: 6
+  mlp_ratio: 4.0
+  dropout: 0.1
+
+train:
+  epochs: 30
+  lr: 0.0001
+  optimizer: adamw
+  weight_decay: 0.0001
+
+scheduler:
+  type: cosine
+  t_max: 60
+  eta_min: 0.000001
+
+visualization:
+  tsne: true
+
