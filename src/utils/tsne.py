@@ -56,12 +56,13 @@ def plot_tsne(
         "font.serif": ["STIXGeneral", "DejaVu Serif"],
         "mathtext.fontset": "stix",
         # "font.serif": ["Times New Roman"],
-        "font.size": 15,  # 全局默认字号
-        "axes.labelsize": 15,  # 坐标轴标签
+        "font.size": 13,  # 全局默认字号
+        "axes.labelsize": 13,  # 坐标轴标签
         "axes.titlesize": 15,  # 图表标题
         "xtick.labelsize": 14,  # X轴刻度（略小于标签，避免拥挤）
         "ytick.labelsize": 14,  # Y轴刻度（与X轴一致）
-        "legend.fontsize": 14,  # 图例字号
+        # "legend.fontsize": 14,  # 图例字号
+        "legend.fontsize": 10,  # 图例字号
         "figure.dpi": 300,
         "axes.linewidth": 0.8,  # 坐标轴线条粗细
     })

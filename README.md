@@ -62,7 +62,7 @@ python scripts/train.py --config configs/default.yaml
 运行 exp1（覆盖默认配置）：
 
 ```powershell
-python scripts/train.py --config configs/default.yaml --exp-config configs/exp1.yaml
+python scripts/train.py --config configs/default.yaml --exp-config experiments/exp1/resnet18_se.yaml
 ```
 
 使用已有 checkpoint 评估：

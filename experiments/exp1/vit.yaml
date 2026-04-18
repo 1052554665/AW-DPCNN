@@ -1,4 +1,4 @@
-experiment_name: exp2_vit
+experiment_name: exp1_vit
 
 model:
   name: vit
@@ -14,9 +14,9 @@ model:
 
 train:
   epochs: 30
-  lr: 0.0001
+  lr: 1e-4
   optimizer: adamw
-  weight_decay: 0.0001
+  weight_decay: 1e-3
 
 scheduler:
   type: cosine
@@ -25,4 +25,7 @@ scheduler:
 
 visualization:
   tsne: true
+
+output:
+  root_dir: ./experiments/exp1/vit
 

@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torchvision.models import vgg16_bn
+from torchvision.models import VGG16_BN_Weights, vgg16_bn
 
 # ======================
 # SE Module
@@ -29,7 +29,8 @@ class SEModule(nn.Module):
 class VGG16_SE(nn.Module):
     def __init__(self, num_classes=5, pretrained=True):
         super().__init__()
-        base = vgg16_bn(pretrained=pretrained)
+        weights = VGG16_BN_Weights.DEFAULT if pretrained else None
+        base = vgg16_bn(weights=weights)
 
         self.features = nn.Sequential(
             *base.features[:23],   # conv1-3

@@ -73,47 +73,57 @@ def train_and_evaluate(config: Dict, run_dir: Path, device: torch.device):
     best_val_f1 = -1.0
     logs = []
     epochs = int(train_cfg.get("epochs", 30))
+    log_path = run_dir / "logs" / "train_log.csv"
+    best_ckpt_path = run_dir / "checkpoints" / "best.pt"
+    last_ckpt_path = run_dir / "checkpoints" / "last.pt"
+    confusion_path = run_dir / "figures" / "confusion_matrix.png"
+    tsne_path = run_dir / "figures" / "tsne.png"
 
-    for epoch in range(1, epochs + 1):
-        train_loss, train_acc = train_one_epoch(model, loaders["train"], optimizer, criterion, device)
-        val_loss, val_metrics, _, _ = evaluate(model, loaders["val"], criterion, device)
-        val_acc, prec, rec, f1, gmean, bal_acc, kappa = val_metrics
+    try:
+        for epoch in range(1, epochs + 1):
+            train_loss, train_acc = train_one_epoch(model, loaders["train"], optimizer, criterion, device)
+            val_loss, val_metrics, _, _ = evaluate(model, loaders["val"], criterion, device)
+            val_acc, prec, rec, f1, gmean, bal_acc, kappa = val_metrics
 
-        logs.append(
-            {
-                "epoch": epoch,
-                "train_loss": train_loss,
-                "train_acc": train_acc,
-                "val_loss": val_loss,
-                "val_acc": val_acc,
-                "precision": prec,
-                "recall": rec,
-                "f1": f1,
-                "gmean": gmean,
-                "val_bal_acc": bal_acc,
-                "val_kappa": kappa,
-                "lr": optimizer.param_groups[0]["lr"],
-            }
-        )
-
-        if scheduler is not None:
-            scheduler.step()
-
-        if f1 > best_val_f1:
-            best_val_f1 = f1
-            torch.save(model.state_dict(), run_dir / "checkpoints" / "best.pt")
-
-        if epoch % int(train_cfg.get("print_freq", 1)) == 0:
-            print(
-                f"[Epoch {epoch:03d}/{epochs:03d}] "
-                f"train_acc={train_acc:.4f} val_acc={val_acc:.4f} "
-                f"val_f1={f1:.4f}"
+            logs.append(
+                {
+                    "epoch": epoch,
+                    "train_loss": train_loss,
+                    "train_acc": train_acc,
+                    "val_loss": val_loss,
+                    "val_acc": val_acc,
+                    "precision": prec,
+                    "recall": rec,
+                    "f1": f1,
+                    "gmean": gmean,
+                    "val_bal_acc": bal_acc,
+                    "val_kappa": kappa,
+                    "lr": optimizer.param_groups[0]["lr"],
+                }
             )
 
-    torch.save(model.state_dict(), run_dir / "checkpoints" / "last.pt")
-    save_logs(logs, path=str(run_dir / "logs" / "train_log.csv"))
+            # Persist logs every epoch so long runs keep progress on disk.
+            save_logs(logs, path=str(log_path))
 
-    model.load_state_dict(torch.load(run_dir / "checkpoints" / "best.pt", map_location=device))
+            if scheduler is not None:
+                scheduler.step()
+
+            if f1 > best_val_f1:
+                best_val_f1 = f1
+                torch.save(model.state_dict(), best_ckpt_path)
+
+            if epoch % int(train_cfg.get("print_freq", 1)) == 0:
+                print(
+                    f"[Epoch {epoch:03d}/{epochs:03d}] "
+                    f"train_acc={train_acc:.4f} val_acc={val_acc:.4f} "
+                    f"val_f1={f1:.4f}"
+                )
+    finally:
+        torch.save(model.state_dict(), last_ckpt_path)
+        if logs:
+            save_logs(logs, path=str(log_path))
+
+    model.load_state_dict(torch.load(best_ckpt_path, map_location=device))
     test_loss, test_metrics, y_true, y_pred = evaluate(model, loaders["test"], criterion, device)
     test_acc, test_prec, test_rec, test_f1, test_gmean, test_bal_acc, test_kappa = test_metrics
 
@@ -134,7 +144,7 @@ def train_and_evaluate(config: Dict, run_dir: Path, device: torch.device):
             y_true,
             y_pred,
             class_names,
-            save_path=str(run_dir / "figures" / "confusion_matrix.png"),
+            save_path=str(confusion_path),
         )
 
     if bool(vis_cfg.get("tsne", False)):
@@ -144,7 +154,7 @@ def train_and_evaluate(config: Dict, run_dir: Path, device: torch.device):
             labels,
             class_names,
             title="t-SNE Visualization on Test Set",
-            save_path=str(run_dir / "figures" / "tsne.png"),
+            save_path=str(tsne_path),
         )
 
     return results

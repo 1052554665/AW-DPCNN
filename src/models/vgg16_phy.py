@@ -1,12 +1,14 @@
 import torch
 import torch.nn as nn
-from torchvision.models import vgg16_bn
+from torchvision.models import VGG16_BN_Weights, vgg16_bn
 
 
 class VGG16_Physics(nn.Module):
     def __init__(self, num_classes=5, embed_dim=512, pretrained=True):
         super().__init__()
-        base = vgg16_bn(pretrained=pretrained)
+
+        weights = VGG16_BN_Weights.IMAGENET1K_V1 if pretrained else None
+        base = vgg16_bn(weights=weights)
 
         self.features = base.features
         self.avgpool = base.avgpool

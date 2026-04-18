@@ -1,0 +1,24 @@
+experiment_name: exp1_MSCA_VGG16
+device: cuda
+model:
+  name: MSCA_VGG16
+  num_classes: 10
+  pretrained: true
+
+train:
+  epochs: 30
+  lr: 1e-4
+  optimizer: adamw
+  weight_decay: 1e-3
+
+scheduler:
+  type: cosine
+  t_max: 40
+  eta_min: 0.000001
+
+visualization:
+  tsne: true
+
+output:
+  root_dir: ./experiments/exp1/MSCA_VGG16
+

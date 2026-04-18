@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from torchvision.models import vgg16_bn
+from torchvision.models import VGG16_BN_Weights, vgg16_bn
 
 class MSCA_Block(nn.Module):
     def __init__(self, in_channels):
@@ -32,7 +32,8 @@ class MSCA_Block(nn.Module):
 class MSCA_VGG16(nn.Module):
     def __init__(self, num_classes=10, pretrained=True, embed_dim=1024):
         super().__init__()
-        base = vgg16_bn(pretrained=pretrained)
+        weights = VGG16_BN_Weights.IMAGENET1K_V1 if pretrained else None
+        base = vgg16_bn(weights=weights)
 
         self.features = base.features
         self.msca = MSCA_Block(512)

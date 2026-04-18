@@ -63,7 +63,7 @@ class CEViT(nn.Module):
     def __init__(
         self,
         num_classes=10,
-        in_chans=1,
+        in_chans=3,
         embed_dim=384,
         depth=6,
         num_heads=6,
@@ -71,6 +71,7 @@ class CEViT(nn.Module):
         drop=0.1
     ):
         super().__init__()
+        self.in_chans = in_chans
 
         # NEW: Conv Stem
         self.conv_stem = ConvStem(in_chans, embed_dim)
@@ -107,6 +108,17 @@ class CEViT(nn.Module):
 
     def forward(self, x, return_feat=False):
         B = x.size(0)
+
+        # Accept common grayscale/RGB mismatches without crashing experiments.
+        if x.size(1) != self.in_chans:
+            if self.in_chans == 1 and x.size(1) == 3:
+                x = x.mean(dim=1, keepdim=True)
+            elif self.in_chans == 3 and x.size(1) == 1:
+                x = x.repeat(1, 3, 1, 1)
+            else:
+                raise RuntimeError(
+                    f"CEViT expected {self.in_chans} input channels, got {x.size(1)}."
+                )
 
         x = self.conv_stem(x)
         x = self.patch_embed(x)
