@@ -82,12 +82,6 @@ python scripts/evaluate.py --config experiments/runs/<run_name>/resolved_config.
 - `figures/confusion_matrix.png`
 - `figures/tsne.png`（启用时）
 
-## 6) 旧脚本说明
-
-`scripts/` 下原有音频预处理脚本（如 `mel.py`, `GAF.py`, `segment_wav.py`）仍可继续使用，用于数据构建阶段；
-模型训练与评估建议统一通过 `train.py`/`evaluate.py` 执行，以保证实验记录一致。
-
-
 # 数据集构建说明
 本仓库的数据构建由两个脚本负责：scripts\built_dataset.py 和 scripts\data_spilt.py。
 

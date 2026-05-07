@@ -14,7 +14,6 @@ def set_seed(seed: int) -> None:
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
-
 def prepare_run_dir(config: Dict) -> Path:
     output_cfg = config.get("output", {})
     root = Path(output_cfg.get("root_dir", "experiments/runs")).resolve()
