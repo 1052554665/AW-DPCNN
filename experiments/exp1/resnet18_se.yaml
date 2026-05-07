@@ -1,0 +1,24 @@
+experiment_name: exp1_resnet18_se
+device: cuda
+model:
+  name: resnet18_se
+  num_classes: 10
+  pretrained: true
+
+train:
+  epochs: 30
+  lr: 1e-4
+  optimizer: adamw
+  weight_decay: 1e-3
+
+scheduler:
+  type: cosine
+  t_max: 40
+  eta_min: 0.000001
+
+visualization:
+  tsne: true
+
+output:
+  root_dir: ./experiments/exp1/resnet18_se
+
