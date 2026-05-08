@@ -70,6 +70,12 @@ python scripts/train.py --config configs/default.yaml
 python scripts/train.py --config configs/default.yaml --exp-config experiments/exp1/resnet18_se.yaml
 ```
 
+运行 exp1 的 Patch Transformer：
+
+```powershell
+python scripts/train.py --config configs/default.yaml --exp-config experiments/exp1/patch_transformer.yaml
+```
+
 使用已有 checkpoint 评估：
 
 ```powershell

@@ -5,6 +5,7 @@ from src.models.baseline_lenet import BaselineCNN
 from src.models.convnext import ConvNeXt
 from src.models.convnext_tiny import ConvNeXtTiny
 from src.models.efficientnet import EfficientNetB0
+from src.models.patch_transformer import PatchTransformer
 from src.models.resnet18 import ResNet18
 from src.models.resnet18_se import ResNet18_SE
 from src.models.MS_CBAM_Resnet50 import ResNet50_CBAM
@@ -53,6 +54,18 @@ def build_model(config: Dict):
         return ConvNeXtTiny(num_classes=num_classes, pretrained=pretrained)
     if name in {"efficientnet_b0", "efficientnet-b0", "efficientnet"}:
         return EfficientNetB0(num_classes=num_classes, pretrained=pretrained)
+    if name in {"patch_transformer", "patch-transformer", "transformer"}:
+        return PatchTransformer(
+            num_classes=num_classes,
+            img_size=int(model_cfg.get("img_size", config["data"].get("img_size", 224))),
+            patch_size=int(model_cfg.get("patch_size", 16)),
+            in_chans=int(model_cfg.get("in_channels", 3)),
+            embed_dim=int(model_cfg.get("embed_dim", 384)),
+            depth=int(model_cfg.get("depth", 6)),
+            num_heads=int(model_cfg.get("num_heads", 6)),
+            mlp_ratio=float(model_cfg.get("mlp_ratio", 4.0)),
+            drop=float(model_cfg.get("dropout", 0.1)),
+        )
     if name == "msca_vgg16":
         return MSCA_VGG16(num_classes=num_classes, pretrained=pretrained)
     if name == "ce_vit":
