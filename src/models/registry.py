@@ -4,6 +4,7 @@ from src.models.alexnet_se import SE_AlexNet
 from src.models.baseline_lenet import BaselineCNN
 from src.models.convnext import ConvNeXt
 from src.models.convnext_tiny import ConvNeXtTiny
+from src.models.efficientnet import EfficientNetB0
 from src.models.resnet18 import ResNet18
 from src.models.resnet18_se import ResNet18_SE
 from src.models.MS_CBAM_Resnet50 import ResNet50_CBAM
@@ -50,6 +51,8 @@ def build_model(config: Dict):
         return ConvNeXt(num_classes=num_classes, pretrained=pretrained)
     if name == "convnext_tiny":
         return ConvNeXtTiny(num_classes=num_classes, pretrained=pretrained)
+    if name in {"efficientnet_b0", "efficientnet-b0", "efficientnet"}:
+        return EfficientNetB0(num_classes=num_classes, pretrained=pretrained)
     if name == "msca_vgg16":
         return MSCA_VGG16(num_classes=num_classes, pretrained=pretrained)
     if name == "ce_vit":

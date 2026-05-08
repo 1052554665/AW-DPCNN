@@ -47,11 +47,16 @@ data/processed/
 
 ## 4) 快速运行
 
+NOTES:
+- 数据集需要手动构建，按照 `数据组织规范` 
+- 使用复现环境运行则不需要安装下方依赖
+
 先安装依赖：
 
 ```powershell
 pip install -r requirements.txt
 ```
+
 
 基线训练：
 
