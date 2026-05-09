@@ -48,6 +48,9 @@ dataset
 NOTES:
 - 数据集需要手动构建，按照 `数据组织规范` 
 - 使用复现环境运行则不需要安装下方依赖
+  - source ~/envs/awdpcnn/bin/activate
+  - export PYTHONPATH=$(pwd)
+
 
 先安装依赖：
 

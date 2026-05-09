@@ -57,7 +57,7 @@ mlartifacts/
 wandb/
 
 # Data
-*.csv
+#*.csv
 *.npy
 *.npz
 *.h5
