@@ -33,7 +33,7 @@ def _build_transforms(img_size: int, augment: bool, normalize_mean: List[float],
 
 
 def build_dataloaders(config: Dict, device: Optional[torch.device] = None) -> Tuple[Dict[str, DataLoader], List[str]]:
-    data_cfg = config["data"]
+    data_cfg = config["dataset"]
     root_dir = Path(data_cfg["root_dir"]).expanduser().resolve()
 
     train_dir = root_dir / data_cfg.get("train_split", "train")
@@ -42,7 +42,7 @@ def build_dataloaders(config: Dict, device: Optional[torch.device] = None) -> Tu
 
     if not train_dir.exists() or not val_dir.exists() or not test_dir.exists():
         raise FileNotFoundError(
-            "Expected train/val/test folders under data.root_dir. "
+            "Expected train/val/test folders under dataset.root_dir. "
             f"Got: {train_dir}, {val_dir}, {test_dir}"
         )
 

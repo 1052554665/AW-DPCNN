@@ -67,7 +67,7 @@ wandb/
 *.pdf
 *.jpg
 *.png
-data/
+dataset/
 
 
 # dataset files
@@ -85,8 +85,8 @@ datasets/**/*.csv
 !datasets/**/__init__.py
 !datasets/README.md
 
-data/raw/
-data/processed/
+dataset/raw/
+dataset/processed/
 
 
 # IDE

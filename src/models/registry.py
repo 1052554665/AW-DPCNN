@@ -57,7 +57,7 @@ def build_model(config: Dict):
     if name in {"patch_transformer", "patch-transformer", "transformer"}:
         return PatchTransformer(
             num_classes=num_classes,
-            img_size=int(model_cfg.get("img_size", config["data"].get("img_size", 224))),
+            img_size=int(model_cfg.get("img_size", config["dataset"].get("img_size", 224))),
             patch_size=int(model_cfg.get("patch_size", 16)),
             in_chans=int(model_cfg.get("in_channels", 3)),
             embed_dim=int(model_cfg.get("embed_dim", 384)),
@@ -73,7 +73,7 @@ def build_model(config: Dict):
     if name == "vit":
         return ViT(
             num_classes=num_classes,
-            img_size=int(model_cfg.get("img_size", config["data"].get("img_size", 224))),
+            img_size=int(model_cfg.get("img_size", config["dataset"].get("img_size", 224))),
             patch_size=int(model_cfg.get("patch_size", 16)),
             in_chans=int(model_cfg.get("in_channels", 3)),
             embed_dim=int(model_cfg.get("embed_dim", 384)),

@@ -21,7 +21,7 @@ def main():
     model = build_model(cfg)
     model.eval()
 
-    img_size = int(cfg.get("data", {}).get("img_size", 224))
+    img_size = int(cfg.get("dataset", {}).get("img_size", 224))
     in_channels = int(cfg.get("model", {}).get("in_channels", 3))
     dummy = torch.randn(args.batch_size, in_channels, img_size, img_size)
 

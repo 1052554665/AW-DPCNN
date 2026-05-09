@@ -3,13 +3,13 @@ experiment_name: baseline
 seed: 42
 device: auto
 
-data:
-  root_dir: ./data/processed
+dataset:
+  root_dir: ./dataset
   train_split: train
   val_split: val
   test_split: test
   img_size: 224
-  batch_size: 16
+  batch_size: 32
   num_workers: 16
   augmentation: true
   pin_memory: true

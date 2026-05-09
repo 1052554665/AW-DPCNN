@@ -1,13 +1,12 @@
 # AW-DPCNN Research Workflow
 
-本项目已整理为可复现的科研实验工作流，核心目标是：
+本项目为可复现的科研实验工作流，核心目标是：
 
 - 统一训练与评估入口
 - YAML 配置驱动实验
 - 自动生成实验目录与结果产物
-- 保留现有模型与预处理脚本
 
-## 1) 项目结构（核心）
+## 1) 项目结构
 
 - `configs/`: 基础配置与实验覆盖配置
 - `scripts/train.py`: 统一训练入口
@@ -18,12 +17,12 @@
 - `src/utils/`: 指标、绘图、配置、实验管理工具
 - `experiments/runs/`: 每次运行自动创建独立目录
 
-## 2) 数据组织规范
+## 2) 数据组织规范（自行复制到项目根目录）
 
 训练默认使用 `ImageFolder` 格式：
 
 ```text
-data/processed/
+dataset
   train/
     class_a/
     class_b/
@@ -40,8 +39,7 @@ data/processed/
 ## 3) 配置体系
 
 - `configs/default.yaml`: 全局默认配置
-- `configs/exp1.yaml`: ResNet18-SE 实验覆盖
-- `configs/exp2.yaml`: ViT 实验覆盖
+- `configs/exp1.yaml`: backbone 实验覆盖
 
 训练时采用“基础配置 + 覆盖配置”合并。
 
@@ -57,7 +55,6 @@ NOTES:
 pip install -r requirements.txt
 ```
 
-
 基线训练：
 
 ```powershell
@@ -68,12 +65,6 @@ python scripts/train.py --config configs/default.yaml
 
 ```powershell
 python scripts/train.py --config configs/default.yaml --exp-config experiments/exp1/resnet18_se.yaml
-```
-
-运行 exp1 的 Patch Transformer：
-
-```powershell
-python scripts/train.py --config configs/default.yaml --exp-config experiments/exp1/patch_transformer.yaml
 ```
 
 使用已有 checkpoint 评估：

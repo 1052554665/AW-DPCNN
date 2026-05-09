@@ -145,7 +145,7 @@ def process_wav_folder(input_dir, output_dir):
 # 主入口
 # =========================================================
 if __name__ == '__main__':
-    INPUT_DIR = 'data/test'
+    INPUT_DIR = 'dataset/test'
     OUTPUT_DIR = 'data1/test'
 
     process_wav_folder(INPUT_DIR, OUTPUT_DIR)
