@@ -1,0 +1,150 @@
+\providecommand{\newblock}{}
+\begin{thebibliography}{10}
+\expandafter\ifx\csname url\endcsname\relax
+  \def\url#1{{\tt #1}}\fi
+\expandafter\ifx\csname urlprefix\endcsname\relax\def\urlprefix{URL }\fi
+\providecommand{\eprint}[2][]{\url{#2}}
+% Bibliography created with iopart-num v2.1
+% /biblio/bibtex/contrib/iopart-num
+
+\bibitem{10491111}
+Zhou Y, He Y, Xing Z, Wang L, Shao K, Lei L and Li Z 2024 {\em IEEE Sensors
+  Journal\/} {\bf 24} 17231--17242
+
+\bibitem{7480687}
+Li J, Zhang Q, Wang K, Wang J, Zhou T and Zhang Y 2016 {\em IEEE Transactions
+  on Dielectrics and Electrical Insulation\/} {\bf 23} 1198--1206
+
+\bibitem{10492658}
+Yu Z, Wei Y, Niu B and Zhang X 2024 {\em IEEE Transactions on Instrumentation
+  and Measurement\/} {\bf 73} 1--11
+
+\bibitem{NIU2025127997}
+Niu B, Wei Y, Yu Z and Wang Y 2025 {\em Expert Systems with Applications\/}
+  {\bf 288} 127997 ISSN 0957-4174
+
+\bibitem{SHAN2023112408}
+Shan S, Liu J, Wu S, Shao Y and Li H 2023 {\em Measurement\/} {\bf 207} 112408
+  ISSN 0263-2241
+
+\bibitem{10606641}
+Hongming L, Zhang K and Han S 2024 A comparison of cnn-based transformer fault
+  diagnosis methods based on voiceprint signal {\em 2024 IEEE 13th Data Driven
+  Control and Learning Systems Conference (DDCLS)\/} pp 819--824
+
+\bibitem{4265659}
+Chen L~J, Lin W~M, Tsao T~P and Lin Y~H 2007 {\em IEEE Transactions on Power
+  Delivery\/} {\bf 22} 1575--1580
+
+\bibitem{7558591}
+Li Y, Peng W, Zhu X, Wei G, Yu H and Qian G 2016 Based on short-time fourier
+  transform impulse frequency response analysis in the application of the
+  transformer winding deformation {\em 2016 IEEE International Conference on
+  Mechatronics and Automation\/} pp 371--375
+
+\bibitem{9760386}
+Xiao R, Zhang Z, Dan Y, Yang Y, Pan Z and Deng J 2022 {\em IEEE Transactions on
+  Instrumentation and Measurement\/} {\bf 71} 1--12
+
+\bibitem{9408662}
+Wang D, Li Y, Jia L, Song Y and Liu Y 2021 {\em IEEE Transactions on
+  Instrumentation and Measurement\/} {\bf 70} 1--10
+
+\bibitem{9832890}
+Zhang Z, Zhou F and Li S 2022 {\em IEEE Access\/} {\bf 10} 78502--78518
+
+\bibitem{4305279}
+Ji L, Yi Z, Shang L and Pu X 2007 {\em IEEE Transactions on Systems, Man, and
+  Cybernetics, Part B (Cybernetics)\/} {\bf 37} 1407--1413
+
+\bibitem{6338347}
+Qu H, Yi Z and Yang S~X 2013 {\em IEEE Transactions on Cybernetics\/} {\bf 43}
+  995--1010
+
+\bibitem{8742596}
+Qian J, Yadong L, Jindun D, Xiaofei F and Xiuchen J 2019 {\em IEEE Access\/}
+  {\bf 7} 83484--83494
+
+\bibitem{9444355}
+Basar S, Ali M, Ochoa-Ruiz G, Waheed A, Rodriguez-Hernandez G and Zareei M 2021
+  {\em IEEE Access\/} {\bf 9} 87219--87240
+
+\bibitem{10848019}
+Deng X and Ma Y 2014 {\em Chinese Journal of Electronics\/} {\bf 23} 97--103
+
+\bibitem{8746999}
+Gai D, Shen X, Cheng H and Chen H 2019 {\em IEEE Access\/} {\bf 7} 85413--85429
+
+\bibitem{4344292}
+Wang Z and Ma Y 2007 Dual-channel pcnn and its application in the field of
+  image fusion {\em Third International Conference on Natural Computation (ICNC
+  2007)\/} vol~1 pp 755--759
+
+\bibitem{10341267}
+Bai G, Sun W, Cao C, Wang D, Sun Q and Sun L 2024 {\em IEEE Sensors Journal\/}
+  {\bf 24} 1894--1904
+
+\bibitem{18184994}
+Zhang Z, Yi Y, Qi J, Wang Q, Qin W, Fan X and Li C 2025 {\em Energies\/} {\bf
+  18} 4991 ISSN 1996-1073
+
+\bibitem{7033433}
+Khan S~A, Equbal M~D and Islam T 2015 {\em IEEE Transactions on Dielectrics and
+  Electrical Insulation\/} {\bf 22} 590--596
+
+\bibitem{11014495}
+Zhang K, Lu H, Han S and Zhao X 2025 {\em IEEE Transactions on Instrumentation
+  and Measurement\/} {\bf 74} 1--11
+
+\bibitem{5352306}
+Tripathy M, Maheshwari R~P and Verma H~K 2010 {\em IEEE Transactions on Power
+  Delivery\/} {\bf 25} 102--112
+
+\bibitem{4717246}
+Shintemirov A, Tang W and Wu Q~H 2009 {\em IEEE Transactions on Systems, Man,
+  and Cybernetics, Part C (Applications and Reviews)\/} {\bf 39} 69--79
+
+\bibitem{2025110731}
+Moradi E, Elsisi M, Mahmoud K, Lehtonen M and Darwish M~M 2025 {\em
+  International Journal of Electrical Power \& Energy Systems\/} {\bf 168}
+  110731 ISSN 0142-0615
+
+\bibitem{215108965}
+Rathod V~B, Kumbhar G~B and Bhalja B~R 2023 {\em Electric Power Systems
+  Research\/} {\bf 215} 108965 ISSN 03787796
+
+\bibitem{10091539}
+Zhao Y, Zhang N, Zhang Z and Xu X 2023 {\em IEEE Access\/} {\bf 11}
+  34407--34420
+
+\bibitem{11048665}
+Ruan Y, Yu X, He Y, Fang Y, Wang J and Cong H 2025 {\em IEEE Transactions on
+  Instrumentation and Measurement\/} {\bf 74} 1--12
+
+\bibitem{10114345}
+Zhao K, Li H, Ma J, Zhuang T, Li Y, Xiao H and Yin Z 2023 Mechanical fault
+  diagnosis method for gis based on convolution neural network and enhanced
+  gramian angular field {\em 2023 5th Asia Energy and Electrical Engineering
+  Symposium (AEEES)\/} pp 640--643
+
+\bibitem{10281942}
+Zhai X and Wang F 2023 Space target recognition based on gramian angular field
+  representation and attention mechanism {\em IGARSS 2023 - 2023 IEEE
+  International Geoscience and Remote Sensing Symposium\/} pp 5774--5777
+
+\bibitem{11278186}
+Hu L, Tian J, Dong Z, Cui L and Lang C 2026 {\em IEEE Transactions on
+  Automation Science and Engineering\/} {\bf 23} 1047--1063
+
+\bibitem{Li_2018}
+Li M, Yuan X, Luo Z and Qiu X 2018 {\em Journal of Physics: Conference
+  Series\/} {\bf 1069} 012151
+
+\bibitem{Kang_2021}
+Kang Y, Lian J, Guo C, Zheng L and Zhang M 2021 {\em Journal of Physics:
+  Conference Series\/} {\bf 1961} 012006
+
+\bibitem{9770845}
+Zeng Z, Zhang R, Cai W and Li Y 2022 {\em IEEE Access\/} {\bf 10} 49251--49264
+
+\end{thebibliography}

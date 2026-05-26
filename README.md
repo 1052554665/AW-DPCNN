@@ -70,6 +70,18 @@ python scripts/train.py --config configs/default.yaml
 python scripts/train.py --config configs/default.yaml --exp-config experiments/exp1/resnet18_se.yaml
 ```
 
+一条命令顺序运行 exp1 下所有配置：
+
+```powershell
+python scripts/run_exp1_all.py --config configs/default.yaml --exp-dir experiments/exp1
+```
+
+仅打印命令（不执行）：
+
+```powershell
+python scripts/run_exp1_all.py --config configs/default.yaml --exp-dir experiments/exp1 --dry-run
+```
+
 使用已有 checkpoint 评估：
 
 ```powershell
