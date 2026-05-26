@@ -42,6 +42,7 @@ ENV/
 checkpoints/
 models/*.pth
 models/*.pt
+experiments/
 
 # TensorFlow
 *.h5
@@ -64,13 +65,12 @@ wandb/
 *.hdf5
 *.mat
 *.wav
-*.pdf
 *.jpg
-*.png
-dataset/
 
 
-# dataset files
+# ======================
+# datasets
+# ======================
 datasets/**/*.wav
 datasets/**/*.png
 datasets/**/*.jpg
@@ -79,6 +79,7 @@ datasets/**/*.npy
 datasets/**/*.npz
 datasets/**/*.mat
 datasets/**/*.csv
+dataset/**
 
 # keep python source
 !datasets/**/*.py
