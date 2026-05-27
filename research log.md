@@ -1,0 +1,9 @@
+- 可能实验参数或者数据集出现问题，无法完全复现论文结果
+- 可能出现问题的实验参数`default.yaml`：
+    - test_split: val
+    - batch_size: 32
+- 可能出现问题的数据集
+  - /home/220242215063/data5_awpcnn
+  - /home/220242215063/pycharm_project_legion/data5_awpcnn1
+  - /home/220242215063/pycharm_project_legion/data5_awpcnn3
+  - /home/220242215063/remote-pycharm-projects/AW-DPCNN/awdpcnn.tar.gz

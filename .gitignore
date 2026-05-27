@@ -1,3 +1,7 @@
+
+
+
+
 # Python
 __pycache__/
 *.py[cod]
@@ -42,7 +46,7 @@ ENV/
 checkpoints/
 models/*.pth
 models/*.pt
-experiments/
+
 
 # TensorFlow
 *.h5
@@ -58,7 +62,6 @@ mlartifacts/
 wandb/
 
 # Data
-*.csv
 *.npy
 *.npz
 *.h5
@@ -78,7 +81,6 @@ datasets/**/*.jpeg
 datasets/**/*.npy
 datasets/**/*.npz
 datasets/**/*.mat
-datasets/**/*.csv
 dataset/**
 
 # keep python source
@@ -102,6 +104,4 @@ dataset/processed/
 Thumbs.db
 
 # Logs
-*.log
-logs/
 runs/
