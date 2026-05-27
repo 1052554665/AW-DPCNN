@@ -23,7 +23,9 @@ Power transformers play a crucial role in power systems, and reliable fault diag
 \section{Introduction}
 Power transformers are indispensable components in modern power systems, and their reliable operation is vital for ensuring grid safety, stability, and continuity \cite{10491111}, \cite{7480687}. Consequently, continuous condition monitoring and fault diagnosis of transformers have attracted sustained research interest. In recent years, voiceprint-based fault diagnosis has emerged as a promising technique owing to its inherent advantages, such as non-contact measurement, operational convenience, and low sensor deployment cost \cite{10492658},\cite{NIU2025127997}. Hong \emph{et al.} and Shan \emph{et al.} employed Mel spectrograms to extract representative acoustic information from transformer signals and demonstrated their effectiveness using field fault data \cite{SHAN2023112408}, \cite{10606641}. To enhance partial discharge recognition, Chen \emph{et al.} developed a non-contact acoustic measurement system incorporating noise suppression via wavelet transform \cite{4265659}. Li \emph{et al.} proposed a method incorporating Short-Time Fourier Transform (STFT) to construct impulse frequency response curves of transformer windings, thereby improving the accuracy of online winding condition evaluation \cite{7558591}. Moreover, the Gramian Angular Summation Field (GASF) technique was introduced in \cite{9760386} to encode transformer vibration signals into joint representations of time, frequency, and energy for converter transformer condition monitoring. Despite these advances, most existing approaches rely on a single acoustic representation, which limits their ability to comprehensively capture the complex and complementary fault-related information embedded in transformer signals, thereby constraining diagnostic performance. Although several studies have attempted to improve performance through multi-representation fusion, these fusion strategies typically employ fixed or heuristic combination schemes and lack the capability to adaptively adjust the contribution of different representations \cite{9408662}, \cite{9832890}. To enable more effective fusion of heterogeneous representations, biologically inspired neural models have recently attracted increasing attention. Pulse-coupled neural networks (PCNNs) are neural models originally developed to simulate the synchronous firing behavior observed in the mammalian visual cortex \cite{4305279,6338347}. Unlike conventional convolutional neural networks, PCNNs employ a pulse-based activation mechanism in which neurons interact through local coupling and dynamic thresholds \cite{8742596}. Owing to these characteristics, PCNNs exhibit strong capability in preserving structural information while suppressing background interference, and have been widely applied in image segmentation, edge detection, and feature enhancement tasks \cite{9444355}, \cite{10848019}, \cite{8746999}. However, conventional PCNNs are typically driven by a single external stimulus, which limits their ability to effectively exploit complementary information from multiple representations. To address this limitation, dual-channel PCNN (DPCNN) architectures have been introduced to enable multi-representation fusion by incorporating multiple external stimuli within the neuronal feeding mechanism \cite{4344292}, \cite{10341267}. Through this mechanism, heterogeneous feature maps can be jointly processed, thereby facilitating the integration of information from different representations. Nevertheless, the fusion process in such architectures generally relies on fixed or predefined coupling strategies, making it difficult to adaptively regulate the relative contributions of different channels. As a result, the model may not effectively emphasize discriminative representations while suppressing less relevant ones, thereby limiting the effectiveness of multi-representation fusion.
 
-With the rapid advancement of deep learning techniques, a variety of neural network architectures have been applied to transformer fault identification \cite{18184994}, \cite{7033433}. Representative studies have investigated advanced deep learning architectures and signal processing techniques to improve fault feature extraction capability \cite{11014495}, \cite{5352306}, \cite{4717246}. However, most existing approaches remain purely data-driven and primarily rely on single acoustic representation. As a result, their diagnostic performance strongly depends on large-scale labeled datasets and is susceptible to degradation under acoustic noise, operating condition variations, and signal inconsistencies commonly encountered in practical transformer monitoring scenarios.
+With the rapid advancement of deep learning techniques, a variety of neural network architectures have been applied to transformer fault identification and rotating machinery fault diagnosis, demonstrating superior automatic feature extraction capability compared with traditional handcrafted methods \cite{18184994}, \cite{7033433}. Early studies commonly adopted baseline convolutional neural networks as benchmark architectures for acoustic and vibration fault classification, verifying the feasibility of end-to-end feature learning for fault diagnosis tasks \cite{ahsanEnhancedFaultDiagnosis2025}. Subsequently, classical deep convolutional backbones, including AlexNet \cite{guNovelFaultDiagnosis2022}, VGG16 \cite{zhangFaultDiagnosisRecognition2024}, and ResNet18 \cite{maBearingFaultDiagnosis2024}, were introduced into intelligent fault diagnosis frameworks and achieved notable improvements in hierarchical feature representation and classification accuracy across machinery health monitoring applications \cite{11014495}, \cite{5352306}, \cite{4717246}. More recently, advanced architectures such as ConvNeXt-Tiny, which incorporate modernized convolutional design principles, have further enhanced representation learning capability and demonstrated competitive performance in fault diagnosis and image-based classification tasks \cite{zhangWaveConvNeXtEfficientPrecise2024}. In addition, publicly available benchmark datasets, such as the CWRU bearing fault dataset, have been extensively employed to evaluate the effectiveness and generalization ability of deep learning-based diagnostic models, serving as a standard reference in fault diagnosis research \cite{alonso-gonzalezBearingFaultDiagnosis2023}, \cite{zhangMachineLearningBased2021}.
+
+Despite these advances, most existing approaches remain purely data-driven and primarily rely on a single acoustic or signal representation. Consequently, their diagnostic performance strongly depends on large-scale labeled datasets and is vulnerable to degradation under acoustic noise, operating condition variations, and signal inconsistencies commonly encountered in practical transformer monitoring scenarios. Moreover, conventional deep learning models often lack explicit mechanisms to incorporate physical constraints or exploit complementary heterogeneous feature representations, limiting their robustness and interpretability in complex transformer fault diagnosis tasks.
 
 To overcome the above limitations, we proposed an adaptive weighted dual-channel pulse-coupled neural network (AW-DPCNN) to enhance representation capability and a multi-scale channel attention enhanced VGG16 (MSCA-VGG16) network to improve model robustness. The main contributions of this work can be summarized as follows:
 
@@ -35,7 +37,7 @@ To overcome the above limitations, we proposed an adaptive weighted dual-channel
 
 
 The overall framework is shown in Fig.~\ref{framework}. The remainder of this paper begins with the related acoustic representation in Section~\ref{section2}. Section~\ref{section3} and \ref{section4} present the principles and architectures of AW-DPCNN and MSCA-VGG16. In Section~\ref{section5}, experiments on field transformer data and the public CWRU dataset are conducted. At last, conclusions are drawn in Section~\ref{section6}.
-\begin{figure*}
+\begin{figure*} 
 \centering
 \includegraphics[width=\linewidth]{framework/framework}
 \caption{Overall framework of the proposed transformer acoustic diagnosis method. The acoustic signal is first converted into Mel spectrogram and GADF images. These heterogeneous representations are then adaptively fused through the proposed AW-DPCNN mechanism. Finally, the fused feature is fed into the MSCA-VGG16 network for fault diagnosis.}
@@ -550,46 +552,91 @@ To evaluate the effectiveness of the proposed classification network, a comparat
 	\end{tabular}
 \end{table}
 
-\begin{figure*}[!t]
-	\centering
-	\begin{subfigure}{0.32\textwidth}
+
+	\begin{figure*}[!t]
 		\centering
-		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_baseline}
-		\caption{Baseline}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.32\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_alexnet}
-		\caption{AlexNet}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.32\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_resnet18}
-		\caption{ResNet18}
-	\end{subfigure}
-	\vspace{3mm}
-	\begin{subfigure}{0.32\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_convnext_tiny}
-		\caption{ConvNeXt-Tiny}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.32\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_vgg16}
-		\caption{VGG16}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.32\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix__MSCA_VGG16}
-		\caption{MSCA-VGG16 (Ours)}
-	\end{subfigure}
-	\caption{Confusion matrices of different network backbones trained using the AW-DPCNN fusion representations. The proposed MSCA-VGG16 achieves the most accurate classification performance with significantly reduced inter-class confusion.}
-	\label{fig:confusion_matrix}
-\end{figure*}
+		\begin{subfigure}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_baseline}
+			\caption{Baseline}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_alexnet}
+			\caption{AlexNet}
+		\end{subfigure}\\[3mm]
+
+		\begin{subfigure}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_resnet18}
+			\caption{ResNet18}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_convnext_tiny}
+			\caption{ConvNeXt-Tiny}
+		\end{subfigure}\\[3mm]
+
+		\begin{subfigure}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_vgg16}
+			\caption{VGG16}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix__MSCA_VGG16}
+			\caption{MSCA-VGG16 (Ours)}
+		\end{subfigure}
+		\caption{Confusion matrices of different network backbones trained using the AW-DPCNN fusion representations. The proposed MSCA-VGG16 achieves the most accurate classification performance with significantly reduced inter-class confusion.}
+		\label{fig:confusion_matrix}
+	\end{figure*}
+
+% \begin{figure*}[!t]
+% 	\centering
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_baseline}
+% 		\caption{Baseline}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_alexnet}
+% 		\caption{AlexNet}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_resnet18}
+% 		\caption{ResNet18}
+% 	\end{subfigure}
+% 	\vspace{3mm}
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_convnext_tiny}
+% 		\caption{ConvNeXt-Tiny}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_vgg16}
+% 		\caption{VGG16}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix__MSCA_VGG16}
+% 		\caption{MSCA-VGG16 (Ours)}
+% 	\end{subfigure}
+% 	\caption{Confusion matrices of different network backbones trained using the AW-DPCNN fusion representations. The proposed MSCA-VGG16 achieves the most accurate classification performance with significantly reduced inter-class confusion.}
+% 	\label{fig:confusion_matrix}
+% \end{figure*}
+
+
+
 
 To evaluate the classification performance of the proposed MSCA-VGG16 model, confusion matrices were employed to visualize the recognition accuracy across ten fault categories, as shown in Fig.~\ref{fig:confusion_matrix}. A hierarchical comparison was conducted among the baseline model, several representative deep learning architectures, and the proposed MSCA-enhanced framework. 
 
@@ -638,30 +685,30 @@ The results indicate that adaptive multi-representation fusion is more effective
 	\label{tab:fusion_exp_simple}
 \end{table}
 
-\begin{figure}
+\begin{figure}[!htbp]
 	\centering
-	\begin{subfigure}{0.24\textwidth}
+	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{tsne/tsne__MSCA_VGG16_mel}
 		\caption{Mel}
 		\label{subfig:tsne_msca_vgg16_mel}
 	\end{subfigure}
 	\hfill
-	\begin{subfigure}{0.24\textwidth}
+	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{tsne/tsne__MSCA_VGG16_gadf}
 		\caption{GADF}
 		\label{subfig:tsne_msca_vgg16_gadf}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.24\textwidth}
+	\end{subfigure}\\[3mm]
+
+	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{tsne/tsne__MSCA_VGG16_concat}
 		\caption{Concat}
 		\label{subfig:tsne_msca_vgg16_concat}
 	\end{subfigure}
 	\hfill
-	\begin{subfigure}{0.24\textwidth}
+	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{tsne/tsne__MSCA_VGG16_awdpcnn}
 		\caption{AW-DPCNN (Ours)}
@@ -744,43 +791,43 @@ As summarized in Table~\ref{tab:cwru_ablation}, the single-representation (A1 an
 
 \begin{figure}[!htbp]
 	\centering
-	
-	\begin{subfigure}{0.24\linewidth}
+
+	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_mel}
 		\caption{Mel}
 		\label{subfig:tsne_cwru_mel}
 	\end{subfigure}
 	\hfill
-	\begin{subfigure}{0.24\linewidth}
+	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_gadf}
 		\caption{GADF}
 		\label{subfig:tsne_cwru_gadf}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.24\linewidth}
+	\end{subfigure}\\[3mm]
+
+	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_concat}
 		\caption{Concat}
 		\label{subfig:tsne_cwru_concat}
 	\end{subfigure}
 	\hfill
-	\begin{subfigure}{0.24\linewidth}
+	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_awdpcnn}
 		\caption{AW-DPCNN(Ours)}
 		\label{subfig:tsne_cwru_awdpcnn}
 	\end{subfigure}
-	
+
 	\caption{
 		t-SNE visualization of feature distributions under different strategies. (a) A1: Mel representation. (b) A2: GADF representation. (c) A3: Mel+GADF with concatenation fusion. (d) A4: Mel+GADF with the proposed AW-DPCNN fusion, which produces more compact intra-class clusters and clearer inter-class boundaries.
 	}
-	
+
 	\label{Fig:tsne_CWRU}
-	
+
 	\vspace{-3mm}
-	
+
 \end{figure}
 
 The t-SNE visualization results in Fig.~\ref{Fig:tsne_CWRU} further support these findings. Compared with the scattered distributions of the single representation and the partially overlapping clusters under concatenation fusion, the features produced by AW-DPCNN exhibit more compact intra-class distributions and clearer inter-class boundaries. This demonstrates that the proposed AW-DPCNN effectively enhances the discriminative capability of fused acoustic representations.
