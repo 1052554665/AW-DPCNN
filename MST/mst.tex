@@ -482,6 +482,47 @@ The experiments in this study were conducted on a system equipped with an Intel 
 	\end{equation}
 \end{enumerate}
 
+	\begin{figure*}
+		\centering
+		\begin{subfigure}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_baseline}
+			\caption{Baseline}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_alexnet}
+			\caption{AlexNet}
+		\end{subfigure}\\[3mm]
+
+		\begin{subfigure}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_resnet18}
+			\caption{ResNet18}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_convnext_tiny}
+			\caption{ConvNeXt-Tiny}
+		\end{subfigure}\\[3mm]
+
+		\begin{subfigure}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_vgg16}
+			\caption{VGG16}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}{0.48\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix__MSCA_VGG16}
+			\caption{MSCA-VGG16 (Ours)}
+		\end{subfigure}
+		\caption{Confusion matrices of different network backbones trained using the AW-DPCNN fusion representations. The proposed MSCA-VGG16 achieves the most accurate classification performance with significantly reduced inter-class confusion.}
+		\label{fig:confusion_matrix}
+	\end{figure*}
+
 \subsection{Backbone Comparison}
 The key hyperparameters of the AW-DPCNN fusion module are summarized in Table~\ref{tab:awdpcnn_params}, where $\mathbf I$ denotes the identity matrix. Unless otherwise specified, these parameters remain fixed throughout all experiments to ensure fair comparison. The detailed configuration of the proposed MSCA-VGG16 network is summarized in Table~\ref{tab:msca_vgg16}, where $d_e$ denotes the dimension of the discriminative embedding.
 \begin{table}
@@ -524,6 +565,8 @@ The key hyperparameters of the AW-DPCNN fusion module are summarized in Table~\r
 	\label{tab:msca_vgg16}
 \end{table}
 
+
+
 To evaluate the effectiveness of the proposed classification network, a comparative experiment was conducted using several representative deep learning backbones, including Baseline CNN, AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16. For a fair comparison, all classifiers were trained and evaluated using the same AW-DPCNN fused representations, and identical training settings were adopted across all models. It can be observed from Table~\ref{tab:network_comparison} that different backbone networks exhibit varying performance in transformer fault classification. The baseline model achieves relatively limited results, with an accuracy of 73.31\% and an F1-score of 69.59\%. By adopting deeper architectures such as AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16, the classification performance improves to different extents, indicating that more powerful feature extraction networks can better capture discriminative acoustic characteristics. Among all compared methods, the proposed MSCA-VGG16 achieves the best performance across all evaluation metrics. Specifically, it obtains an accuracy of 87.45\%, an F1-score of 86.97\%, and a G-mean of 85.69\%, which are significantly higher than those of the other backbone models. Compared with the baseline model, the accuracy improves by more than 14\%. Moreover, the balanced accuracy and Kappa coefficient reach 87.50\% and 86.03\%, respectively, indicating improved classification consistency and robustness across different fault categories. These results demonstrate the effectiveness of the proposed MSCA-VGG16 framework for transformer acoustic fault diagnosis.
 \begin{table}
 	\centering
@@ -553,46 +596,7 @@ To evaluate the effectiveness of the proposed classification network, a comparat
 \end{table}
 
 
-	\begin{figure*}[!t]
-		\centering
-		\begin{subfigure}{0.48\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_baseline}
-			\caption{Baseline}
-		\end{subfigure}
-		\hfill
-		\begin{subfigure}{0.48\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_alexnet}
-			\caption{AlexNet}
-		\end{subfigure}\\[3mm]
 
-		\begin{subfigure}{0.48\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_resnet18}
-			\caption{ResNet18}
-		\end{subfigure}
-		\hfill
-		\begin{subfigure}{0.48\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_convnext_tiny}
-			\caption{ConvNeXt-Tiny}
-		\end{subfigure}\\[3mm]
-
-		\begin{subfigure}{0.48\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_vgg16}
-			\caption{VGG16}
-		\end{subfigure}
-		\hfill
-		\begin{subfigure}{0.48\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix__MSCA_VGG16}
-			\caption{MSCA-VGG16 (Ours)}
-		\end{subfigure}
-		\caption{Confusion matrices of different network backbones trained using the AW-DPCNN fusion representations. The proposed MSCA-VGG16 achieves the most accurate classification performance with significantly reduced inter-class confusion.}
-		\label{fig:confusion_matrix}
-	\end{figure*}
 
 % \begin{figure*}[!t]
 % 	\centering
@@ -664,27 +668,6 @@ When the proposed AW-DPCNN fusion mechanism is applied (E4), the model achieves 
 \textbf{4) Overall performance analysis.}
 The results indicate that adaptive multi-representation fusion is more effective than simple feature aggregation. By dynamically adjusting the contribution of heterogeneous acoustic representations, the AW-DPCNN module can better exploit complementary information and enhance discriminative representation learning for transformer fault diagnosis.
 
-\begin{table}
-	\centering
-	\caption{Comparison of Fusion Strategies}
-	\begin{tabular}{lccccccc}
-		\toprule
-		\textbf{Exp.} & \textbf{Representation} & \textbf{Mel} & \textbf{GADF} & \textbf{Fusion Strategy} 
-		& \textbf{Acc (\%)} & \textbf{F1 (\%)} & \textbf{G-mean (\%)} \\
-		\midrule
-		E1 & Mel      & $\checkmark$ & $\times$ & None  
-		& 80.82 & 77.89 & 49.68 \\
-		E2 & GADF     & $\times$ & $\checkmark$ & None 
-		& 85.10 & 86.80 & 81.08 \\
-		E3 & Mel+GADF & $\checkmark$ & $\checkmark$ & Concat 
-		& 82.20 & 83.50 & 81.08 \\
-		E4 & Mel+GADF & $\checkmark$ & $\checkmark$ & \textbf{AW-DPCNN (Ours)} 
-		& \textbf{87.45} & \textbf{86.97} & \textbf{85.69} \\
-		\bottomrule
-	\end{tabular}
-	\label{tab:fusion_exp_simple}
-\end{table}
-
 \begin{figure}[!htbp]
 	\centering
 	\begin{subfigure}{0.48\textwidth}
@@ -719,7 +702,75 @@ The results indicate that adaptive multi-representation fusion is more effective
 	\vspace{-5pt}
 \end{figure}
 
+
+
+
+
+\begin{table}
+	\centering
+	\caption{Comparison of Fusion Strategies}
+	\begin{tabular}{lccccccc}
+		\toprule
+		\textbf{Exp.} & \textbf{Representation} & \textbf{Mel} & \textbf{GADF} & \textbf{Fusion Strategy} 
+		& \textbf{Acc (\%)} & \textbf{F1 (\%)} & \textbf{G-mean (\%)} \\
+		\midrule
+		E1 & Mel      & $\checkmark$ & $\times$ & None  
+		& 80.82 & 77.89 & 49.68 \\
+		E2 & GADF     & $\times$ & $\checkmark$ & None 
+		& 85.10 & 86.80 & 81.08 \\
+		E3 & Mel+GADF & $\checkmark$ & $\checkmark$ & Concat 
+		& 82.20 & 83.50 & 81.08 \\
+		E4 & Mel+GADF & $\checkmark$ & $\checkmark$ & \textbf{AW-DPCNN (Ours)} 
+		& \textbf{87.45} & \textbf{86.97} & \textbf{85.69} \\
+		\bottomrule
+	\end{tabular}
+	\label{tab:fusion_exp_simple}
+\end{table}
+
+
+
 In addition to the quantitative metrics derived from the confusion matrix, t-SNE visualization is applied to the feature embeddings extracted before the final classification layer, as illustrated in Fig. \ref{Fig:tsne}. The visualization results for Exp. 1–Exp. 4 defined in Table \ref{tab:fusion_exp_simple} show that the proposed AW-DPCNN fusion yields the most compact intra class clusters and the clearest inter class separation.
+
+\begin{figure}
+	\centering
+
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_mel}
+		\caption{Mel}
+		\label{subfig:tsne_cwru_mel}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_gadf}
+		\caption{GADF}
+		\label{subfig:tsne_cwru_gadf}
+	\end{subfigure}\\[3mm]
+
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_concat}
+		\caption{Concat}
+		\label{subfig:tsne_cwru_concat}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.48\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_awdpcnn}
+		\caption{AW-DPCNN(Ours)}
+		\label{subfig:tsne_cwru_awdpcnn}
+	\end{subfigure}
+
+	\caption{
+		t-SNE visualization of feature distributions under different strategies. (a) A1: Mel representation. (b) A2: GADF representation. (c) A3: Mel+GADF with concatenation fusion. (d) A4: Mel+GADF with the proposed AW-DPCNN fusion, which produces more compact intra-class clusters and clearer inter-class boundaries.
+	}
+
+	\label{Fig:tsne_CWRU}
+
+	\vspace{-3mm}
+
+\end{figure}
 
 To analyze the contribution of each architectural component, an ablation study was conducted on VGG16-based models, as summarized in Table~\ref{tab:ablation_vgg16}. The baseline VGG16 (M1) achieves an accuracy of 78.15\% and an F1-score of 75.82\%, indicating limited discriminative capability for acoustic fault diagnosis. Introducing individual components, including channel attention (M2), multi-scale convolution (M3), and the compact embedding head (M4), all leads to performance improvements compared with the baseline, demonstrating the effectiveness of each module in enhancing representation. When all proposed components are integrated, the full MSCA-VGG16 model (M5) achieves the best performance with an accuracy of 87.45\% and an F1-score of 86.97\%. Meanwhile, the Kappa coefficient increases from 75.76\% in the baseline model to 86.03\%, indicating a higher level of agreement between the predicted labels and ground truth. The consistent improvement across all evaluation metrics indicates that the multi-scale feature enhancement, channel attention mechanism, and compact embedding head work cooperatively to strengthen discriminative representation learning and improve diagnostic performance.
 
@@ -741,6 +792,8 @@ To analyze the contribution of each architectural component, an ablation study w
 			\hline
 		\end{tabular}
 \end{table}
+
+
 
 \subsection{Generalization Validation on the CWRU Dataset}
 To further evaluate the generalization capability of the proposed method, experiments were conducted on the publicly available Case Western Reserve University (CWRU) bearing dataset. The 12 kHz drive-end vibration signals were selected, including four conditions: Normal (N), Inner race fault (IR), Outer race fault (OR, located at the load zone at 6 o’clock), and Ball fault (B), all with a fault diameter of 0.007 inches. The vibration signals were converted into Mel spectrograms and GADF images using the same preprocessing pipeline as that applied to the transformer acoustic signals. To provide a fair evaluation of cross-domain generalization, no dataset-specific parameter tuning was performed. A cross-speed evaluation strategy was adopted, where samples with a fault diameter of 0.007 inches were used for training and those with 0.014 inches were used for testing, while ensuring that segments from the same raw signal were assigned exclusively to one subset to prevent data leakage. Although the CWRU dataset is based on vibration signals rather than acoustic signals, it provides a widely used benchmark for evaluating the generalization capability of fault diagnosis models.
@@ -789,46 +842,7 @@ As summarized in Table~\ref{tab:cwru_ablation}, the single-representation (A1 an
 \end{table}
 
 
-\begin{figure}[!htbp]
-	\centering
 
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_mel}
-		\caption{Mel}
-		\label{subfig:tsne_cwru_mel}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_gadf}
-		\caption{GADF}
-		\label{subfig:tsne_cwru_gadf}
-	\end{subfigure}\\[3mm]
-
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_concat}
-		\caption{Concat}
-		\label{subfig:tsne_cwru_concat}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_awdpcnn}
-		\caption{AW-DPCNN(Ours)}
-		\label{subfig:tsne_cwru_awdpcnn}
-	\end{subfigure}
-
-	\caption{
-		t-SNE visualization of feature distributions under different strategies. (a) A1: Mel representation. (b) A2: GADF representation. (c) A3: Mel+GADF with concatenation fusion. (d) A4: Mel+GADF with the proposed AW-DPCNN fusion, which produces more compact intra-class clusters and clearer inter-class boundaries.
-	}
-
-	\label{Fig:tsne_CWRU}
-
-	\vspace{-3mm}
-
-\end{figure}
 
 The t-SNE visualization results in Fig.~\ref{Fig:tsne_CWRU} further support these findings. Compared with the scattered distributions of the single representation and the partially overlapping clusters under concatenation fusion, the features produced by AW-DPCNN exhibit more compact intra-class distributions and clearer inter-class boundaries. This demonstrates that the proposed AW-DPCNN effectively enhances the discriminative capability of fused acoustic representations.
 

@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2026.4.17)  27 MAY 2026 17:30
+This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2026.4.17)  27 MAY 2026 22:29
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -403,10 +403,6 @@ File: equipment/equipment.pdf Graphic file (type pdf)
 File: Fused images/Fused images.pdf Graphic file (type pdf)
 <use Fused images/Fused images.pdf>
  [10] [11]
-Overfull \hbox (10.43462pt too wide) in paragraph at lines 511--525
- [][] 
- []
-
 File: confusion_matrix/confusion_matrix_baseline.png Graphic file (type bmp)
 <confusion_matrix/confusion_matrix_baseline.png>
 File: confusion_matrix/confusion_matrix_alexnet.png Graphic file (type bmp)
@@ -420,9 +416,15 @@ File: confusion_matrix/confusion_matrix_vgg16.png Graphic file (type bmp)
 File: confusion_matrix/confusion_matrix__MSCA_VGG16.png Graphic file (type bmp)
 <confusion_matrix/confusion_matrix__MSCA_VGG16.png>
 
-LaTeX Warning: Float too large for page by 7.68202pt on input line 595.
 
-[12] [13]
+LaTeX Warning: Float too large for page by 7.68202pt on input line 524.
+
+
+Overfull \hbox (10.43462pt too wide) in paragraph at lines 552--566
+ [][] 
+ []
+
+[12] [13] [14]
 File: tsne/tsne__MSCA_VGG16_mel.png Graphic file (type bmp)
 <tsne/tsne__MSCA_VGG16_mel.png>
 File: tsne/tsne__MSCA_VGG16_gadf.png Graphic file (type bmp)
@@ -431,7 +433,6 @@ File: tsne/tsne__MSCA_VGG16_concat.png Graphic file (type bmp)
 <tsne/tsne__MSCA_VGG16_concat.png>
 File: tsne/tsne__MSCA_VGG16_awdpcnn.png Graphic file (type bmp)
 <tsne/tsne__MSCA_VGG16_awdpcnn.png>
- [14]
 File: tsne_cwru/tsne_cwru_mel.png Graphic file (type bmp)
 <tsne_cwru/tsne_cwru_mel.png>
 File: tsne_cwru/tsne_cwru_gadf.png Graphic file (type bmp)
@@ -440,14 +441,14 @@ File: tsne_cwru/tsne_cwru_concat.png Graphic file (type bmp)
 <tsne_cwru/tsne_cwru_concat.png>
 File: tsne_cwru/tsne_cwru_awdpcnn.png Graphic file (type bmp)
 <tsne_cwru/tsne_cwru_awdpcnn.png>
- (./mst.bbl [15] [16]) [17] [18] [19] [20] (./mst.aux)
+ [15] [16] [17] (./mst.bbl [18] [19]) [20] (./mst.aux)
 Package rerunfilecheck Info: File `mst.out' has not changed.
 (rerunfilecheck)             Checksum: 48392F8BAF731147242FF2AC8F11A063;4112.
  ) 
 Here is how much of TeX's memory you used:
  12179 strings out of 476191
  201900 string characters out of 5812072
- 514575 words of memory out of 5000000
+ 515575 words of memory out of 5000000
  32688 multiletter control sequences out of 15000+600000
  479144 words of font info for 79 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
