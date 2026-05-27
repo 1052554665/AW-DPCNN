@@ -3,39 +3,47 @@
   shorttitle = {Enhanced {{Fault Diagnosis}} in {{Rotating Machinery Using}} a {{Hybrid CWT-LeNet-5-LSTM Model}}},
   author = {Ahsan, Muhammad and Waqar Hassan, Muhammad and Rodriguez, Jose and Abdelrahem, Mohamed},
   date = {2025},
-  journal = {IEEE Access},
+  journaltitle = {IEEE Access},
   volume = {13},
   pages = {1026--1045},
   issn = {2169-3536},
   doi = {10.1109/ACCESS.2024.3522948},
+  url = {https://ieeexplore.ieee.org/document/10816403},
+  urldate = {2026-05-26},
   abstract = {The presented research paper proposes a novel integrated technique combining LeNet-5 with Continuous Wavelet Transform (CWT) along with Long Short-Term Memory (LSTM). The purpose of this integration is to improve the performance of mechanisms used for the detection of defects in rotatory machines across various operating conditions. The Convolutional Neural Networks (CNN) assists the presented CWT-LeNet-5-LSTM technique in finding the complex characteristics in the data, while LSTM learns the trends in the dataset and performs the necessary analysis of vibrations occurring in faulty machines. The developed model was examined for various loads and faults to extract results having accuracies of 99.6\%, 96.9\%, 92.5\% and 96.6\% for load conditions 3, 2, 1, and 0, respectively. These results demonstrate the ability of the proposed model to adapt according to varying load conditions while having the necessary levels of accuracy. This validates the model to perform precise fault detection and diagnosis, offering capabilities of predictive maintenance in industrial settings.},
   keywords = {Accuracy,Continuous wavelet transform (CWT),Continuous wavelet transforms,Convolutional neural networks,Fault detection,fault diagnosis,Fault diagnosis,Feature extraction,LeNet-5,Load modeling,Long short term memory,long short-term memory (LSTM),Machinery,predictive maintenance,vibration analysis,Vibrations},
+  file = {/home/yangchen/Zotero/storage/ADLIJIDM/Ahsan et al. - 2025 - Enhanced Fault Diagnosis in Rotating Machinery Using a Hybrid CWT-LeNet-5-LSTM Model Performance Ac.pdf}
 }
 
 @article{alonso-gonzalezBearingFaultDiagnosis2023,
   title = {Bearing {{Fault Diagnosis With Envelope Analysis}} and {{Machine Learning Approaches Using CWRU Dataset}}},
   author = {Alonso-González, Miguel and Díaz, Vicente García and Pérez, Benjamìn López and G-Bustelo, B. Cristina Pelayo and Anzola, John Petearson},
   date = {2023},
-  journal = {IEEE Access},
+  journaltitle = {IEEE Access},
   volume = {11},
   pages = {57796--57805},
   issn = {2169-3536},
   doi = {10.1109/ACCESS.2023.3283466},
+  url = {https://ieeexplore.ieee.org/document/10145440},
+  urldate = {2026-05-26},
   abstract = {Predictive maintenance in machines aims to anticipate failures. In rotating machines, the component that suffers the most wear and tear is the bearings. Currently, based on the Industry 4.0 paradigm, advances have been made in obtaining data, specifically, vibration signals that can be used to predict deterioration using various techniques. In this study, we have applied vibration analysis to obtain features that can be used in an optimal Machine Learning model using a public dataset from CWRU, widely used in research, which contains data on bearing failures. The main objective of this research is to detect bearing failures using a minimum set of observations and selecting the minimum number of features. To achieve this, frequency domain vibration analysis, combined with envelope analysis, is utilized as an effective method for detecting bearing failures. The results were further improved by incorporating an optimal bandwidth determined using the kurtogram. When the results of the envelope analysis are applied to various machine learning models, using the calculated amplitudes as predictors, the Kernel Naive Bayes model achieved an accuracy of 94.4\%. Meanwhile, the Decision Tree (Fine Tree) and KNN (Fine KNN) models demonstrate exceptional accuracy, achieving a perfect accuracy rate of 100\%.},
   keywords = {Bearing fault,Data models,deep learning,Fault diagnosis,Feature extraction,industry 40,machine learning,Maintenance engineering,Mathematical models,predictive maintenance,Prognostics and health management,Vibrations},
+  file = {/home/yangchen/Zotero/storage/QMHAZGSS/Alonso-González et al. - 2023 - Bearing Fault Diagnosis With Envelope Analysis and Machine Learning Approaches Using CWRU Dataset.pdf}
 }
 
 @article{guNovelFaultDiagnosis2022,
   title = {A Novel Fault Diagnosis Method of Wind Turbine Bearings Based on Compressed Sensing and {{AlexNet}}},
   author = {Gu, Heng and Liu, Wenyi and Zhang, Yang and Jiang, Xiangyu},
   date = {2022-08},
-  journal = {Meas. Sci. Technol.},
+  journaltitle = {Meas. Sci. Technol.},
   volume = {33},
   number = {11},
   pages = {115011},
   publisher = {IOP Publishing},
   issn = {0957-0233},
   doi = {10.1088/1361-6501/ac8276},
+  url = {https://doi.org/10.1088/1361-6501/ac8276},
+  urldate = {2026-05-26},
   abstract = {The bearing is the core component which ensures the normal operation of the wind turbine. The vibration signal based on fault diagnosis is non-linear, non-stationary and causes serious noise pollution. Conventional methods are difficult to demodulate, and the operation is complex. With the increasing capacity of wind turbine assemblers, the signal samples based on Shannon sampling theorem are also increasing, which brings great pressure to data transmission and storage. Deep learning based on big data-driven for wind turbine running condition monitoring plays an effective role in the field of fault diagnosis. However, data training depends on a large amount of data and takes a long time. Therefore, a novel fault diagnosis method based on compressed sensing (CS) and AlexNet is proposed. This method used small sample data. Firstly, the signal is sparsely processed by stagewise orthogonal matching pursuit algorithm, so that the sparse signal is convenient for signal transmission and can alleviate the pressure of signal storage. Secondly, the CS theory is used to restore the signal and reduce the noise of the signal. Thirdly, a fault-free signal is selected and compared with the fault signal with the same phase to obtain the characteristic residual signal. Next, they are subjected to continuous wavelet transform to obtain the wavelet spectrum of the signal. Finally, it is constructed into a pseudo-trichromatic graph and put into the improved AlexNet network to obtain the effect of fault diagnosis. Compared with other methods, experiment shows that the proposed method has higher accuracy in wind turbine fault diagnosis},
   langid = {english}
 }
@@ -45,13 +53,15 @@
   title = {A Bearing Fault Diagnosis Model with Convolutional Cross Transformer and {{ResNet18}}},
   author = {Ma, Xurui and Wang, Yanyan and Qin, Jinning and Wang, Zefeng and Liu, Zhengyang},
   date = {2024-11},
-  journal = {Meas. Sci. Technol.},
+  journaltitle = {Meas. Sci. Technol.},
   volume = {36},
   number = {1},
   pages = {016132},
   publisher = {IOP Publishing},
   issn = {0957-0233},
   doi = {10.1088/1361-6501/ad8a7b},
+  url = {https://doi.org/10.1088/1361-6501/ad8a7b},
+  urldate = {2026-05-26},
   abstract = {In the industrial field, malfunction of rotating machinery, especially bearings, can cause significant economic losses to enterprises. Addressing the limitations of traditional fault diagnosis methods, such as poor generalization performance and low noise resistance, this paper introduces a fault diagnosis model that parallels the cross convolutional transformer and ResNet18 (CCTAR). The proposed CCTAR utilizes two feature extraction channels, aimed at balancing the extraction of local and global features, and the specially designed convolutional cross-decoding layer has excellent noise resistance, surpassing traditional multi-layer Transformer encoding layers with a single-layer structure. CCTAR achieves commendable recognition accuracy across multiple datasets and maintains high accuracy in noisy environments. Furthermore, transfer learning experiments have demonstrated the proposed model’s capability to achieve superior fault diagnosis performance across different working conditions with a limited number of samples, highlighting its practical significance.},
   langid = {english}
 }
@@ -63,9 +73,12 @@
   date = {2024-08},
   pages = {1099--1103},
   doi = {10.1109/ICCEPE62686.2024.10931339},
+  url = {https://ieeexplore.ieee.org/document/10931339},
+  urldate = {2026-05-26},
   abstract = {Due to the various defects of power equipment that can affect the normal operation of the power grid, it is of great significance to use infrared images to quickly and accurately identify power equipment faults. A fault diagnosis and recognition algorithm based on the improved VGG model is proposed. The algorithm optimizes the fully connected layer to reduce the computational load of the network and embeds the BCBAM attention mechanism into the network model. Normalization methods are introduced to improve the channel attention module and spatial attention module, thereby improving the accuracy of the algorithm's fault diagnosis and recognition. Based on the original cascading network characteristics and processing process, the linking method is changed to parallel, improving the network structure and performance. Experimental data shows that the model has accurate fault recognition ability, and is superior to Faster RCNN and Resnet in accuracy evaluation indicators. 50 and traditional models such as VGG 16 were used to verify the accuracy of the algorithm in diagnosing and identifying faults.},
   eventtitle = {2024 5th {{International Conference}} on {{Clean Energy}} and {{Electric Power Engineering}} ({{ICCEPE}})},
   keywords = {Accuracy,attention mechanism,Attention mechanisms,Character recognition,Computational modeling,Data models,deep learning network,Fault diagnosis,fault identification,Image recognition,lightw eight VGG model,Load modeling,Power grids,Residual neural networks},
+  file = {/home/yangchen/Zotero/storage/9IE5EKD2/Zhang et al. - 2024 - Fault Diagnosis and Recognition of Power Equipment Infrared Images Based on Lightweight VGG16 and BC.pdf}
 }
 
 @article{zhangMachineLearningBased2021,
@@ -73,13 +86,16 @@
   shorttitle = {Machine {{Learning Based Bearing Fault Diagnosis Using}} the {{Case Western Reserve University Data}}},
   author = {Zhang, Xiao and Zhao, Boyang and Lin, Yun},
   date = {2021},
-  journal = {IEEE Access},
+  journaltitle = {IEEE Access},
   volume = {9},
   pages = {155598--155608},
   issn = {2169-3536},
   doi = {10.1109/ACCESS.2021.3128669},
+  url = {https://ieeexplore.ieee.org/document/9617588},
+  urldate = {2026-05-26},
   abstract = {The most important parts of rotating machinery are the rolling bearings. Finding bearing faults in time can avoid affecting the operation of the entire equipment. The data-driven fault diagnosis technology of bearings has recently become a research hotspot, and the starting point of research is often the acquisition of vibration signals. There are many public data sets for rolling bearings. Among them, the most widely used public dataset is Case Western Reserve University bearing center (CWRU). This paper will start from the CWRU data set, compare and analyze some basic methods of machine learning based rolling bearing fault diagnosis, and summarize the characteristics of CWRU. First, we give a comprehensive introduction to CWRU and summarize the results achieved. After that, the basic methods and principles of machine learning based rolling bearing fault diagnosis were summarized. Finally, we conduct experiments and analyze experimental results. This paper will have certain guiding significance for the future use of CWRU for machine learning based rolling bearing fault diagnosis.},
   keywords = {classifier,CWRU,Entropy,Fault diagnosis,Feature extraction,feature selection,machine learning,Machine learning,Rolling bearings,Time-domain analysis,Vibrations},
+  file = {/home/yangchen/Zotero/storage/M7VQZ7K9/Zhang et al. - 2021 - Machine Learning Based Bearing Fault Diagnosis Using the Case Western Reserve University Data A Rev.pdf}
 }
 
 @article{zhangWaveConvNeXtEfficientPrecise2024,
@@ -87,26 +103,30 @@
   shorttitle = {Wave-{{ConvNeXt}}},
   author = {Zhang, Liangwei and Lin, Jing and Yang, Zhe and Shao, Haidong and Liu, Biyu and Li, Chuan},
   date = {2024-07},
-  journal = {IEEE Internet of Things Journal},
+  journaltitle = {IEEE Internet of Things Journal},
   volume = {11},
   number = {13},
   pages = {23096--23109},
   issn = {2327-4662},
   doi = {10.1109/JIOT.2024.3386965},
+  url = {https://ieeexplore.ieee.org/document/10496468},
+  urldate = {2026-05-26},
   abstract = {The burgeoning field of the Industrial Internet of Things (IIoT) necessitates advanced fault diagnosis methods capable of navigating the dual challenges of high-predictive accuracy and the constraints of edge computing environments. Our study introduces Wave-ConvNeXt, a novel fault diagnosis model that seamlessly integrates the state-of-the-art ConvNeXt architecture with Wavelet Transform. This innovative model stands out for its lightweight design yet delivers exceptional accuracy in fault diagnosis. In Wave-ConvNeXt, we re-engineer the ConvNeXt model for IIoT applications by adopting 1-D convolution, tailored for processing high-frequency, nonperiodic inputs. This adaptation is complemented by replacing the traditional “patchify” layer with a Wavelet transform layer, which simplifies input signals into subsignals, thereby easing learning complexities and diminishing the dependence on elaborate deep architectures. Further enhancing this model, we incorporate a squeeze-and-excitation module, enriching its ability to prioritize channelwise feature relevance, akin to self-attention mechanisms. This integration is rigorously validated through an ablation study. Wave-ConvNeXt epitomizes a holistic approach, enabling an end-to-end optimization of feature learning and fault classification. Our empirical analysis on two real-world IIoT data sets demonstrates Wave-ConvNeXt’s superiority over existing models. It not only elevates prediction accuracy but also significantly curtails computational complexity. Additionally, our exploration into the impact of various mother wavelets reveals the effectiveness of using wavelet basis functions with smaller support, bolstering diagnostic precision. The source code of Wave-ConvNeXt is available at https://github.com/leviszhang/waveConvNeXt.},
   keywords = {Computational efficiency,Computational modeling,Computer architecture,Continuous wavelet transforms,ConvNeXt architecture,fault diagnosis,Fault diagnosis,Industrial Internet of Things,Industrial Internet of Things (IIoT),Time-frequency analysis,Transforms,wavelet transform},
+  file = {/home/yangchen/Zotero/storage/BHZGI7QC/Zhang et al. - 2024 - Wave-ConvNeXt An Efficient and Precise Fault Diagnosis Method for IIoT Leveraging Tailored ConvNeXt.pdf}
 }
 
 @article{Dai_2020,
   title = {Research on Face Recognition Based on Gabor-{{LeNet}} Convolutional Neural Network Model},
   author = {Dai, Qinxuan and Luo, Xiaoshu and Meng, Zhiming},
   date = {2020-10},
-  journal = {Journal of Physics: Conference Series},
+  journaltitle = {Journal of Physics: Conference Series},
   volume = {1650},
   number = {3},
   pages = {032035},
   publisher = {IOP Publishing},
   doi = {10.1088/1742-6596/1650/3/032035},
+  url = {https://doi.org/10.1088/1742-6596/1650/3/032035},
   abstract = {Aiming at the problems of slowing convergence speed, and low recognition accuracy in the face recognition training of the existing LeNet-5 convolutional neural network, an improved LeNet-5 convolutional neural network model is proposed and applied for face recognition. The main improvement is the use of Gabor filter to initialize the first convolutional layer and the activation function of Parametric Rectified Linear Unit (PReLU). The recognition accuracy of the improved model on ORL and GT face datasets has reached more than 98}
 }
 
@@ -114,28 +134,33 @@
   title = {Enhancement Algorithm for Color Images Based on Improved {{FC-MSPCNN}}},
   author = {Kang, Yuan and Lian, Jing and Guo, Chenxi and Zheng, Li and Zhang, Mingxuan},
   date = {2021-07},
-  journal = {J. Phys.: Conf. Ser.},
+  journaltitle = {J. Phys.: Conf. Ser.},
   volume = {1961},
   number = {1},
   pages = {012006},
   publisher = {IOP Publishing},
   issn = {1742-6596},
   doi = {10.1088/1742-6596/1961/1/012006},
+  url = {https://doi.org/10.1088/1742-6596/1961/1/012006},
+  urldate = {2026-05-20},
   abstract = {Image enhancement has been a hot research topic in image processing in recent years, and Pulse-Coupled Neural Network (PCNN) based image processing has become one of the important channels for image processing. Recently, we have applied this network to image enhancement based on Fire-controlled Pulse-coupled NeuralNetwork (FC-MSPCNN) without changing its model structure by combining the adaptive parameter setting method to redefine the link coefficients β. On the one hand, and reprocessing the mapping matrix of the extracted three channels on the other hand. The experimental results of the improved FC-MSPCNN are proved to be more effective and robust compared with the traditional classical algorithm, both in terms of competent analysis and objective comparison.},
   langid = {english},
+  file = {/home/yangchen/Zotero/storage/EPIKCUG6/Kang et al. - 2021 - Enhancement algorithm for color images based on improved FC-MSPCNN.pdf}
 }
 
 @article{kanimalarBananaDiseaseDetection2025,
   title = {Banana Disease Detection Using {{Swin Transformer}} and {{ConvNeXt-Tiny}} Architecture with {{Spotted Hyena Optimizer}} for Optimized Classification Performance},
   author = {Kanimalar, C and Karthikeyan, M},
   date = {2025-10},
-  journal = {Eng. Res. Express},
+  journaltitle = {Eng. Res. Express},
   volume = {7},
   number = {4},
   pages = {045249},
   publisher = {IOP Publishing},
   issn = {2631-8695},
   doi = {10.1088/2631-8695/ae14b1},
+  url = {https://doi.org/10.1088/2631-8695/ae14b1},
+  urldate = {2026-05-26},
   abstract = {Early detection of diseases present in banana plants is vital to reducing crop loss and maintaining sustainable agriculture. This work presents a diagnostic framework for seven major banana plant diseases and infestations—Aphids, Bacterial Soft Rot, Black Sigatoka, Panama Disease, Pseudostem Weevil, Scarring Beetle, and Yellow Sigatoka—using leaf images and a deep learning approach. A Wiener filter is first applied to enhance image quality by reducing noise, while Dynamic Histogram Equalization is performed to improve image contrast. A hybrid feature extractor combining the Swin Transformer and ConvNeXtTiny backbone is employed to capture both global and local visual patterns important to disease symptoms. A SoftMax classifier is employed, with parameters tuned using the Spotted Hyena Optimizer to improve convergence and learning stability. On a publicly available dataset of 5,170 images, the proposed model achieved an accuracy of 97.7\%, precision of 94.0\%, recall of 89.10\%, F1-score of 0.910, and MCC of 0.8337. These results outperform benchmark architectures, including EfficientNetB0, ResNet50, and VGG16, thereby confirming the robustness and potential of the model for real-time, field-based disease monitoring systems.},
   langid = {english}
 }
@@ -144,15 +169,18 @@
   title = {Automated {{Waste Classification}} with {{VGG16 CNN Model}} for {{Sustainable Waste Management}}},
   author = {Poetro, Bagus Satrio Waluyo and Kurniadi, Dedy and Meldyantono, Anggara Putra},
   date = {2025-09},
-  journal = {IOP Conf. Ser.: Earth Environ. Sci.},
+  journaltitle = {IOP Conf. Ser.: Earth Environ. Sci.},
   volume = {1543},
   number = {1},
   pages = {012037},
   publisher = {IOP Publishing},
   issn = {1755-1315},
   doi = {10.1088/1755-1315/1543/1/012037},
+  url = {https://doi.org/10.1088/1755-1315/1543/1/012037},
+  urldate = {2026-05-26},
   abstract = {Inefficient waste management is a major challenge to the environment due to the ever-increasing volume of waste. The application of artificial intelligence technology, particularly deep learning models such as Convolutional Neural Networks (CNN), offers a promising solution to automate waste classification more efficiently. This research aims to implement a CNN model based on the VGG16 architecture to classify waste into two main categories: Organic (O) and Recycled (R). The methodology used includes dividing the waste classification dataset into training and testing data, as well as training a pre-trained VGG16 model with the addition of a binary classification layer. Evaluation was performed using metrics such as accuracy, precision, recall, and F1-score. Based on the training results, the model showed an increase in training accuracy from about 81\% to 87\%, as well as a stable validation accuracy that increased to close to 89.9\%. Meanwhile, the loss value on training data decreased from about 0.43 to 0.34, and on validation data from 0.35 to 0.27. Factors such as the number of epochs, batch size, and image augmentation technique also affect the performance of the model. This research shows that the VGG16-based CNN model has great potential to be applied in automated waste management systems, which can improve the efficiency of the recycling process and support environmental conservation efforts.},
   langid = {english},
+  file = {/home/yangchen/Zotero/storage/FL243BWC/Poetro et al. - 2025 - Automated Waste Classification with VGG16 CNN Model for Sustainable Waste Management.pdf}
 }
 
 @ARTICLE{10491111,
