@@ -8,24 +8,35 @@
 % /biblio/bibtex/contrib/iopart-num
 
 \bibitem{10491111}
-Zhou Y, He Y, Xing Z, Wang L, Shao K, Lei L and Li Z 2024 {\em IEEE Sensors
-  Journal\/} {\bf 24} 17231--17242
+Zhou Y, He Y, Xing Z, Wang L, Shao K, Lei L and Li Z 2024 Vibration
+  signal-based fusion residual attention model for power transformer fault
+  diagnosis.
+\newblock {\em IEEE Sensors Journal\/} {\bf 24} 17231--17242
 
 \bibitem{7480687}
-Li J, Zhang Q, Wang K, Wang J, Zhou T and Zhang Y 2016 {\em IEEE Transactions
-  on Dielectrics and Electrical Insulation\/} {\bf 23} 1198--1206
+Li J, Zhang Q, Wang K, Wang J, Zhou T and Zhang Y 2016 Optimal dissolved gas
+  ratios selected by genetic algorithm for power transformer fault diagnosis
+  based on support vector machine.
+\newblock {\em IEEE Transactions on Dielectrics and Electrical Insulation\/}
+  {\bf 23} 1198--1206
 
 \bibitem{10492658}
-Yu Z, Wei Y, Niu B and Zhang X 2024 {\em IEEE Transactions on Instrumentation
-  and Measurement\/} {\bf 73} 1--11
+Yu Z, Wei Y, Niu B and Zhang X 2024 Automatic condition monitoring and fault
+  diagnosis system for power transformers based on voiceprint recognition.
+\newblock {\em IEEE Transactions on Instrumentation and Measurement\/} {\bf 73}
+  1--11
 
 \bibitem{NIU2025127997}
-Niu B, Wei Y, Yu Z and Wang Y 2025 {\em Expert Systems with Applications\/}
-  {\bf 288} 127997 ISSN 0957-4174
+Niu B, Wei Y, Yu Z and Wang Y 2025 Acoustic signal augmentation for fault
+  diagnosis of power transformers based on improved cycle generative
+  adversarial networks.
+\newblock {\em Expert Systems with Applications\/} {\bf 288} 127997 ISSN
+  0957-4174
 
 \bibitem{SHAN2023112408}
-Shan S, Liu J, Wu S, Shao Y and Li H 2023 {\em Measurement\/} {\bf 207} 112408
-  ISSN 0263-2241
+Shan S, Liu J, Wu S, Shao Y and Li H 2023 A motor bearing fault voiceprint
+  recognition method based on {{Mel-CNN}} model.
+\newblock {\em Measurement\/} {\bf 207} 112408 ISSN 0263-2241
 
 \bibitem{10606641}
 Hongming L, Zhang K and Han S 2024 A comparison of cnn-based transformer fault
@@ -33,8 +44,10 @@ Hongming L, Zhang K and Han S 2024 A comparison of cnn-based transformer fault
   Control and Learning Systems Conference (DDCLS)\/} pp 819--824
 
 \bibitem{4265659}
-Chen L~J, Lin W~M, Tsao T~P and Lin Y~H 2007 {\em IEEE Transactions on Power
-  Delivery\/} {\bf 22} 1575--1580
+Chen L~J, Lin W~M, Tsao T~P and Lin Y~H 2007 Study of partial discharge
+  measurement in power equipment using acoustic technique and wavelet
+  transform.
+\newblock {\em IEEE Transactions on Power Delivery\/} {\bf 22} 1575--1580
 
 \bibitem{7558591}
 Li Y, Peng W, Zhu X, Wei G, Yu H and Qian G 2016 Based on short-time fourier
@@ -43,37 +56,54 @@ Li Y, Peng W, Zhu X, Wei G, Yu H and Qian G 2016 Based on short-time fourier
   Mechatronics and Automation\/} pp 371--375
 
 \bibitem{9760386}
-Xiao R, Zhang Z, Dan Y, Yang Y, Pan Z and Deng J 2022 {\em IEEE Transactions on
-  Instrumentation and Measurement\/} {\bf 71} 1--12
+Xiao R, Zhang Z, Dan Y, Yang Y, Pan Z and Deng J 2022 Multifeature extraction
+  and semi-supervised deep learning scheme for state diagnosis of converter
+  transformer.
+\newblock {\em IEEE Transactions on Instrumentation and Measurement\/} {\bf 71}
+  1--12
 
 \bibitem{9408662}
-Wang D, Li Y, Jia L, Song Y and Liu Y 2021 {\em IEEE Transactions on
-  Instrumentation and Measurement\/} {\bf 70} 1--10
+Wang D, Li Y, Jia L, Song Y and Liu Y 2021 Novel three-stage feature fusion
+  method of multimodal data for bearing fault diagnosis.
+\newblock {\em IEEE Transactions on Instrumentation and Measurement\/} {\bf 70}
+  1--10
 
 \bibitem{9832890}
-Zhang Z, Zhou F and Li S 2022 {\em IEEE Access\/} {\bf 10} 78502--78518
+Zhang Z, Zhou F and Li S 2022 A cross working condition multiscale recursive
+  feature fusion method for fault diagnosis of rolling bearing in multiple
+  working conditions.
+\newblock {\em IEEE Access\/} {\bf 10} 78502--78518
 
 \bibitem{4305279}
-Ji L, Yi Z, Shang L and Pu X 2007 {\em IEEE Transactions on Systems, Man, and
-  Cybernetics, Part B (Cybernetics)\/} {\bf 37} 1407--1413
+Ji L, Yi Z, Shang L and Pu X 2007 Binary fingerprint image thinning using
+  template-based pcnns.
+\newblock {\em IEEE Transactions on Systems, Man, and Cybernetics, Part B
+  (Cybernetics)\/} {\bf 37} 1407--1413
 
 \bibitem{6338347}
-Qu H, Yi Z and Yang S~X 2013 {\em IEEE Transactions on Cybernetics\/} {\bf 43}
-  995--1010
+Qu H, Yi Z and Yang S~X 2013 Efficient shortest-path-tree computation in
+  network routing based on pulse-coupled neural networks.
+\newblock {\em IEEE Transactions on Cybernetics\/} {\bf 43} 995--1010
 
 \bibitem{8742596}
-Qian J, Yadong L, Jindun D, Xiaofei F and Xiuchen J 2019 {\em IEEE Access\/}
-  {\bf 7} 83484--83494
+Qian J, Yadong L, Jindun D, Xiaofei F and Xiuchen J 2019 Image fusion method
+  based on structure-based saliency map and fdst-pcnn framework.
+\newblock {\em IEEE Access\/} {\bf 7} 83484--83494
 
 \bibitem{9444355}
 Basar S, Ali M, Ochoa-Ruiz G, Waheed A, Rodriguez-Hernandez G and Zareei M 2021
-  {\em IEEE Access\/} {\bf 9} 87219--87240
+  A novel defocused image segmentation method based on pcnn and lbp.
+\newblock {\em IEEE Access\/} {\bf 9} 87219--87240
 
 \bibitem{10848019}
-Deng X and Ma Y 2014 {\em Chinese Journal of Electronics\/} {\bf 23} 97--103
+Deng X and Ma Y 2014 Pcnn model analysis and its automatic parameters
+  determination in image segmentation and edge detection.
+\newblock {\em Chinese Journal of Electronics\/} {\bf 23} 97--103
 
 \bibitem{8746999}
-Gai D, Shen X, Cheng H and Chen H 2019 {\em IEEE Access\/} {\bf 7} 85413--85429
+Gai D, Shen X, Cheng H and Chen H 2019 Medical image fusion via pcnn based on
+  edge preservation and improved sparse representation in nsst domain.
+\newblock {\em IEEE Access\/} {\bf 7} 85413--85429
 
 \bibitem{4344292}
 Wang Z and Ma Y 2007 Dual-channel pcnn and its application in the field of
@@ -81,77 +111,105 @@ Wang Z and Ma Y 2007 Dual-channel pcnn and its application in the field of
   2007)\/} vol~1 pp 755--759
 
 \bibitem{10341267}
-Bai G, Sun W, Cao C, Wang D, Sun Q and Sun L 2024 {\em IEEE Sensors Journal\/}
-  {\bf 24} 1894--1904
+Bai G, Sun W, Cao C, Wang D, Sun Q and Sun L 2024 Gan-based bearing fault
+  diagnosis method for short and imbalanced vibration signal.
+\newblock {\em IEEE Sensors Journal\/} {\bf 24} 1894--1904
 
 \bibitem{18184994}
-Zhang Z, Yi Y, Qi J, Wang Q, Qin W, Fan X and Li C 2025 {\em Energies\/} {\bf
-  18} 4991 ISSN 1996-1073
+Zhang Z, Yi Y, Qi J, Wang Q, Qin W, Fan X and Li C 2025 Partial {{Discharge
+  Characteristics}} of {{Typical Defects}} in {{Oil-Paper Insulation Based}} on
+  {{Photon Detection Technology}}.
+\newblock {\em Energies\/} {\bf 18} 4991 ISSN 1996-1073
 
 \bibitem{7033433}
-Khan S~A, Equbal M~D and Islam T 2015 {\em IEEE Transactions on Dielectrics and
-  Electrical Insulation\/} {\bf 22} 590--596
+Khan S~A, Equbal M~D and Islam T 2015 A comprehensive comparative study of dga
+  based transformer fault diagnosis using fuzzy logic and anfis models.
+\newblock {\em IEEE Transactions on Dielectrics and Electrical Insulation\/}
+  {\bf 22} 590--596
 
 \bibitem{ahsanEnhancedFaultDiagnosis2025}
-Ahsan M, Waqar~Hassan M, Rodriguez J and Abdelrahem M  {\bf 13} 1026--1045 ISSN
-  2169-3536 \urlprefix\url{https://ieeexplore.ieee.org/document/10816403}
+Ahsan M, Waqar~Hassan M, Rodriguez J and Abdelrahem M 2025 Enhanced {{Fault
+  Diagnosis}} in {{Rotating Machinery Using}} a {{Hybrid CWT-LeNet-5-LSTM
+  Model}}: {{Performance Across Various Load Conditions}}.
+\newblock {\em IEEE Access\/} {\bf 13} 1026--1045 ISSN 2169-3536
 
 \bibitem{guNovelFaultDiagnosis2022}
-Gu H, Liu W, Zhang Y and Jiang X  {\bf 33} 115011 ISSN 0957-0233
-  \urlprefix\url{https://doi.org/10.1088/1361-6501/ac8276}
+Gu H, Liu W, Zhang Y and Jiang X 2022 A novel fault diagnosis method of wind
+  turbine bearings based on compressed sensing and {{AlexNet}}.
+\newblock {\em Meas. Sci. Technol.\/} {\bf 33} 115011 ISSN 0957-0233
 
 \bibitem{zhangFaultDiagnosisRecognition2024}
-Zhang B, Zhang J and Qiu B Fault {{Diagnosis}} and {{Recognition}} of {{Power
-  Equipment Infrared Images Based}} on {{Lightweight VGG16}} and {{BCBAM}} {\em
-  2024 5th {{International Conference}} on {{Clean Energy}} and {{Electric
-  Power Engineering}} ({{ICCEPE}})\/} pp 1099--1103
-  \urlprefix\url{https://ieeexplore.ieee.org/document/10931339}
+Zhang B, Zhang J and Qiu B 2024 Fault {{Diagnosis}} and {{Recognition}} of
+  {{Power Equipment Infrared Images Based}} on {{Lightweight VGG16}} and
+  {{BCBAM}} {\em 2024 5th {{International Conference}} on {{Clean Energy}} and
+  {{Electric Power Engineering}} ({{ICCEPE}})\/} pp 1099--1103
 
 \bibitem{maBearingFaultDiagnosis2024}
-Ma X, Wang Y, Qin J, Wang Z and Liu Z  {\bf 36} 016132 ISSN 0957-0233
-  \urlprefix\url{https://doi.org/10.1088/1361-6501/ad8a7b}
+Ma X, Wang Y, Qin J, Wang Z and Liu Z 2024 A bearing fault diagnosis model with
+  convolutional cross transformer and {{ResNet18}}.
+\newblock {\em Meas. Sci. Technol.\/} {\bf 36} 016132 ISSN 0957-0233
 
 \bibitem{11014495}
-Zhang K, Lu H, Han S and Zhao X 2025 {\em IEEE Transactions on Instrumentation
-  and Measurement\/} {\bf 74} 1--11
+Zhang K, Lu H, Han S and Zhao X 2025 A novel fault diagnosis method for power
+  transformers based on voiceprint recognition considering multitype noises.
+\newblock {\em IEEE Transactions on Instrumentation and Measurement\/} {\bf 74}
+  1--11
 
 \bibitem{5352306}
-Tripathy M, Maheshwari R~P and Verma H~K 2010 {\em IEEE Transactions on Power
-  Delivery\/} {\bf 25} 102--112
+Tripathy M, Maheshwari R~P and Verma H~K 2010 Power transformer differential
+  protection based on optimal probabilistic neural network.
+\newblock {\em IEEE Transactions on Power Delivery\/} {\bf 25} 102--112
 
 \bibitem{4717246}
-Shintemirov A, Tang W and Wu Q~H 2009 {\em IEEE Transactions on Systems, Man,
-  and Cybernetics, Part C (Applications and Reviews)\/} {\bf 39} 69--79
+Shintemirov A, Tang W and Wu Q~H 2009 Power transformer fault classification
+  based on dissolved gas analysis by implementing bootstrap and genetic
+  programming.
+\newblock {\em IEEE Transactions on Systems, Man, and Cybernetics, Part C
+  (Applications and Reviews)\/} {\bf 39} 69--79
 
 \bibitem{zhangWaveConvNeXtEfficientPrecise2024}
-Zhang L, Lin J, Yang Z, Shao H, Liu B and Li C  {\bf 11} 23096--23109 ISSN
-  2327-4662 \urlprefix\url{https://ieeexplore.ieee.org/document/10496468}
+Zhang L, Lin J, Yang Z, Shao H, Liu B and Li C 2024 Wave-{{ConvNeXt}}: {{An
+  Efficient}} and {{Precise Fault Diagnosis Method}} for {{IIoT Leveraging
+  Tailored ConvNeXt}} and {{Wavelet Transform}}.
+\newblock {\em IEEE Internet of Things Journal\/} {\bf 11} 23096--23109 ISSN
+  2327-4662
 
 \bibitem{alonso-gonzalezBearingFaultDiagnosis2023}
-Alonso-González M, Díaz V~G, Pérez B~L, G-Bustelo B~C~P and Anzola J~P  {\bf
-  11} 57796--57805 ISSN 2169-3536
-  \urlprefix\url{https://ieeexplore.ieee.org/document/10145440}
+Alonso-González M, Díaz V~G, Pérez B~L, G-Bustelo B~C~P and Anzola J~P 2023
+  Bearing {{Fault Diagnosis With Envelope Analysis}} and {{Machine Learning
+  Approaches Using CWRU Dataset}}.
+\newblock {\em IEEE Access\/} {\bf 11} 57796--57805 ISSN 2169-3536
 
 \bibitem{zhangMachineLearningBased2021}
-Zhang X, Zhao B and Lin Y  {\bf 9} 155598--155608 ISSN 2169-3536
-  \urlprefix\url{https://ieeexplore.ieee.org/document/9617588}
+Zhang X, Zhao B and Lin Y 2021 Machine {{Learning Based Bearing Fault Diagnosis
+  Using}} the {{Case Western Reserve University Data}}: {{A Review}}.
+\newblock {\em IEEE Access\/} {\bf 9} 155598--155608 ISSN 2169-3536
 
 \bibitem{2025110731}
-Moradi E, Elsisi M, Mahmoud K, Lehtonen M and Darwish M~M 2025 {\em
-  International Journal of Electrical Power \& Energy Systems\/} {\bf 168}
-  110731 ISSN 0142-0615
+Moradi E, Elsisi M, Mahmoud K, Lehtonen M and Darwish M~M 2025 Robust deep
+  neural network-based internet of things for power transformer fault diagnosis
+  under imbalanced data and uncertainties.
+\newblock {\em International Journal of Electrical Power \& Energy Systems\/}
+  {\bf 168} 110731 ISSN 0142-0615
 
 \bibitem{215108965}
-Rathod V~B, Kumbhar G~B and Bhalja B~R 2023 {\em Electric Power Systems
-  Research\/} {\bf 215} 108965 ISSN 03787796
+Rathod V~B, Kumbhar G~B and Bhalja B~R 2023 Performance analysis of acoustic
+  sensors based time reversal technique for partial discharge localization in
+  power transformers.
+\newblock {\em Electric Power Systems Research\/} {\bf 215} 108965 ISSN
+  03787796
 
 \bibitem{10091539}
-Zhao Y, Zhang N, Zhang Z and Xu X 2023 {\em IEEE Access\/} {\bf 11}
-  34407--34420
+Zhao Y, Zhang N, Zhang Z and Xu X 2023 Bearing fault diagnosis based on mel
+  frequency cepstrum coefficient and deformable space-frequency attention
+  network.
+\newblock {\em IEEE Access\/} {\bf 11} 34407--34420
 
 \bibitem{11048665}
-Ruan Y, Yu X, He Y, Fang Y, Wang J and Cong H 2025 {\em IEEE Transactions on
-  Instrumentation and Measurement\/} {\bf 74} 1--12
+Ruan Y, Yu X, He Y, Fang Y, Wang J and Cong H 2025 Hierarchical fault diagnosis
+  method for piezoresistive pressure sensor based on gaf and cnn-svm.
+\newblock {\em IEEE Transactions on Instrumentation and Measurement\/} {\bf 74}
+  1--12
 
 \bibitem{10114345}
 Zhao K, Li H, Ma J, Zhuang T, Li Y, Xiao H and Yin Z 2023 Mechanical fault
@@ -165,18 +223,25 @@ Zhai X and Wang F 2023 Space target recognition based on gramian angular field
   International Geoscience and Remote Sensing Symposium\/} pp 5774--5777
 
 \bibitem{11278186}
-Hu L, Tian J, Dong Z, Cui L and Lang C 2026 {\em IEEE Transactions on
-  Automation Science and Engineering\/} {\bf 23} 1047--1063
+Hu L, Tian J, Dong Z, Cui L and Lang C 2026 Beyond cnn or transformer alone: A
+  gadf-powered dual-branch network with kan-swin transformer for fault
+  diagnosis of aerospace bearing.
+\newblock {\em IEEE Transactions on Automation Science and Engineering\/} {\bf
+  23} 1047--1063
 
 \bibitem{Li_2018}
-Li M, Yuan X, Luo Z and Qiu X 2018 {\em Journal of Physics: Conference
-  Series\/} {\bf 1069} 012151
+Li M, Yuan X, Luo Z and Qiu X 2018 Infrared and visual image fusion based on
+  nsst and improved pcnn.
+\newblock {\em Journal of Physics: Conference Series\/} {\bf 1069} 012151
 
-\bibitem{Kang_2021}
-Kang Y, Lian J, Guo C, Zheng L and Zhang M 2021 {\em Journal of Physics:
-  Conference Series\/} {\bf 1961} 012006
+\bibitem{kangEnhancementAlgorithmColor2021}
+Kang Y, Lian J, Guo C, Zheng L and Zhang M 2021 Enhancement algorithm for color
+  images based on improved {{FC-MSPCNN}}.
+\newblock {\em J. Phys.: Conf. Ser.\/} {\bf 1961} 012006 ISSN 1742-6596
 
 \bibitem{9770845}
-Zeng Z, Zhang R, Cai W and Li Y 2022 {\em IEEE Access\/} {\bf 10} 49251--49264
+Zeng Z, Zhang R, Cai W and Li Y 2022 Application of local histogram clipping
+  equalization image enhancement in bearing fault diagnosis.
+\newblock {\em IEEE Access\/} {\bf 10} 49251--49264
 
 \end{thebibliography}

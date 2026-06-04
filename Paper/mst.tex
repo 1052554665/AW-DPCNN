@@ -9,11 +9,16 @@
 \usepackage{subcaption}
 \usepackage{booktabs}
 \usepackage{multirow}
+\usepackage{microtype}
+\usepackage{caption}
+\captionsetup{font=small,labelfont=bf}
+
+% add common graphics paths to simplify includes
+\graphicspath{{framework/}{representation/}{AW-DPCNN/}{MSCA-VGG16/}{Fused images/}{equipment/}{confusion_matrix/}{tsne/}{tsne_cwru/}}
 
 \begin{document}
 
 \title{AW-DPCNN Based Multi-Representation Acoustic Signal Fusion for Transformer Fault Diagnosis}
-
 \keywords{Acoustic signal, Gramian angular difference field (GADF), Mel spectrograms, multi-representation, multi scale convolution, transformer fault diagnosis, pulse coupled neural network (PCNN).}
 
 \begin{abstract}
@@ -113,7 +118,7 @@ As shown in Fig.~\ref{representation}(b), the GADF encodes structured temporal d
 \label{section3}
 As discussed above, the Mel spectrogram and GADF provide fundamentally different yet complementary representations of transformer acoustic signals. Specifically, the Mel spectrogram primarily characterizes local time--frequency energy distributions and perceptually relevant spectral patterns, whereas the GADF emphasizes global temporal dependencies and dynamic correlation structures. Owing to their distinct statistical properties and structural characteristics, directly combining these heterogeneous representations using conventional convolution or simple feature concatenation may fail to effectively capture their cross-modal relationships and complementary fault information.
 
-To address this issue, the proposed AW-DPCNN introduces a PCNN-inspired fusion mechanism to enhance heterogeneous representation integration. The pulse coupling characteristic of PCNN enables dynamic interaction among neighboring feature responses, allowing salient structures shared across Mel and GADF representations to be synchronously enhanced while suppressing irrelevant or inconsistent activations~\cite{Li_2018}. Such a mechanism is particularly suitable for acoustic representation fusion, where local spectral textures and global temporal correlation patterns coexist across different feature domains~\cite{Kang_2021}. Moreover, the adaptive weighting strategy further regulates the contribution of each representation according to their fault-sensitive responses, thereby improving feature complementarity and discriminative capability.
+To address this issue, the proposed AW-DPCNN introduces a PCNN-inspired fusion mechanism to enhance heterogeneous representation integration. The pulse coupling characteristic of PCNN enables dynamic interaction among neighboring feature responses, allowing salient structures shared across Mel and GADF representations to be synchronously enhanced while suppressing irrelevant or inconsistent activations~\cite{Li_2018}. Such a mechanism is particularly suitable for acoustic representation fusion, where local spectral textures and global temporal correlation patterns coexist across different feature domains~\cite{kangEnhancementAlgorithmColor2021}. Moreover, the adaptive weighting strategy further regulates the contribution of each representation according to their fault-sensitive responses, thereby improving feature complementarity and discriminative capability.
 
 Building upon these characteristics, the proposed AW-DPCNN integrates dual-channel processing, adaptive weighting, and multi-scale convolution to effectively model cross-representation dependencies and hierarchical feature interactions between Mel and GADF representations, ultimately enhancing transformer fault diagnosis performance.
 
