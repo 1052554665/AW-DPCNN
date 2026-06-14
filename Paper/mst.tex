@@ -538,12 +538,12 @@ The key hyperparameters of the AW-DPCNN fusion module are summarized in Table~\r
 		\hline
 		\textbf{Parameter} & \textbf{Symbol} & \textbf{Value} \\
 		\hline
-		Iteration number & $N$ & 20 \\
+		Iteration number & $N$ & 8 \\
 		Decay coefficient & $\alpha_L$ & 0.001 \\
 		Threshold decay & $\alpha_T$ & 0.001 \\
 		Amplification coefficient & $V_T$ & 20 \\
 		Stabilization constant & $\sigma$ & 0.1 \\
-		Contrast amplification factor & $\gamma$ & 4 \\
+		Contrast amplification factor & $\gamma$ & 10 \\
 		Local neighborhood window size & $\boldsymbol{\Omega}$ & $3 \times 3$ \\
 		Kernel size of Mel channel & $\boldsymbol{W}_1$ & $3 \times 5$ \\
 		Kernel size of GADF channel & $\boldsymbol{W}_2$ & $3 \times 3$ \\
@@ -801,7 +801,7 @@ To analyze the contribution of each architectural component, an ablation study w
 
 
 \subsection{Generalization Validation on the CWRU Dataset}
-To further evaluate the generalization capability of the proposed method, experiments were conducted on the publicly available Case Western Reserve University (CWRU) bearing dataset. The 12 kHz drive-end vibration signals were selected, including four conditions: Normal (N), Inner race fault (IR), Outer race fault (OR, located at the load zone at 6 o’clock), and Ball fault (B), all with a fault diameter of 0.007 inches. The vibration signals were converted into Mel spectrograms and GADF images using the same preprocessing pipeline as that applied to the transformer acoustic signals. To provide a fair evaluation of cross-domain generalization, no dataset-specific parameter tuning was performed. A cross-speed evaluation strategy was adopted, where samples with a fault diameter of 0.007 inches were used for training and those with 0.014 inches were used for testing, while ensuring that segments from the same raw signal were assigned exclusively to one subset to prevent data leakage. Although the CWRU dataset is based on vibration signals rather than acoustic signals, it provides a widely used benchmark for evaluating the generalization capability of fault diagnosis models.
+To further evaluate the generalization capability of the proposed method, experiments were conducted on the publicly available Case Western Reserve University (CWRU) bearing dataset. The 12 kHz drive-end vibration signals were selected, including four conditions: Normal (N), Inner race fault (IR), Outer race fault (OR, located at the load zone at 6 o’clock), and Ball fault (B), all with a fault diameter of 0.007 inches. The vibration signals were converted into Mel spectrograms and GADF images using the same preprocessing pipeline as that applied to the transformer acoustic signals. To provide a fair evaluation of cross-domain generalization, no dataset-specific parameter tuning was performed. A cross-severity evaluation strategy was adopted, where samples with a fault diameter of 0.007 inches were used for training and those with 0.014 inches were used for testing, while ensuring that segments from the same raw signal were assigned exclusively to one subset to prevent data leakage. Although the CWRU dataset is based on vibration signals rather than acoustic signals, it provides a widely used benchmark for evaluating the generalization capability of fault diagnosis models.
 
 As summarized in Table~\ref{tab:cwru_ablation}, the single-representation (A1 and A2) achieves relatively limited performance, with accuracies of 89.72\% and 91.34\%, respectively, indicating that Mel or GADF representations alone cannot fully characterize the fault information. When the two representations are directly fused through feature concatenation (A3), the accuracy increases to 96.41\%, demonstrating that the Mel spectrogram and GADF representations provide complementary information. By introducing the proposed AW-DPCNN fusion strategy (A4), the accuracy further improves to 97.86\%, showing that adaptive weighted fusion can better exploit cross-modal representation correlations than simple concatenation. Finally, combining AW-DPCNN with the MSCA-VGG16 classifier (A5) achieves the best performance with an accuracy of 99.67\%.
 

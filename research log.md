@@ -1,18 +1,18 @@
->review the research plan, and make necessary adjustments based on feedback and insights gained from the review process. This may involve refining the methodologies, adjusting the experimental design, or incorporating additional analyses to strengthen the research outcomes.
-
 # Research plan
 For the project `AW-DPCNN`, the research plan is divided into two main sections: supervised learning and unspervised learning. Each section will outline the steps and methodologies to be followed for dataset preparation, model training, and evaluation.
 
 ## for supervised learning
 
 ### dataset preparation
-For CWRU datasets, it will be processed as follows:
 
 Reviewing and revising the script `build_fused_dataset.py`, the script is responsible for building the fused dataset by combining the Mel spectrogram and GADF image using AW-DPCNN. The script likely performs the following steps:
-1. Preprocess the data if necessary (e.g., normalization, resizing).
+1. Preprocess the data
+   - **Split at file level rather than segment level** (e.g., 2 files train / 1 val / 1 test per class); 
+   - **Segment each split independently** with your sliding window parameters
+   - Extend the script to support `.mat` input directly.
 2. Transform each waveform into the Mel spectrogram and GADF image using appropriate libraries and techniques (e.g., librosa for Mel spectrogram, and a suitable method for GADF image generation).
 3. Combine the Mel spectrogram and GADF image into a single fused representation using the AW-DPCNN architecture. This may involve feeding both inputs into the model and extracting features to create a unified representation.
-4. Split the fused dataset into training, validation, and test sets with appropriate ratios (e.g., 70% training, 15% validation, 15% test), and stratified k-fold should supplement the final test evaluation.
+4. After generating the fused images independently for each split, verify that no file-level leakage occurred.
 5. Save the fused dataset to `AW-DPCNN/dataset` for further use.
 6. Compute class distribution statistics (imbalance ratio, entropy) across train/validation/test splits to confirm stratifications; verify no significant distribution shift between splits using JS divergence on label proportions.
 
@@ -74,10 +74,12 @@ The structure of the fused dataset is as follows:
 
 ### model training and evaluation
 After preparing the fused dataset, the dataset was fed into the classification model for training. The training process involves the following steps:
-1. Load the fused dataset from `AW-DPCNN/dataset` and create data loaders for training, validation, and testing.
-2. Some state-of-the-art classification models (e.g., ResNet, DenseNet, etc.) will be used as the backbone of the classification model. Those models can be referenced and revised in `src/models/`. The model will be trained using the training set, and the performance will be evaluated on the validation set to tune hyperparameters and prevent overfitting.
-3. After training, the final model will be evaluated on the test set to assess its performance in terms of metrics such as accuracy, precision, recall, F1-score, F-measure, confusion matrix, ROC curve and AUC value.
-4. t-SNE visualization will be performed to visualize the feature space and understand how well the model is separating different classes. The feature layers before the classifier head of the trained model will be used to extract features from the test set, and t-SNE will be applied to reduce the dimensionality for visualization.
+1. Consider adding a **noise injection** or **cross-load** condition to make the CWRU benchmark more challenging and convincing
+2. Load the fused dataset from `AW-DPCNN/dataset` and create data loaders for training, validation, and testing.
+3. For the cross-severity experiment, train on ALL `cwru_raw_007` files and test on ALL `cwru_raw_014` files — this avoids leakage entirely since the recordings are physically different.
+4. Some state-of-the-art classification models (e.g., ResNet, DenseNet, etc.) will be used as the backbone of the classification model. Those models can be referenced and revised in `src/models/`. The model will be trained using the training set, and the performance will be evaluated on the validation set to tune hyperparameters and prevent overfitting.
+5. After training, the final model will be evaluated on the test set to assess its performance in terms of metrics such as accuracy, precision, recall, F1-score, F-measure, confusion matrix, ROC curve and AUC value.
+6. t-SNE visualization will be performed to visualize the feature space and understand how well the model is separating different classes. The feature layers before the classifier head of the trained model will be used to extract features from the test set, and t-SNE will be applied to reduce the dimensionality for visualization.
 
 
 ### Comparison experiments
@@ -91,7 +93,7 @@ Ablation studies will be conducted to understand the contribution of different c
 
 
 
-## for unsupervised learning
+## for unsupervised learning (disconnected and not included in the current version of the paper)
 
 ### dataset preparation
 To implement an unsupervised system using this dataset, the following steps will be taken:
@@ -122,4 +124,3 @@ Refer to the scripts in `E01_simple_AE_test/torch_version/models.py`, some state
     - Precision, Recall, and F1-score: These metrics will be calculated at a specific threshold to evaluate the model's performance in terms of correctly identifying anomalies (precision) and capturing all anomalies (recall).
 
 
->This paper will be submitted to IEEE, review this paper manuscript, what aspects it can be improved, and what additional analyses or experiments could be conducted to strengthen the research findings. This may involve suggesting alternative methodologies, identifying potential limitations, or proposing further experiments to validate the results. Is the research plan suitable for the intended research goals, and does it effectively address the research questions? Are there any gaps or areas that require further clarification or development? Provide constructive feedback to enhance the overall quality and rigor of the research plan. Do not excecute the review process, just provide suggestions for improvement.

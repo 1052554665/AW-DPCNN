@@ -313,6 +313,43 @@ All models (except `baseline` and `alexnet_se`) support ImageNet pretrained weig
 | Python | 3.10+ |
 | Environment | Conda recommended |
 
+
+### dataset preparation
+
+```plaintext
+Usage (CWRU .mat, with file‑level split)::
+
+    python scripts/build_fused_dataset.py \
+        --input-dir ./raw-data/cwru_raw_007 \
+        --output-dir ./datasets/cwru_within \
+        --input-format mat --sr 12000 \
+        --win-len 2048 --hop-len 1024 \
+        --n-fft 1024 --n-mels 128 --fmax 6000 \
+        --file-split 50,25,25 --split-seed 42 \
+        --metadata --workers 16
+
+Usage (CWRU cross‑severity — no split, two separate runs)::
+
+    python scripts/build_fused_dataset.py \
+        --input-dir ./raw-data/cwru_raw_007 --output-dir ./datasets/cwru_cross/train \
+        --input-format mat --sr 12000 \
+        --win-len 2048 --hop-len 1024 \
+        --n-fft 1024 --n-mels 128 --fmax 6000
+
+    python scripts/build_fused_dataset.py \
+        --input-dir ./raw-data/cwru_raw_014 --output-dir ./datasets/cwru_cross/test \
+        --input-format mat --sr 12000 \
+        --win-len 2048 --hop-len 1024 \
+        --n-fft 1024 --n-mels 128 --fmax 6000
+
+Usage (transformer .wav, pre‑split)::
+
+    python scripts/build_fused_dataset.py \
+        --input-dir ./raw_wavs/train --output-dir ./datasets/train \
+        --win-len 3000 --hop-len 750 --img-size 224 \
+        --workers 16
+```
+
 ### Activate Pre-built Environment
 
 ```bash
