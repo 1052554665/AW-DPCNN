@@ -2,11 +2,11 @@ experiment_name: exp1_MSCA_VGG16
 device: cuda
 model:
   name: MSCA_VGG16
-  num_classes: 4
+  num_classes: 10
   pretrained: true
 
 train:
-  epochs: 30
+  epochs: 10
   lr: 1e-4
   optimizer: adamw
   weight_decay: 1e-3
@@ -20,5 +20,5 @@ visualization:
   tsne: true
 
 output:
-  root_dir: ./experiments/exp1/MSCA_VGG16
+  root_dir: ./experiments/exp2/MSCA_VGG16
 

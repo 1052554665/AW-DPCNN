@@ -3,11 +3,11 @@ device: cuda
 
 model:
   name: alexnet_se
-  num_classes: 10
+  num_classes: 4
   in_channels: 3
 
 train:
-  epochs: 30
+  epochs: 10
   lr: 1e-4
   optimizer: adamw
   weight_decay: 1e-3

@@ -72,6 +72,60 @@ The structure of the fused dataset is as follows:
   - `metadata.csv` (optional, containing labels and other relevant information)
 
 
+For the `transformer` dataset, the following steps will be taken:
+- check the directoy tree of the folder `AW-DPCNN/raw-data/transformer`, refer to the script `build_fused_dataset.py` to create a script for `transformer` dataset.
+- the `transformer` dataset had been spilted, consequently, do not need to split the dataset again, just transform the waveform into the Mel spectrogram and GADF image, and fused them via AW-DPCNN, and save the fused image into `AW-DPCNN/dataset/transformer/` with the same directory structure as above.
+
+
+---
+
+### Script: build_transformer_dataset.py
+
+| Property | Value |
+|---|---|
+| Sample rate | 44,100 Hz |
+| Duration per file | ~1 s (44,100 samples) |
+| Classes | 10 (Loosen, Normal, PartialDischarge, 10kvOverload, 30pThirdHarmonic, 30pFifthHarmonic, 30pSeventhHarmonic, pureThirdHarmonic, pureFifthHarmonic, pureSeventhHarmonic) |
+| Split | Pre-split: train (~1023 files) / val (~363 files) / test (~363 files) |
+| Structure | `raw-data/transformer/{train,val,test}/{class_name}/*.wav` |
+
+#### Key design decisions
+
+| Aspect | Detail |
+|---|---|
+| **Input** | `raw-data/transformer/{train,val,test}/{ClassName}/*.wav` (pre-split, honoured exactly) |
+| **Output** | `datasets/transformer/{train,val,test}/{ClassName}/*.png` (ImageFolder-compatible) |
+| **No re-splitting** | The existing train/val/test partition is preserved — no file-level split |
+| **Fusion** | Same AW-DPCNN algorithm (`γ=4`, `N=20`) as `build_fused_dataset.py` |
+
+#### Dry-run results
+
+| Split | Windows (images) |
+|---|---|
+| train | 40,920 |
+| val | 14,520 |
+| test | 14,520 |
+| **Total** | **69,960** |
+
+All 10 classes present in each split. Output paths follow the pattern:  
+`datasets/transformer/train/10kvOverload/G4_10kvOverload_seg0_00000.png`
+
+#### To run
+
+```bash
+# Enter the project root directory
+cd AW-DPCNN
+# Default parameters (recommended)
+python scripts/build_transformer_dataset.py --workers 16 --metadata --verify
+
+# Custom window / Mel parameters
+python scripts/build_transformer_dataset.py \
+    --win-len 4096 --hop-len 1024 \
+    --n-fft 2048 --n-mels 128 --fmax 8000 \
+    --workers 16 --metadata --verify
+```
+
+
 ### model training and evaluation
 After preparing the fused dataset, the dataset was fed into the classification model for training. The training process involves the following steps:
 1. Consider adding a **noise injection** or **cross-load** condition to make the CWRU benchmark more challenging and convincing

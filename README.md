@@ -160,49 +160,6 @@ datasets/
 
 Modify `data.root_dir` and split names in `configs/default.yaml`.
 
-### 3.2 One-Stop Dataset Builder
-
-The `build_fused_dataset.py` script performs the **full pipeline in a single pass** — Mel spectrogram, GADF, and AW-DPCNN fusion — guaranteeing each fused image comes from the **same signal segment**:
-
-```bash
-# Sliding window mode (from raw WAVs with class sub-folders)
-python scripts/build_fused_dataset.py \
-    --input-dir  ./raw_wavs/train \
-    --output-dir ./datasets/train \
-    --win-len 3000 --hop-len 750 --img-size 224 \
-    --n-iter 8 --workers 16
-
-# Pre-segmented mode (one image per WAV)
-python scripts/build_fused_dataset.py \
-    --input-dir ./pre_segmented/train \
-    --output-dir ./datasets/train \
-    --win-len 0 --img-size 224
-```
-
-### 3.3 Individual Stage Scripts
-
-For fine-grained control, each stage can be run separately:
-
-```bash
-# Step 1: Mel spectrograms
-python scripts/mel.py --input-dir raw_wavs --output-dir mel_outputs
-
-# Step 2: GADF images
-python scripts/GAF.py --input-dir raw_wavs --output-dir gaf_outputs
-
-# Step 3: AW-DPCNN fusion
-python scripts/awdpcnn.py --mel-dir mel_outputs --gaf-dir gaf_outputs --output-dir fused_outputs
-```
-
-### 3.4 CWRU Dataset Processing
-
-For the Case Western Reserve University bearing dataset (`.mat` files):
-
-```bash
-python scripts/cwru_process.py --raw-root raw-data/cwru_raw_007 --output-dir datasets/cwru
-```
-
----
 
 ## 4) Configuration System
 
@@ -314,7 +271,7 @@ All models (except `baseline` and `alexnet_se`) support ImageNet pretrained weig
 | Environment | Conda recommended |
 
 
-### dataset preparation
+### CWRU dataset preparation
 
 ```plaintext
 Usage (CWRU .mat, with file‑level split)::
@@ -341,14 +298,26 @@ Usage (CWRU cross‑severity — no split, two separate runs)::
         --input-format mat --sr 12000 \
         --win-len 2048 --hop-len 1024 \
         --n-fft 1024 --n-mels 128 --fmax 6000
-
-Usage (transformer .wav, pre‑split)::
-
-    python scripts/build_fused_dataset.py \
-        --input-dir ./raw_wavs/train --output-dir ./datasets/train \
-        --win-len 3000 --hop-len 750 --img-size 224 \
-        --workers 16
 ```
+
+- For each model, just change the `name_classes` and `epochs` in the experiment YAML.
+
+
+### Transformer dataset preparation
+
+```bash
+# Enter the project root directory
+cd AW-DPCNN
+# Default parameters (recommended)
+python scripts/build_transformer_dataset.py --workers 16 --metadata --verify
+
+# Custom window / Mel parameters
+python scripts/build_transformer_dataset.py \
+    --win-len 4096 --hop-len 1024 \
+    --n-fft 2048 --n-mels 128 --fmax 8000 \
+    --workers 16 --metadata --verify
+```
+
 
 ### Activate Pre-built Environment
 
@@ -363,12 +332,6 @@ export PYTHONPATH=$(pwd)
 pip install -r requirements.txt
 ```
 
-### Verify Environment
-
-```bash
-python scripts/smoke_check.py
-```
-
 ### Baseline Training
 
 ```bash
@@ -376,6 +339,12 @@ python scripts/train.py --config configs/default.yaml
 ```
 
 ### Run a Single Experiment
+
+```bash
+# Enter the project root directory
+cd AW-DPCNN
+```
+- change `root_dir` in `defult.yaml` to replace datasets.
 
 ```bash
 python scripts/train.py \

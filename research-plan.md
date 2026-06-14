@@ -6,7 +6,7 @@ For the project `AW-DPCNN`, the research plan is divided into two main sections:
 ### CWRU Dataset Processing Strategy
 
 Reviewing and revising the script `build_fused_dataset.py`, the script is responsible for building the fused dataset by combining the Mel spectrogram and GADF image using AW-DPCNN. The script likely performs the following steps:
-1. Add `.mat` reading support directly to `build_fused_dataset.py`
+1. Add `.mat` and `.wav` reading support directly to `build_fused_dataset.py`
 2. Preprocess the data: Split at file level rather than segment level (e.g., 2 files train / 1 val / 1 test per class)
 3. For each .mat file:
    a. Load `DE_time` signal by searching for keys containing `DE_time`
@@ -30,3 +30,20 @@ Reviewing and revising the script `build_fused_dataset.py`, the script is respon
 
 
 The Normal (N) class has ~3.5× more windows than the fault classes because its recordings are longer. This is real-world class imbalance — your existing class-weighted loss in the training pipeline should handle it, but be aware of it when interpreting per-class metrics.
+
+
+### Transformer Dataset Processing Strategy
+
+For the `transformer` dataset, the following steps will be taken:
+- check the directoy tree of the folder `AW-DPCNN/raw-data/transformer`, refer to the script `build_fused_dataset.py` to create a script for `transformer` dataset.
+- the `transformer` dataset had been spilted, consequently, do not need to split the dataset again, just transform the waveform into the Mel spectrogram and GADF image, and fused them via AW-DPCNN, and save the fused image into `AW-DPCNN/dataset/transformer/` with the same directory structure as above.
+
+
+| Property | Value |
+|---|---|
+| Sample rate | 44,100 Hz |
+| Duration per file | ~1 s (44,100 samples) |
+| Classes | 10 (Loosen, Normal, PartialDischarge, 10kvOverload, 30pThirdHarmonic, 30pFifthHarmonic, 30pSeventhHarmonic, pureThirdHarmonic, pureFifthHarmonic, pureSeventhHarmonic) |
+| Split | Pre-split: train (~1023 files) / val (~363 files) / test (~363 files) |
+| Structure | `raw-data/transformer/{train,val,test}/{class_name}/*.wav` |
+

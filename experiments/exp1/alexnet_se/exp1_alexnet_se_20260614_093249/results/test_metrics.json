@@ -1,0 +1,10 @@
+{
+  "test_loss": 0.009549310280328007,
+  "test_acc": 1.0,
+  "test_precision": 1.0,
+  "test_recall": 1.0,
+  "test_f1": 1.0,
+  "test_gmean": 1.000001,
+  "test_bal_acc": 1.0,
+  "test_kappa": 1.0
+}
