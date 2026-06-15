@@ -18,6 +18,7 @@ from src.models.vgg16_eh import VGG16_Embed
 from src.models.vit import ViT
 from src.models.MSCA_VGG16 import MSCA_VGG16
 from src.models.CE_ViT import CEViT
+from src.models.mobilenetv3 import MobileNetV3Small
 
 
 def build_model(config: Dict):
@@ -70,6 +71,8 @@ def build_model(config: Dict):
         return MSCA_VGG16(num_classes=num_classes, pretrained=pretrained)
     if name == "ce_vit":
         return CEViT(num_classes=num_classes)
+    if name in {"mobilenetv3", "mobilenet_v3", "mobilenetv3_small"}:
+        return MobileNetV3Small(num_classes=num_classes, pretrained=pretrained)
     if name == "vit":
         return ViT(
             num_classes=num_classes,

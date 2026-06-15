@@ -1,14 +1,14 @@
-experiment_name: exp1_MA_CBAM_Resnet50
+experiment_name: exp1_mobilenetv3_small
 device: cuda
 
 model:
-  name: ms_cbam_resnet50
+  name: mobilenetv3_small
   num_classes: 4
   pretrained: true
 
 train:
   epochs: 30
-  lr: 1e-6
+  lr: 1e-4
   optimizer: adamw
   weight_decay: 1e-3
 
@@ -23,4 +23,4 @@ visualization:
   tsne: true
 
 output:
-  root_dir: ./experiments/exp1/MA_CBAM_Resnet50
+  root_dir: ./experiments/exp1/mobilenetv3_small
