@@ -7,8 +7,8 @@ model:
   in_channels: 3
 
 train:
-  epochs: 30
-  lr: 1e-4
+  epochs: 50
+  lr: 1e-6
   optimizer: adamw
   weight_decay: 1e-3
 

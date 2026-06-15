@@ -1,245 +1,130 @@
-# Research plan
-For the project `AW-DPCNN`, the research plan is divided into two main sections: supervised learning and unspervised learning. Each section will outline the steps and methodologies to be followed for dataset preparation, model training, and evaluation.
+# transformer-five dataset
+>create a script same as `build_CWRU_dataset.py` to process the `raw-data/transformer-five` dataset, and make sure the data split is done at file level, not frame level, to avoid data leakage. The script should also include a verification step to check for any potential data leakage by comparing the distribution of classes in the training, validation, and test sets.
 
-## for supervised learning
+Here's the analysis of transformer-five:
 
-### dataset preparation
-
-Reviewing and revising the script `build_fused_dataset.py`, the script is responsible for building the fused dataset by combining the Mel spectrogram and GADF image using AW-DPCNN. The script likely performs the following steps:
-1. Preprocess the data
-   - **Split at file level rather than segment level** (e.g., 2 files train / 1 val / 1 test per class); 
-   - **Segment each split independently** with your sliding window parameters
-   - Extend the script to support `.mat` input directly.
-2. Transform each waveform into the Mel spectrogram and GADF image using appropriate libraries and techniques (e.g., librosa for Mel spectrogram, and a suitable method for GADF image generation).
-3. Combine the Mel spectrogram and GADF image into a single fused representation using the AW-DPCNN architecture. This may involve feeding both inputs into the model and extracting features to create a unified representation.
-4. After generating the fused images independently for each split, verify that no file-level leakage occurred.
-5. Save the fused dataset to `AW-DPCNN/dataset` for further use.
-6. Compute class distribution statistics (imbalance ratio, entropy) across train/validation/test splits to confirm stratifications; verify no significant distribution shift between splits using JS divergence on label proportions.
-
-The structure of the fused dataset is as follows:
-- `AW-DPCNN/dataset/`
-  - `train/`
-    - `B`
-      - `001.png`
-      - `002.png`
-      - ... 
-    - `IR`
-      - `001.png`
-      - `002.png`
-      - ...
-    - `OR` 
-      - `001.png`
-      - `002.png`
-      - ...
-    - `N`
-      - `001.png`
-      - `002.png`
-      - ...
-  - `validation/`
-    - `B`
-      - `001.png`
-      - `002.png`
-      - ... 
-    - `IR`
-      - `001.png`
-      - `002.png`
-      - ...
-    - `OR` 
-      - `001.png`
-      - `002.png`
-      - ...
-    - `N`
-      - `001.png`
-      - `002.png`
-      - ...
-  - `test/`
-    - `B`
-      - `001.png`
-      - `002.png`
-      - ... 
-    - `IR`
-      - `001.png`
-      - `002.png`
-      - ...
-    - `OR` 
-      - `001.png`
-      - `002.png`
-      - ...
-    - `N`
-      - `001.png`
-      - `002.png`
-      - ...
-  - `metadata.csv` (optional, containing labels and other relevant information)
+| Class | Files | % |
+|---|---|---|
+| DCBias | 119 | 18.3% |
+| Harmonic | 109 | 16.7% |
+| Loosen | 119 | 18.3% |
+| **Normal** | **185** | **28.4%** |
+| PartialDischarge | 119 | 18.3% |
+| **Total** | **651** | 100% |
 
 
-For the `transformer` dataset, the following steps will be taken:
-- check the directoy tree of the folder `AW-DPCNN/raw-data/transformer`, refer to the script `build_fused_dataset.py` to create a script for `transformer` dataset.
-- the `transformer` dataset had been spilted, consequently, do not need to split the dataset again, just transform the waveform into the Mel spectrogram and GADF image, and fused them via AW-DPCNN, and save the fused image into `AW-DPCNN/dataset/transformer/` with the same directory structure as above.
 
+## Script: build_transformer_five.py
 
----
+### What it does
+A single unified pipeline that reads **unsplit** `.wav` files from transformer-five, performs a **file-level** stratified split, and generates AW-DPCNN fused images — all in one step.
 
-### Script: build_transformer_dataset.py
+### Key design — File-level split (no leakage)
 
-| Property | Value |
-|---|---|
-| Sample rate | 44,100 Hz |
-| Duration per file | ~1 s (44,100 samples) |
-| Classes | 10 (Loosen, Normal, PartialDischarge, 10kvOverload, 30pThirdHarmonic, 30pFifthHarmonic, 30pSeventhHarmonic, pureThirdHarmonic, pureFifthHarmonic, pureSeventhHarmonic) |
-| Split | Pre-split: train (~1023 files) / val (~363 files) / test (~363 files) |
-| Structure | `raw-data/transformer/{train,val,test}/{class_name}/*.wav` |
+| vs | Old approach (`split_transformer_five.py` + build_transformer_dataset.py) | New approach (`build_transformer_five.py`) |
+|---|---|---|
+| Split granularity | Split .wav files first, then window → no leakage guarantee in build step | **File-level split inside the build pipeline** — all windows from a source file go to the same split |
+| Verification | Manual | Automatic JS divergence check |
 
-#### Key design decisions
+### Result
 
-| Aspect | Detail |
-|---|---|
-| **Input** | `raw-data/transformer/{train,val,test}/{ClassName}/*.wav` (pre-split, honoured exactly) |
-| **Output** | `datasets/transformer/{train,val,test}/{ClassName}/*.png` (ImageFolder-compatible) |
-| **No re-splitting** | The existing train/val/test partition is preserved — no file-level split |
-| **Fusion** | Same AW-DPCNN algorithm (`γ=4`, `N=20`) as `build_fused_dataset.py` |
+```
+✅ 5,859 fused images generated
+   train:  3,501 images  (DCBias:639  Harmonic:585  Loosen:639  Normal:999  PartialDischarge:639)
+   val:    1,179 images  (DCBias:216  Harmonic:198  Loosen:216  Normal:333  PartialDischarge:216)
+   test:   1,179 images  (DCBias:216  Harmonic:198  Loosen:216  Normal:333  PartialDischarge:216)
 
-#### Dry-run results
+[OK] All 651 source files assigned to exactly one split — zero leakage
+```
 
-| Split | Windows (images) |
-|---|---|
-| train | 40,920 |
-| val | 14,520 |
-| test | 14,520 |
-| **Total** | **69,960** |
-
-All 10 classes present in each split. Output paths follow the pattern:  
-`datasets/transformer/train/10kvOverload/G4_10kvOverload_seg0_00000.png`
-
-#### To run
+### Usage
 
 ```bash
-# Enter the project root directory
-cd AW-DPCNN
-# Default parameters (recommended)
-python scripts/build_transformer_dataset.py --workers 16 --metadata --verify
+# Default (recommended)
+python scripts/build_transformer_five.py --workers 32
 
-# Custom window / Mel parameters
-python scripts/build_transformer_dataset.py \
+# Dry-run to preview the split
+python scripts/build_transformer_five.py --dry-run
+
+# Custom parameters
+python scripts/build_transformer_five.py \
     --win-len 4096 --hop-len 1024 \
-    --n-fft 2048 --n-mels 128 --fmax 8000 \
-    --workers 16 --metadata --verify
+    --file-split 70,15,15 \
+    --workers 16
 ```
 
->according to the part of  model training and evaluation,  check and revise all the configuration files, models.
+# transformer-ten dataset
+>Analyse the origin data `raw-data/Group2_4（original）` and create a script similar to `build_CWRU_dataset.py` to build the corresponding dataset. 
+- The GX represents the group number, e.g., G2 represents group 2.
+- Select the data from the original dataset, which includes 10 classes.
+- The data spilting should obey the following principles:
+  * The data should be split at file level, not frame level, to avoid data leakage.
+  * Spilting the data with a proper ratio.
+  * The distribution of classes in the training, validation, and test sets should be similar to ensure that the model is trained and evaluated on representative samples.
+- The 10 classes in the original dataset are as follows, where Normal was represented by NoLoad.
+  - Loosen
+  - Overload
+  - Normal
+  - PartialDischarge
+  - 30pThirdHarmonic
+  - 30pFifthHarmonic
+  - 30pSeventhHarmonic
+  - pureFifthHarmonic
+  - pureSeventhHarmonic
+  - pureThirdHarmonic
 
-### model training and evaluation
+The experiment results show that the validation accuracy is very low.
 
-- **Evaluation Metrics**: Adding additional metrics such as the ROC curve, and AUC value to gain a more comprehensive understanding of the model's performance across different classes.
-- **Epochs**: Start with 10 epochs for initial experiments, then increase to 30 epochs for more thorough training.
-- **Early Stopping**: Implement early stopping based on validation loss to prevent overfitting and ensure that the model generalizes well to unseen data. Using a learning rate scheduler `ReduceLROnPlateau` with `patience=5` and early stopping with `patience=15` to adjust the learning rate dynamically based on the validation performance, which can help in achieving better convergence.
-- **Learning Rate**: Start with a learning rate of 10⁻⁴, then decrease to 10⁻⁵ for fine-tuning after initial convergence.
-- **Optimizer**: Use AdamW optimizer with a weight decay of 1e-3 to prevent overfitting and improve generalization. 
-- **Batch Size**: Use a batch size of 32, which is a common choice for training deep learning models and should work well with the available computational resources.
-- **Data Augmentation**: Apply data augmentation techniques (e.g., random cropping, horizontal flipping, color jittering) to increase the diversity of the training data and improve the model's robustness.
+revise the script and the classes are as follows, where Normal was represented by NoLoad.
+  - Overload
+  - Normal
+  - 10pThirdHarmonic
+  - 10pFifthHarmonic
+  - 10pSeventhHarmonic
+  - 20FifthHarmonic
+  - 20SeventhHarmonic
+  - 20ThirdHarmonic
 
----
-
-Here's the analysis of what needs to change:
-
-| Area | Current | Required |
-|---|---|---|
-| **Scheduler** | `StepLR` / `CosineAnnealingLR` | `ReduceLROnPlateau` (patience=5) |
-| **Early Stopping** | ❌ Not implemented | patience=15 on val_f1 |
-| **ROC/AUC** | ❌ Not implemented | Add to metrics & evaluation |
-| **Augmentation** | RandomFlip, RandomRotation | Add RandomCrop, ColorJitter |
-| **MA_CBAM_Resnet50.yaml** | Empty | Fill with proper config |
-| **Several exp configs** | `cosine` scheduler | → `plateau` |
+The validation accuracy is also low.
 
 
 
-#### Summary of Changes
+## Script: build_group2_4.py
 
-##### 1. metrics.py — Added ROC-AUC
-- Added `compute_roc_auc(y_true, y_score, num_classes)` using `sklearn.metrics.roc_auc_score` with one-vs-rest multi-class support
 
-##### 2. train_eval.py — Probabilities + AUC helper
-- `evaluate()` now returns **5 values**: `(loss, metrics, y_true, y_pred, y_score)` — the 5th is softmax probabilities for AUC
-- Added `calculate_roc_auc()` helper function
 
-##### 3. workflow.py — Scheduler + Early Stopping + AUC
-| Feature | Before | After |
-|---|---|---|
-| **Scheduler** | `StepLR` only | `ReduceLROnPlateau` (mode=max, patience=5, factor=0.5) + legacy `StepLR`/`Cosine` still supported |
-| **Early Stopping** | ❌ | ✅ patience=15 on `val_f1` (configurable) |
-| **Best model** | Saved by F1 | Saved by F1, tracked with epoch number |
-| **val_auc** | ❌ | ✅ Logged every epoch |
-| **test_auc** | ❌ | ✅ In final results JSON |
-| **Checkpoint restore** | Always loads best.pt | Guarded with existence check |
 
-##### 4. image_classification.py — Augmentation
-- Added `RandomResizedCrop(scale=(0.8, 1.0))` 
-- Added `ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.05)`
 
-##### 5. evaluate.py — Updated for new API
-- Handles new 5-tuple return from `evaluate()`
-- Prints `test_auc` alongside other metrics
+### Key design
 
-##### 6. default.yaml — Updated defaults
-```yaml
-train:
-  epochs: 30          # was 10
-  early_stopping:
-    enabled: true
-    patience: 15
-    metric: val_f1
-
-scheduler:
-  type: plateau       # was step
-  mode: max
-  factor: 0.5
-  patience: 5
-  min_lr: 0.000001
-
-visualization:
-  roc_curve: true     # new
-```
-
-##### 7. All 17 experiment configs — Standardized
-| Change | Detail |
+| Feature | Detail |
 |---|---|
-| Scheduler | `cosine` → `plateau` with `mode:max, factor:0.5, patience:5, min_lr:1e-6` |
-| Epochs | `10` → `30` (baseline, alexnet_se, MSCA_VGG16) |
-| `num_classes` | Fixed from `10` → `4` (CWRU dataset has 4 classes) |
-| `lr` | Fixed `1e-5` → `1e-4` (baseline, MSCA_VGG16 which were fine-tuning too early) |
-| MA_CBAM_Resnet50 | Was empty → filled with proper config |
+| **File-level split** | All windows from a source file go to exactly one split — zero leakage |
+| **Duration-aware balancing** | Files sorted by window count, assigned via greedy balanced multi-way partition to minimize inter-split variance |
+| **Verification** | JS divergence computed between all split pairs |
+| **Group tracking** | `group` and `condition_raw` columns in metadata.csv |
 
 
-### add extra metrics
->also add extra metrics: parameters and FLOPs, and save the ROC curve plot for each model for visualization and comparison.
+### Usage
 
-#### Changes Summary
+```bash
+# Default
+python scripts/build_group2_4.py --workers 32
 
-##### 1. metrics.py — Model complexity
-- **`count_parameters(model)`** — counts trainable parameters
-- **`compute_flops(model, input_shape, device)`** — estimates MACs via forward hooks on Conv2d, Linear, BatchNorm2d, ReLU, pooling layers. No external dependencies needed.
+# Dry-run
+python scripts/build_group2_4.py --dry-run
 
-##### 2. plot_roc.py — New file
-- **`plot_roc_curves(y_true, y_score, class_names, save_path)`** — plots per-class ROC curves (one-vs-rest) plus micro/macro average, with per-class AUC in the legend. IEEE-style formatting.
-
-##### 3. workflow.py — Integration
-- Computes **params & FLOPs** at training start, printed to console
-- Saves **ROC curve** to `figures/roc_curve.png` after testing
-- Includes `params` and `flops` in the results JSON
-
-##### 4. evaluate.py — Integration
-- Same params/FLOPs/ROC additions for standalone evaluation
-
-##### Output per run
-| File | Content |
-|---|---|
-| `figures/roc_curve.png` | Per-class + micro/macro ROC curves |
-| `results/test_metrics.json` | Includes `params`, `flops` fields |
-| Console | `Params: X.XXM \| FLOPs: X.XXM` |
-
->always print the tool name alongside the numbers for clarity, e.g.:
+# Custom split ratio
+python scripts/build_group2_4.py --file-split 50,25,25 --workers 16
 ```
-EfficientNet-B0 | Params: 5.3M | FLOPs: 780M
-```
+
+
+
+
+
+
+
+
 
 
 ### Comparison experiments
