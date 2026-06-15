@@ -125,15 +125,121 @@ python scripts/build_transformer_dataset.py \
     --workers 16 --metadata --verify
 ```
 
+>according to the part of  model training and evaluation,  check and revise all the configuration files, models.
 
 ### model training and evaluation
-After preparing the fused dataset, the dataset was fed into the classification model for training. The training process involves the following steps:
-1. Consider adding a **noise injection** or **cross-load** condition to make the CWRU benchmark more challenging and convincing
-2. Load the fused dataset from `AW-DPCNN/dataset` and create data loaders for training, validation, and testing.
-3. For the cross-severity experiment, train on ALL `cwru_raw_007` files and test on ALL `cwru_raw_014` files — this avoids leakage entirely since the recordings are physically different.
-4. Some state-of-the-art classification models (e.g., ResNet, DenseNet, etc.) will be used as the backbone of the classification model. Those models can be referenced and revised in `src/models/`. The model will be trained using the training set, and the performance will be evaluated on the validation set to tune hyperparameters and prevent overfitting.
-5. After training, the final model will be evaluated on the test set to assess its performance in terms of metrics such as accuracy, precision, recall, F1-score, F-measure, confusion matrix, ROC curve and AUC value.
-6. t-SNE visualization will be performed to visualize the feature space and understand how well the model is separating different classes. The feature layers before the classifier head of the trained model will be used to extract features from the test set, and t-SNE will be applied to reduce the dimensionality for visualization.
+
+- **Evaluation Metrics**: Adding additional metrics such as the ROC curve, and AUC value to gain a more comprehensive understanding of the model's performance across different classes.
+- **Epochs**: Start with 10 epochs for initial experiments, then increase to 30 epochs for more thorough training.
+- **Early Stopping**: Implement early stopping based on validation loss to prevent overfitting and ensure that the model generalizes well to unseen data. Using a learning rate scheduler `ReduceLROnPlateau` with `patience=5` and early stopping with `patience=15` to adjust the learning rate dynamically based on the validation performance, which can help in achieving better convergence.
+- **Learning Rate**: Start with a learning rate of 10⁻⁴, then decrease to 10⁻⁵ for fine-tuning after initial convergence.
+- **Optimizer**: Use AdamW optimizer with a weight decay of 1e-3 to prevent overfitting and improve generalization. 
+- **Batch Size**: Use a batch size of 32, which is a common choice for training deep learning models and should work well with the available computational resources.
+- **Data Augmentation**: Apply data augmentation techniques (e.g., random cropping, horizontal flipping, color jittering) to increase the diversity of the training data and improve the model's robustness.
+
+---
+
+Here's the analysis of what needs to change:
+
+| Area | Current | Required |
+|---|---|---|
+| **Scheduler** | `StepLR` / `CosineAnnealingLR` | `ReduceLROnPlateau` (patience=5) |
+| **Early Stopping** | ❌ Not implemented | patience=15 on val_f1 |
+| **ROC/AUC** | ❌ Not implemented | Add to metrics & evaluation |
+| **Augmentation** | RandomFlip, RandomRotation | Add RandomCrop, ColorJitter |
+| **MA_CBAM_Resnet50.yaml** | Empty | Fill with proper config |
+| **Several exp configs** | `cosine` scheduler | → `plateau` |
+
+
+
+#### Summary of Changes
+
+##### 1. metrics.py — Added ROC-AUC
+- Added `compute_roc_auc(y_true, y_score, num_classes)` using `sklearn.metrics.roc_auc_score` with one-vs-rest multi-class support
+
+##### 2. train_eval.py — Probabilities + AUC helper
+- `evaluate()` now returns **5 values**: `(loss, metrics, y_true, y_pred, y_score)` — the 5th is softmax probabilities for AUC
+- Added `calculate_roc_auc()` helper function
+
+##### 3. workflow.py — Scheduler + Early Stopping + AUC
+| Feature | Before | After |
+|---|---|---|
+| **Scheduler** | `StepLR` only | `ReduceLROnPlateau` (mode=max, patience=5, factor=0.5) + legacy `StepLR`/`Cosine` still supported |
+| **Early Stopping** | ❌ | ✅ patience=15 on `val_f1` (configurable) |
+| **Best model** | Saved by F1 | Saved by F1, tracked with epoch number |
+| **val_auc** | ❌ | ✅ Logged every epoch |
+| **test_auc** | ❌ | ✅ In final results JSON |
+| **Checkpoint restore** | Always loads best.pt | Guarded with existence check |
+
+##### 4. image_classification.py — Augmentation
+- Added `RandomResizedCrop(scale=(0.8, 1.0))` 
+- Added `ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.05)`
+
+##### 5. evaluate.py — Updated for new API
+- Handles new 5-tuple return from `evaluate()`
+- Prints `test_auc` alongside other metrics
+
+##### 6. default.yaml — Updated defaults
+```yaml
+train:
+  epochs: 30          # was 10
+  early_stopping:
+    enabled: true
+    patience: 15
+    metric: val_f1
+
+scheduler:
+  type: plateau       # was step
+  mode: max
+  factor: 0.5
+  patience: 5
+  min_lr: 0.000001
+
+visualization:
+  roc_curve: true     # new
+```
+
+##### 7. All 17 experiment configs — Standardized
+| Change | Detail |
+|---|---|
+| Scheduler | `cosine` → `plateau` with `mode:max, factor:0.5, patience:5, min_lr:1e-6` |
+| Epochs | `10` → `30` (baseline, alexnet_se, MSCA_VGG16) |
+| `num_classes` | Fixed from `10` → `4` (CWRU dataset has 4 classes) |
+| `lr` | Fixed `1e-5` → `1e-4` (baseline, MSCA_VGG16 which were fine-tuning too early) |
+| MA_CBAM_Resnet50 | Was empty → filled with proper config |
+
+
+### add extra metrics
+>also add extra metrics: parameters and FLOPs, and save the ROC curve plot for each model for visualization and comparison.
+
+#### Changes Summary
+
+##### 1. metrics.py — Model complexity
+- **`count_parameters(model)`** — counts trainable parameters
+- **`compute_flops(model, input_shape, device)`** — estimates MACs via forward hooks on Conv2d, Linear, BatchNorm2d, ReLU, pooling layers. No external dependencies needed.
+
+##### 2. plot_roc.py — New file
+- **`plot_roc_curves(y_true, y_score, class_names, save_path)`** — plots per-class ROC curves (one-vs-rest) plus micro/macro average, with per-class AUC in the legend. IEEE-style formatting.
+
+##### 3. workflow.py — Integration
+- Computes **params & FLOPs** at training start, printed to console
+- Saves **ROC curve** to `figures/roc_curve.png` after testing
+- Includes `params` and `flops` in the results JSON
+
+##### 4. evaluate.py — Integration
+- Same params/FLOPs/ROC additions for standalone evaluation
+
+##### Output per run
+| File | Content |
+|---|---|
+| `figures/roc_curve.png` | Per-class + micro/macro ROC curves |
+| `results/test_metrics.json` | Includes `params`, `flops` fields |
+| Console | `Params: X.XXM \| FLOPs: X.XXM` |
+
+>always print the tool name alongside the numbers for clarity, e.g.:
+```
+EfficientNet-B0 | Params: 5.3M | FLOPs: 780M
+```
 
 
 ### Comparison experiments
@@ -144,6 +250,9 @@ To evaluate the effectiveness of the AW-DPCNN architecture, comparison experimen
 Ablation studies will be conducted to understand the contribution of different components of the AW-DPCNN architecture. For each ablation, create a configuration file that specifies which components are removed or modified. This will involve:
 - Removing multi-scale, channel attention, and embedding head, separately and evaluating the impact on performance to identify which components are most critical for the model's success.
 - Analyzing the results of the ablation studies to gain insights into the model's behavior and identify potential areas for improvement.
+
+
+
 
 
 

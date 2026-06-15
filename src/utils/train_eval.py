@@ -1,8 +1,9 @@
 from pathlib import Path
 
 import torch
+import numpy as np
 import pandas as pd
-from src.utils.metrics import compute_metrics
+from src.utils.metrics import compute_metrics, compute_roc_auc
 
 
 def _extract_logits(output):
@@ -42,10 +43,19 @@ def train_one_epoch(model, loader, optimizer, criterion, device):
 
 
 @torch.no_grad()
-def evaluate(model, loader, criterion, device): # loader 是谁，指标就属于谁
+def evaluate(model, loader, criterion, device):
+    """Evaluate model on a dataloader.
+
+    Returns:
+        loss: average loss.
+        metrics: (acc, precision, recall, f1, gmean, bal_acc, kappa).
+        y_true: ground-truth labels.
+        y_pred: predicted labels.
+        y_score: predicted class probabilities (softmax), shape [N, num_classes].
+    """
     model.eval()
     losses = []
-    y_true, y_pred = [], []
+    y_true, y_pred, y_score = [], [], []
 
     for x, y in loader:
         x, y = x.to(device), y.to(device)
@@ -53,12 +63,23 @@ def evaluate(model, loader, criterion, device): # loader 是谁，指标就属�
         loss = criterion(out, y)
         losses.append(loss.item())
 
+        probs = torch.softmax(out, dim=1)
         preds = out.argmax(dim=1)
+
         y_true.extend(y.cpu().numpy())
         y_pred.extend(preds.cpu().numpy())
+        y_score.extend(probs.cpu().numpy())
 
     metrics = compute_metrics(y_true, y_pred)
-    return sum(losses)/len(losses), metrics, y_true, y_pred
+    return sum(losses) / len(losses), metrics, y_true, y_pred, y_score
+
+
+def calculate_roc_auc(y_true, y_score, num_classes: int):
+    """Compute ROC-AUC from accumulated predictions."""
+    if y_score is None or len(y_score) == 0:
+        return 0.0
+    y_score = np.asarray(y_score, dtype=float)
+    return compute_roc_auc(y_true, y_score, num_classes, average="macro")
 
 
 def save_logs(logs, path="logs/training_log.csv"):

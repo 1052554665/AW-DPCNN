@@ -67,7 +67,12 @@ def main():
 
     print("==== Final Test Metrics ====")
     for key, value in results.items():
-        print(f"{key}: {value:.6f}")
+        if isinstance(value, float):
+            print(f"{key}: {value:.6f}")
+        elif isinstance(value, int):
+            print(f"{key}: {value:,}")
+        else:
+            print(f"{key}: {value}")
 
 
 if __name__ == "__main__":

@@ -16,8 +16,10 @@ def _build_transforms(img_size: int, augment: bool, normalize_mean: List[float],
 
     if augment:
         train_ops.extend([
+            transforms.RandomResizedCrop(img_size if img_size > 0 else 224, scale=(0.8, 1.0)),
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.RandomRotation(degrees=10),
+            transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.05),
         ])
 
     train_ops.extend([

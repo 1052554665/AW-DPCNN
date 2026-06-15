@@ -34,16 +34,36 @@ The Normal (N) class has ~3.5× more windows than the fault classes because its 
 
 ### Transformer Dataset Processing Strategy
 
-For the `transformer` dataset, the following steps will be taken:
-- check the directoy tree of the folder `AW-DPCNN/raw-data/transformer`, refer to the script `build_fused_dataset.py` to create a script for `transformer` dataset.
-- the `transformer` dataset had been spilted, consequently, do not need to split the dataset again, just transform the waveform into the Mel spectrogram and GADF image, and fused them via AW-DPCNN, and save the fused image into `AW-DPCNN/dataset/transformer/` with the same directory structure as above.
+Since the transformer data is not available, the next research will not consider real-world data of the transformer. There list the reason as follows:
+1. The collection of transformer data should be succiffient, but the current data is not enough for training a deep learning model.
+2. For supervised learning, the data should be labeled, but the current data is not all labeled.
+3. For unsupervised learning, the data should be unlabeled. Consequently, in the later stages, the data can be divided into normal and abnormal data for unspervised learning.
 
 
-| Property | Value |
-|---|---|
-| Sample rate | 44,100 Hz |
-| Duration per file | ~1 s (44,100 samples) |
-| Classes | 10 (Loosen, Normal, PartialDischarge, 10kvOverload, 30pThirdHarmonic, 30pFifthHarmonic, 30pSeventhHarmonic, pureThirdHarmonic, pureFifthHarmonic, pureSeventhHarmonic) |
-| Split | Pre-split: train (~1023 files) / val (~363 files) / test (~363 files) |
-| Structure | `raw-data/transformer/{train,val,test}/{class_name}/*.wav` |
+### model training and evaluation
+After preparing the fused dataset, the dataset was fed into the classification model for training. The training process involves the following steps:
+1. Consider adding a **noise injection** or **cross-load** condition to make the CWRU benchmark more challenging and convincing
+2. Load the fused dataset from `AW-DPCNN/dataset` and create data loaders for training, validation, and testing.
+3. For the cross-severity experiment, train on ALL `cwru_raw_007` files and test on ALL `cwru_raw_014` files — this avoids leakage entirely since the recordings are physically different.
+4. Some state-of-the-art classification models (e.g., ResNet, DenseNet, etc.) will be used as the backbone of the classification model. Those models can be referenced and revised in `src/models/`. The model will be trained using the training set, and the performance will be evaluated on the validation set to tune hyperparameters and prevent overfitting.
+5. After training, the final model will be evaluated on the test set to assess its performance in terms of metrics such as accuracy, precision, recall, F1-score, F-measure, confusion matrix, ROC curve and AUC value.
+6. t-SNE visualization will be performed to visualize the feature space and understand how well the model is separating different classes. The feature layers before the classifier head of the trained model will be used to extract features from the test set, and t-SNE will be applied to reduce the dimensionality for visualization.
 
+About training strategy, there are some key design decisions to be made:
+- **Epochs**: Start with 10 epochs for initial experiments, then increase to 30 epochs for more thorough training.
+- **Early Stopping**: Implement early stopping based on validation loss to prevent overfitting and ensure that the model generalizes well to unseen data. Using a learning rate scheduler `ReduceLROnPlateau` with `patience=5` and early stopping with `patience=15` to adjust the learning rate dynamically based on the validation performance, which can help in achieving better convergence.
+- **Learning Rate**: Start with a learning rate of 10⁻⁴, then decrease to 10⁻⁵ for fine-tuning after initial convergence.
+- **Optimizer**: Use AdamW optimizer with a weight decay of 1e-3 to prevent overfitting and improve generalization. 
+- **Batch Size**: Use a batch size of 32, which is a common choice for training deep learning models and should work well with the available computational resources.
+- **Data Augmentation**: Apply data augmentation techniques (e.g., random cropping, horizontal flipping, color jittering) to increase the diversity of the training data and improve the model's robustness.
+- **Evaluation Metrics**: In addition to accuracy, precision, recall, and F1-score, consider using additional metrics such as the confusion matrix, ROC curve, and AUC value to gain a more comprehensive understanding of the model's performance across different classes.
+- **Cross-validation**: If computational resources allow, consider implementing k-fold cross-validation to further validate the model's performance and ensure that the results are robust across different subsets of the data.
+- **Hyperparameter Tuning**: Use techniques such as grid search or random search to explore different combinations of hyperparameters (e.g., learning rate, batch size, weight decay) and identify the optimal settings for training the model.
+- **Ensemble Methods**: Consider training multiple models with different architectures or hyperparameters and combining their predictions using ensemble methods (e.g., majority voting, weighted averaging) to potentially improve overall performance.
+- **Model Interpretability**: Explore techniques for interpreting the model's predictions (e.g., Grad-CAM, SHAP values) to gain insights into which features are most important for classification and to ensure that the model is making decisions based on relevant information.
+- **Reproducibility**: Ensure that the training process is reproducible by setting random seeds, documenting the training configuration, and saving the trained models and results for future reference and comparison.
+- **Computational Resources**: Monitor the computational resources (e.g., GPU usage, memory) during training and adjust the batch size or model architecture if necessary to ensure efficient training without running into resource limitations.
+- **Logging and Visualization**: Use tools such as TensorBoard or Weights & Biases to log training metrics, visualize the training process, and track the performance of different models and hyperparameter configurations over time.
+- **Model Selection**: After training multiple models and configurations, select the best-performing model based on validation metrics and evaluate it on the test set to report the final results. Consider also reporting the performance of other models for comparison and to provide insights into the effectiveness of different architectures and training strategies.
+- **Statistical Significance Testing**: If comparing multiple models or configurations, consider performing statistical significance testing (e.g., paired t-test) to determine whether observed differences in performance are statistically significant and not due to random chance.
+- **Error Analysis**: After evaluating the model on the test set, perform an error analysis to identify common types of misclassifications and understand the limitations of the model. This can provide insights into potential areas for improvement and guide future research directions.

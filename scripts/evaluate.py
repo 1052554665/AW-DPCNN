@@ -7,8 +7,10 @@ import torch.nn as nn
 from src.datasets import build_dataloaders
 from src.models import build_model
 from src.utils.config import load_yaml
+from src.utils.metrics import count_parameters, compute_flops
 from src.utils.plot_confusion import plot_confusion
-from src.utils.train_eval import evaluate
+from src.utils.plot_roc import plot_roc_curves
+from src.utils.train_eval import calculate_roc_auc, evaluate
 from src.utils.tsne import extract_features, plot_tsne
 
 
@@ -40,22 +42,40 @@ def main():
     model = build_model(config).to(device)
     model.load_state_dict(torch.load(args.checkpoint, map_location=device))
 
+    # --- Model complexity ---
+    n_params = count_parameters(model, trainable_only=True)
+    img_size = int(config.get("dataset", {}).get("img_size", 224))
+    in_ch = int(config.get("model", {}).get("in_channels", 3))
+    try:
+        n_flops = compute_flops(model, input_shape=(1, in_ch, img_size, img_size), device=device)
+    except Exception:
+        n_flops = 0
+    model_name = str(config.get("model", {}).get("name", "unknown"))
+    print(f"{model_name} | Params: {n_params / 1e6:.2f}M | FLOPs: {n_flops / 1e6:.2f}M")
+
     loaders, class_names = build_dataloaders(config)
+    num_classes = len(class_names)
     criterion = nn.CrossEntropyLoss()
-    test_loss, metrics, y_true, y_pred = evaluate(model, loaders["test"], criterion, device)
+    test_loss, metrics, y_true, y_pred, y_score = evaluate(model, loaders["test"], criterion, device)
+    test_auc = calculate_roc_auc(y_true, y_score, num_classes)
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     plot_confusion(y_true, y_pred, class_names, save_path=str(output_dir / "confusion_matrix.png"))
 
+    if bool(config.get("visualization", {}).get("roc_curve", True)):
+        plot_roc_curves(y_true, y_score, class_names, save_path=str(output_dir / "roc_curve.png"))
+
     if bool(config.get("visualization", {}).get("tsne", False)):
         features, labels = extract_features(model, loaders["test"], device)
         plot_tsne(features, labels, class_names, save_path=str(output_dir / "tsne.png"))
 
-    keys = ["acc", "precision", "recall", "f1", "gmean", "bal_acc", "kappa"]
+    keys = ["acc", "precision", "recall", "f1", "gmean", "bal_acc", "kappa", "auc"]
+    values = list(metrics) + [test_auc]
     print(f"test_loss={test_loss:.6f}")
-    for key, value in zip(keys, metrics):
+    for key, value in zip(keys, values):
         print(f"{key}={value:.6f}")
+    print(f"params={n_params}  flops={n_flops}")
 
 
 if __name__ == "__main__":

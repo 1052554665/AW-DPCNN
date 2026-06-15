@@ -2,7 +2,7 @@ experiment_name: exp1_patch_transformer
 
 model:
   name: patch_transformer
-  num_classes: 10
+  num_classes: 4
   in_channels: 3
   img_size: 224
   patch_size: 16
@@ -19,9 +19,11 @@ train:
   weight_decay: 1e-3
 
 scheduler:
-  type: cosine
-  t_max: 60
-  eta_min: 0.000001
+  type: plateau
+  mode: max
+  factor: 0.5
+  patience: 5
+  min_lr: 0.000001
 
 visualization:
   tsne: true

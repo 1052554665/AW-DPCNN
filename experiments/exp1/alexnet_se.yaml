@@ -7,15 +7,17 @@ model:
   in_channels: 3
 
 train:
-  epochs: 10
+  epochs: 30
   lr: 1e-4
   optimizer: adamw
   weight_decay: 1e-3
 
 scheduler:
-  type: cosine
-  t_max: 40
-  eta_min: 0.000001
+  type: plateau
+  mode: max
+  factor: 0.5
+  patience: 5
+  min_lr: 0.000001
 
 visualization:
   tsne: true

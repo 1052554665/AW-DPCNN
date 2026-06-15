@@ -2,7 +2,7 @@ experiment_name: exp1_efficientnet_b0
 device: cuda
 model:
   name: efficientnet_b0
-  num_classes: 10
+  num_classes: 4
   pretrained: true
 train:
   epochs: 30
@@ -10,9 +10,11 @@ train:
   optimizer: adamw
   weight_decay: 1e-3
 scheduler:
-  type: cosine
-  t_max: 40
-  eta_min: 0.000001
+  type: plateau
+  mode: max
+  factor: 0.5
+  patience: 5
+  min_lr: 0.000001
 visualization:
   tsne: true
 output:

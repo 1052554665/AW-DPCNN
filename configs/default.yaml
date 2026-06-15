@@ -4,13 +4,14 @@ seed: 42
 device: auto
 
 dataset:
-  root_dir: ./datasets/transformer
+  root_dir: ./datasets/cwru_within
+  # root_dir: ./datasets/cwru_cross
   train_split: train
   val_split: val
   test_split: test
   img_size: 224
   batch_size: 32
-  num_workers: 32
+  num_workers: 16
   augmentation: true
   pin_memory: true
   normalize_mean: [0.485, 0.456, 0.406]
@@ -18,23 +19,29 @@ dataset:
 
 model:
   name: baseline
-  num_classes: 30
+  num_classes: 4
   in_channels: 3
   pretrained: false
 
 train:
-  epochs: 10
+  epochs: 30
   optimizer: adamw
   lr: 0.0001
   weight_decay: 0.001
   momentum: 0.9
   class_weighting: true
   print_freq: 1
+  early_stopping:
+    enabled: true
+    patience: 15
+    metric: val_f1
 
 scheduler:
-  type: step
-  step_size: 15
-  gamma: 0.5
+  type: plateau
+  mode: max
+  factor: 0.5
+  patience: 5
+  min_lr: 0.000001
 
 output:
   root_dir: ./experiments/runs
@@ -42,3 +49,4 @@ output:
 visualization:
   confusion_matrix: true
   tsne: true
+  roc_curve: true
