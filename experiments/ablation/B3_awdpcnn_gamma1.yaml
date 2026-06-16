@@ -1,8 +1,11 @@
-experiment_name: exp1_mobilenetv3_small
+experiment_name: ablation_B3_awdpcnn_gamma1
 device: cuda
 
+dataset:
+  root_dir: ./datasets/ablation/awdpcnn_gamma1
+
 model:
-  name: mobilenetv3_small
+  name: vgg16
   num_classes: 5
   pretrained: true
 
@@ -23,4 +26,4 @@ visualization:
   tsne: true
 
 output:
-  root_dir: ./experiments/experiment_result/exp1/mobilenetv3_small
+  root_dir: ./experiments/experiment_result/ablation/B3_awdpcnn_gamma1

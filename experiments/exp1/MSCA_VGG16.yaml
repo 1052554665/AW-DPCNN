@@ -22,5 +22,5 @@ visualization:
   tsne: true
 
 output:
-  root_dir: ./experiments/exp1/MSCA_VGG16
+  root_dir: ./experiments/experiment_result/exp1/MSCA_VGG16
 

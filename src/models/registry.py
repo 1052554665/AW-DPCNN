@@ -27,7 +27,13 @@ def build_model(config: Dict):
         return MobileNetV3Small(num_classes=num_classes, pretrained=pretrained)
 
     if name == "msca_vgg16":
-        return MSCA_VGG16(num_classes=num_classes, pretrained=pretrained)
+        return MSCA_VGG16(
+            num_classes=num_classes,
+            pretrained=pretrained,
+            use_ms=bool(model_cfg.get("use_ms", True)),
+            use_ca=bool(model_cfg.get("use_ca", True)),
+            use_eh=bool(model_cfg.get("use_eh", True)),
+        )
 
     if name == "vit":
         return ViT(

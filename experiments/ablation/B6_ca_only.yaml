@@ -1,10 +1,16 @@
-experiment_name: exp1_mobilenetv3_small
+experiment_name: ablation_B6_ca_only
 device: cuda
 
+dataset:
+  root_dir: ./datasets/transformer-five
+
 model:
-  name: mobilenetv3_small
+  name: msca_vgg16
   num_classes: 5
   pretrained: true
+  use_ms: false
+  use_ca: true
+  use_eh: false
 
 train:
   epochs: 30
@@ -23,4 +29,4 @@ visualization:
   tsne: true
 
 output:
-  root_dir: ./experiments/experiment_result/exp1/mobilenetv3_small
+  root_dir: ./experiments/experiment_result/ablation/B6_ca_only

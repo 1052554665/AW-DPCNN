@@ -1,46 +1,82 @@
->Add **noise robustness experiment**: Inject Gaussian white noise at SNR = [-5, 0, 5, 10, 15, 20] dB into test signals, report accuracy degradation curve for proposed method vs. baselines.
+# Ablation: Component Decomposition
+> To isolate and quantify the contribution of each component (MS, CA, EH) in the AW-DPCNN framework. Conducting ablation studies by systematically removing or replacing components and evaluating performance impacts.
 
-## Script: noise_robustness.py
+**Current**: MS, CA, EH on VGG16
 
-### How it works
-1. Loads a trained checkpoint
-2. Injects **additive Gaussian white noise** into test images at the pixel level (before ImageNet normalization) at SNR ∈ {−5, 0, 5, 10, 15, 20} dB + clean
-3. Evaluates accuracy, F1, and AUC at each SNR
-4. Saves CSV, JSON, and publication-quality accuracy-vs-SNR plot
+**Expand to include AW-DPCNN components**:
 
-### Noise model
-$$\text{SNR}_{\text{dB}} = 10 \log_{10}\left(\frac{P_{\text{signal}}}{P_{\text{noise}}}\right), \quad P_{\text{signal}} = \mathbb{E}[x^2]$$
+| Exp | AW-DPCNN | MS | CA | EH | Expected |
+|---|---|---|---|---|---|
+| B0 | ✗ (single Mel) | ✗ | ✗ | ✗ | Lower bound |
+| B1 | ✗ (single GADF) | ✗ | ✗ | ✗ | GADF > Mel |
+| B2 | ✗ (Concat) | ✗ | ✗ | ✗ | Baseline fusion |
+| B3 | ✓ (γ=1, fixed weight) | ✗ | ✗ | ✗ | PCNN without adaptive |
+| B4 | ✓ (full AW-DPCNN) | ✗ | ✗ | ✗ | Fusion contribution |
+| B5 | ✓ | ✓ | ✗ | ✗ | +MS contribution |
+| B6 | ✓ | ✗ | ✓ | ✗ | +CA contribution |
+| B7 | ✓ | ✗ | ✗ | ✓ | +EH contribution |
+| B8 | ✓ | ✓ | ✓ | ✓ | **Full model** |
 
-Noise is injected after `ToTensor()` (pixel values in [0, 1]) and before `Normalize()`, so the model sees noisy inputs that simulate corrupted acoustic measurements.
+----
 
-### Usage
+## Ablation: Component Decomposition — Complete Setup
+
+### Dataset Variants (B0–B3)
+
+| Exp | Dataset | Builder |
+|---|---|---|
+| B0 | `datasets/ablation/mel_only/` | Mel pseudo-color only |
+| B1 | `datasets/ablation/gadf_only/` | GADF pseudo-color only |
+| B2 | `datasets/ablation/concat/` | Mel+GADF pixel-wise average |
+| B3 | `datasets/ablation/awdpcnn_gamma1/` | AW-DPCNN with γ=1 |
+| B4–B8 | transformer-five | Full AW-DPCNN (γ=4) |
+
+Build with: `python build_ablation_datasets.py --workers 16`
+
+### Model Variants (B5–B8)
+
+| Exp | Classifier | Params | MS | CA | EH |
+|---|---|---|---|---|---|
+| B0–B4 | VGG16 | 134.3M | — | — | — |
+| B5 | MSCA-VGG16 | 26.5M | ✓ | ✗ | ✗ |
+| B6 | MSCA-VGG16 | 17.7M | ✗ | ✓ | ✗ |
+| B7 | MSCA-VGG16 | 15.5M | ✗ | ✗ | ✓ |
+| B8 | MSCA-VGG16 | 26.8M | ✓ | ✓ | ✓ |
+
+### Running the Ablation
 
 ```bash
-# Single model (requires a trained checkpoint)
-python scripts/noise_robustness.py     --config configs/default.yaml     --exp-config experiments/exp1/mobilenetv3_small.yaml     --auto-checkpoint
+# 1. Build ablation datasets (B0–B3)
+python scripts/build_ablation_datasets.py --workers 16
 
-# Batch mode — evaluates ALL models in exp1 with auto-found checkpoints
-python scripts/noise_robustness.py \
-    --config configs/default.yaml \
-    --exp-dir experiments/exp1 \
-    --auto-checkpoint
+# 2. Run all 9 experiments
+for exp in experiments/ablation/B*.yaml; do
+    python scripts/train.py --config configs/default.yaml --exp-config "$exp"
+done
 
-# Custom SNR range
-python scripts/noise_robustness.py \
-    --config configs/default.yaml \
-    --exp-config experiments/exp1/vgg16.yaml \
-    --checkpoint .../best.pt \
-    --snr -10 -5 0 5 10 15 20
+# 3. Compile results table
+python scripts/noise_robustness.py --config configs/default.yaml \
+    --exp-dir experiments/ablation --auto-checkpoint
 ```
 
-### Output
-```
-experiments/noise_robustness/
-├── noise_robustness.csv       # model, snr, accuracy, f1, auc, loss
-├── noise_robustness.json      # structured results
-└── noise_robustness.png       # multi-model accuracy-vs-SNR plot
-```
 
-> ⚠ **Note**: Models must be trained first (with checkpoints saved). Use `--auto-checkpoint` to auto-discover `best.pt` from the latest run of each experiment config.
+# put results in a unified folder
 
-Made changes.
+All experiment outputs now go to a unified folder:
+
+```
+experiments/
+├── experiment_result/          ← NEW unified output
+│   ├── exp1/
+│   │   ├── vgg16_20260616_.../
+│   │   ├── mobilenetv3_small_20260616_.../
+│   │   └── ...
+│   └── ablation/
+│       ├── B0_mel_only_20260616_.../
+│       ├── B1_gadf_only_20260616_.../
+│       └── ...
+├── exp1/                       ← configs only (no more output)
+│   └── *.yaml
+└── ablation/                   ← configs only (no more output)
+    └── B*.yaml
+```

@@ -18,4 +18,4 @@ scheduler:
 visualization:
   tsne: true
 output:
-  root_dir: ./experiments/exp1/efficientnet_b0
+  root_dir: ./experiments/experiment_result/exp1/efficientnet_b0
