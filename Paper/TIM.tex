@@ -1,4 +1,4 @@
-\documentclass[anonymous]{iopjournal}
+\documentclass[journal]{IEEEtran}
 
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
@@ -11,35 +11,54 @@
 \usepackage{multirow}
 \usepackage{microtype}
 \usepackage{caption}
+\usepackage{balance}
 \captionsetup{font=small,labelfont=bf}
 
 % add common graphics paths to simplify includes
 \graphicspath{{framework/}{representation/}{AW-DPCNN/}{MSCA-VGG16/}{Fused images/}{equipment/}{confusion_matrix/}{tsne/}{tsne_cwru/}}
 
+\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
+
 \begin{document}
 
 \title{AW-DPCNN Based Multi-Representation Acoustic Signal Fusion for Transformer Fault Diagnosis}
-\keywords{Acoustic signal, Gramian angular difference field (GADF), Mel spectrograms, multi-representation, multi scale convolution, transformer fault diagnosis, pulse coupled neural network (PCNN).}
+
+% \author{Chen Yang, \IEEEmembership{Graduate Student Member, IEEE}, Zonglong Bai, Zhiyuan Xie, Chenggang Liu, Junyan Zhang and Yihe Guo% <- use \IEEEmembership{Member, IEEE} for IEEE members
+\author{Chen Yang, Zonglong Bai, Zhiyuan Xie, Chenggang Liu, Junyan Zhang and Yihe Guo% <- use \IEEEmembership{Member, IEEE} for IEEE members
+% \thanks{Manuscript received xx xxx, 2025; revised xx xxx, 2025. This work was supported by...}
+% \thanks{Author One and Author Two are with the...}
+% \thanks{Author Three is with the...}
+}
+
+\markboth{IEEE Transactions on Instrumentation and Measurement}%
+{Author~\MakeLowercase{\textit{et al.}}: AW-DPCNN Based Multi-Representation Acoustic Signal Fusion}
+
+\maketitle
 
 \begin{abstract}
 Power transformers play a crucial role in power systems, and reliable fault diagnosis is essential for ensuring operation stability. Conventional acoustic diagnostic approaches typically rely on single-spectrum representations, which are insufficient to capture the complex and diverse characteristics of transformer acoustic signals. To address this limitation, a multi-representation acoustic signal fusion framework is proposed for transformer fault diagnosis. Transformer acoustic signals are first converted into Mel spectrograms and Gramian Angular Difference Field (GADF) images to capture complementary time–frequency distributions and temporal correlation characteristics. An adaptive weighted dual-channel pulse-coupled neural network (AW-DPCNN) is then employed to fuse these heterogeneous acoustic representations into a unified representation. Based on the fused representations, a multi-scale channel attention enhanced VGG16 network (MSCA-VGG16) is developed to improve representation discrimination and classification robustness. Experimental results on field transformer acoustic data demonstrate that the proposed method achieves an accuracy of 87.45\%. In addition, experiments conducted on the Case Western Reserve University (CWRU) dataset further verify the effectiveness and generalization capability of the proposed framework. These results indicate that the proposed approach provides an effective solution for intelligent acoustic-based transformer fault diagnosis.
 \end{abstract}
 
+\begin{IEEEkeywords}
+Acoustic signal, Gramian angular difference field (GADF), Mel spectrograms, multi-representation, multi-scale convolution, transformer fault diagnosis, pulse coupled neural network (PCNN).
+\end{IEEEkeywords}
+
 \section{Introduction}
-Power transformers are indispensable components in modern power systems, and their reliable operation is vital for ensuring grid safety, stability, and continuity \cite{10491111}, \cite{7480687}. Consequently, continuous condition monitoring and fault diagnosis of transformers have attracted sustained research interest. In recent years, voiceprint-based fault diagnosis has emerged as a promising technique owing to its inherent advantages, such as non-contact measurement, operational convenience, and low sensor deployment cost \cite{10492658},\cite{NIU2025127997}. Hong \emph{et al.} and Shan \emph{et al.} employed Mel spectrograms to extract representative acoustic information from transformer signals and demonstrated their effectiveness using field fault data \cite{SHAN2023112408}, \cite{10606641}. To enhance partial discharge recognition, Chen \emph{et al.} developed a non-contact acoustic measurement system incorporating noise suppression via wavelet transform \cite{4265659}. Li \emph{et al.} proposed a method incorporating Short-Time Fourier Transform (STFT) to construct impulse frequency response curves of transformer windings, thereby improving the accuracy of online winding condition evaluation \cite{7558591}. Moreover, the Gramian Angular Summation Field (GASF) technique was introduced in \cite{9760386} to encode transformer vibration signals into joint representations of time, frequency, and energy for converter transformer condition monitoring. Despite these advances, most existing approaches rely on a single acoustic representation, which limits their ability to comprehensively capture the complex and complementary fault-related information embedded in transformer signals, thereby constraining diagnostic performance. Although several studies have attempted to improve performance through multi-representation fusion, these fusion strategies typically employ fixed or heuristic combination schemes and lack the capability to adaptively adjust the contribution of different representations \cite{9408662}, \cite{9832890}. To enable more effective fusion of heterogeneous representations, biologically inspired neural models have recently attracted increasing attention. Pulse-coupled neural networks (PCNNs) are neural models originally developed to simulate the synchronous firing behavior observed in the mammalian visual cortex \cite{4305279,6338347}. Unlike conventional convolutional neural networks, PCNNs employ a pulse-based activation mechanism in which neurons interact through local coupling and dynamic thresholds \cite{8742596}. Owing to these characteristics, PCNNs exhibit strong capability in preserving structural information while suppressing background interference, and have been widely applied in image segmentation, edge detection, and feature enhancement tasks \cite{9444355}, \cite{10848019}, \cite{8746999}. However, conventional PCNNs are typically driven by a single external stimulus, which limits their ability to effectively exploit complementary information from multiple representations. To address this limitation, dual-channel PCNN (DPCNN) architectures have been introduced to enable multi-representation fusion by incorporating multiple external stimuli within the neuronal feeding mechanism \cite{4344292}, \cite{10341267}. Through this mechanism, heterogeneous feature maps can be jointly processed, thereby facilitating the integration of information from different representations. Nevertheless, the fusion process in such architectures generally relies on fixed or predefined coupling strategies, making it difficult to adaptively regulate the relative contributions of different channels. As a result, the model may not effectively emphasize discriminative representations while suppressing less relevant ones, thereby limiting the effectiveness of multi-representation fusion.
+\IEEEPARstart{P}{ower} transformers are indispensable components in modern power systems, and their reliable operation is vital for ensuring grid safety, stability, and continuity \cite{10491111}, \cite{7480687}. Consequently, continuous condition monitoring and fault diagnosis of transformers have attracted sustained research interest. In recent years, voiceprint-based fault diagnosis has emerged as a promising technique owing to its inherent advantages, such as non-contact measurement, operational convenience, and low sensor deployment cost \cite{10492658},\cite{NIU2025127997}. Hong \emph{et al.} and Shan \emph{et al.} employed Mel spectrograms to extract representative acoustic information from transformer signals and demonstrated their effectiveness using field fault data \cite{SHAN2023112408}, \cite{10606641}. To enhance partial discharge recognition, Chen \emph{et al.} developed a non-contact acoustic measurement system incorporating noise suppression via wavelet transform \cite{4265659}. Li \emph{et al.} proposed a method incorporating Short-Time Fourier Transform (STFT) to construct impulse frequency response curves of transformer windings, thereby improving the accuracy of online winding condition evaluation \cite{7558591}. Moreover, the Gramian Angular Summation Field (GASF) technique was introduced in \cite{9760386} to encode transformer vibration signals into joint representations of time, frequency, and energy for converter transformer condition monitoring. Despite these advances, most existing approaches rely on a single acoustic representation, which limits their ability to comprehensively capture the complex and complementary fault-related information embedded in transformer signals, thereby constraining diagnostic performance. Although several studies have attempted to improve performance through multi-representation fusion, these fusion strategies typically employ fixed or heuristic combination schemes and lack the capability to adaptively adjust the contribution of different representations \cite{9408662}, \cite{9832890}. To enable more effective fusion of heterogeneous representations, biologically inspired neural models have recently attracted increasing attention. Pulse-coupled neural networks (PCNNs) are neural models originally developed to simulate the synchronous firing behavior observed in the mammalian visual cortex \cite{4305279,6338347}. Unlike conventional convolutional neural networks, PCNNs employ a pulse-based activation mechanism in which neurons interact through local coupling and dynamic thresholds \cite{8742596}. Owing to these characteristics, PCNNs exhibit strong capability in preserving structural information while suppressing background interference, and have been widely applied in image segmentation, edge detection, and feature enhancement tasks \cite{9444355}, \cite{10848019}, \cite{8746999}. However, conventional PCNNs are typically driven by a single external stimulus, which limits their ability to effectively exploit complementary information from multiple representations. To address this limitation, dual-channel PCNN (DPCNN) architectures have been introduced to enable multi-representation fusion by incorporating multiple external stimuli within the neuronal feeding mechanism \cite{4344292}, \cite{10341267}. Through this mechanism, heterogeneous feature maps can be jointly processed, thereby facilitating the integration of information from different representations. Nevertheless, the fusion process in such architectures generally relies on fixed or predefined coupling strategies, making it difficult to adaptively regulate the relative contributions of different channels. As a result, the model may not effectively emphasize discriminative representations while suppressing less relevant ones, thereby limiting the effectiveness of multi-representation fusion.
 
 With the rapid advancement of deep learning techniques, a variety of neural network architectures have been applied to transformer fault identification and rotating machinery fault diagnosis, demonstrating superior automatic feature extraction capability compared with traditional handcrafted methods \cite{18184994}, \cite{7033433}. Early studies commonly adopted baseline convolutional neural networks as benchmark architectures for acoustic and vibration fault classification, verifying the feasibility of end-to-end feature learning for fault diagnosis tasks \cite{ahsanEnhancedFaultDiagnosis2025}. Subsequently, classical deep convolutional backbones, including AlexNet \cite{guNovelFaultDiagnosis2022}, VGG16 \cite{zhangFaultDiagnosisRecognition2024}, and ResNet18 \cite{maBearingFaultDiagnosis2024}, were introduced into intelligent fault diagnosis frameworks and achieved notable improvements in hierarchical feature representation and classification accuracy across machinery health monitoring applications \cite{11014495}, \cite{5352306}, \cite{4717246}. More recently, advanced architectures such as ConvNeXt-Tiny, which incorporate modernized convolutional design principles, have further enhanced representation learning capability and demonstrated competitive performance in fault diagnosis and image-based classification tasks \cite{zhangWaveConvNeXtEfficientPrecise2024}. In addition, publicly available benchmark datasets, such as the CWRU bearing fault dataset, have been extensively employed to evaluate the effectiveness and generalization ability of deep learning-based diagnostic models, serving as a standard reference in fault diagnosis research \cite{alonso-gonzalezBearingFaultDiagnosis2023}, \cite{zhangMachineLearningBased2021}.
 
 Despite these advances, most existing approaches remain purely data-driven and primarily rely on a single acoustic or signal representation. Consequently, their diagnostic performance strongly depends on large-scale labeled datasets and is vulnerable to degradation under acoustic noise, operating condition variations, and signal inconsistencies commonly encountered in practical transformer monitoring scenarios. Moreover, conventional deep learning models often lack explicit mechanisms to incorporate physical constraints or exploit complementary heterogeneous feature representations, limiting their robustness and interpretability in complex transformer fault diagnosis tasks.
 
 To overcome the above limitations, we proposed an adaptive weighted dual-channel pulse-coupled neural network (AW-DPCNN) to enhance representation capability and a multi-scale channel attention enhanced VGG16 (MSCA-VGG16) network to improve model robustness. The main contributions of this work can be summarized as follows:
+\begin{itemize}
+\item An AW-DPCNN fusion mechanism is proposed to adaptively integrate Mel and Gramian Angular Difference Field (GADF) representations, enabling more comprehensive modeling of transformer acoustic characteristics.
 
-(1) An AW-DPCNN fusion mechanism is proposed to adaptively integrate Mel and Gramian Angular Difference Field (GADF) representations, enabling more comprehensive modeling of transformer acoustic characteristics.
 
-(2) To further exploit the complementary information of the fused representation and enhance multi-scale feature sensitivity as well as channel discrimination, an MSCA-VGG16 network is constructed.
+\item To further exploit the complementary information of the fused representation and enhance multi-scale feature sensitivity as well as channel discrimination, an MSCA-VGG16 network is constructed.
 
-(3) Extensive experimental results on field transformer data and the Case Western Reserve University (CWRU) bearing dataset verify that the proposed method achieves superior diagnostic accuracy and robustness compared with single-representation methods.
-
+\item Extensive experimental results on field transformer data and the Case Western Reserve University (CWRU) bearing dataset verify that the proposed method achieves superior diagnostic accuracy and robustness compared with single-representation methods.
+\end{itemize}
 
 The overall framework is shown in Fig.~\ref{framework}. The remainder of this paper begins with the related acoustic representation in Section~\ref{section2}. Section~\ref{section3} and \ref{section4} present the principles and architectures of AW-DPCNN and MSCA-VGG16. In Section~\ref{section5}, experiments on field transformer data and the public CWRU dataset are conducted. At last, conclusions are drawn in Section~\ref{section6}.
 \begin{figure*} 
@@ -344,30 +363,30 @@ The network is optimized using cross-entropy loss as follows
 \end{equation}
 
 By projecting high-dimensional convolutional features into a compact latent space, the embedding layer enhances intra-class compactness and inter-class separability while reducing parameter redundancy. The proposed MSCA-VGG16 framwork is presented in Fig.~\ref{MSCA-VGG}.
-\begin{figure}
+\begin{figure*}
 	\centering
 	\includegraphics[width=\textwidth]{MSCA-VGG16/MSCA-VGG16}
 	\caption{Overall architecture of the proposed MSCA-VGG16 network for transformer fault classification.}
 	\label{MSCA-VGG}
-\end{figure}
+\end{figure*}
 
 \section{Experimental Setup and Performance Evaluation}
 \label{section5}
 \subsection{Dataset Construction and Preprocessing}
 An experimental platform was established to collect acoustic signals from power transformers operating in a real substation environment. Among several transformers deployed at different locations, a series of 220 kV transformers were selected for acoustic data acquisition due to their prominent vibration-induced acoustic emissions. As illustrated in Fig.~\ref{fig:equipment}, the acoustic acquisition system consists of an omnidirectional microphone mounted on a tripod and connected to a data acquisition device via a USB interface for both power supply and signal transmission. To ensure stable signal capture while reducing environmental interference, the microphone was positioned approximately 1.2~m in front of the transformer tank.
-\begin{figure}
+\begin{figure*}
 	\centering
 	\includegraphics[width=\linewidth]{equipment/equipment}
 	\caption{Experimental platform of acoustic signal acquisition.}
 	\label{fig:equipment}
-\end{figure}
+\end{figure*}
 
 All acoustic data were recorded across multiple independent acquisition sessions under different operating conditions. The continuous audio signals were first resampled to a uniform sampling rate of 44.1kHz to ensure consistency. Each recording was then segmented into fixed-length clips of 1s with 60\% overlap. To prevent data leakage caused by temporal correlation between overlapping segments, dataset partitioning was conducted at the recording-session level rather than at the segment level. Specifically, all segments derived from the same recording session were assigned exclusively to either the training, validation, or test subset. The dataset is divided into training, validation, and test subsets with a ratio of 60\%, 20\%, and 20\%, respectively, using a fixed random seed to ensure reproducibility and strict independence between the subsets.
 
 The collected acoustic signals were categorized into multiple classes corresponding to different transformer operating conditions, including normal operation and several typical fault states, as shown in Table~\ref{tab:operating_conditions}. Each acoustic segment was independently labeled according to the operating condition during the recording period. The detailed composition of the dataset, including the number of samples in each subset, is summarized in Table~\ref{dataset}.
 
 
-\begin{table}
+\begin{table*}
 	\caption{Transformer Operating Conditions and Corresponding Labels}
 	\centering
 	\begin{tabular}{ll}
@@ -387,9 +406,9 @@ The collected acoustic signals were categorized into multiple classes correspond
 		\bottomrule
 	\end{tabular}
 	\label{tab:operating_conditions}
-\end{table}
+\end{table*}
 
-\begin{table}
+\begin{table*}
 	\centering
 	\caption{Composition of the Transformer Acoustic Dataset}
 	\label{dataset}
@@ -406,15 +425,15 @@ The collected acoustic signals were categorized into multiple classes correspond
 		Testing set & 4115 & 441 & 294 & 441 & 294 & 441 & 881 & 294 & 441 & 294 & 294 \\
 		\bottomrule
 	\end{tabular}
-\end{table}
+\end{table*}
 
 Fig.~\ref{Fig: Fused images} illustrates the representations of different transformer operating conditions before and after adaptive fusion. The Mel spectrogram primarily reflects frequency-domain energy distributions, where harmonic-related faults exhibit distinct banded patterns. In contrast, GADF images encode temporal correlations and periodic structures of the acoustic signals, revealing complementary information that is not explicitly captured in the Mel domain.
-\begin{figure}
+\begin{figure*}
 	\centering
 	\includegraphics[width=\textwidth]{Fused images/Fused images}
 	\caption{Visualization of Mel spectrograms, GADF images, and adaptively fused representations generated by the proposed AW-DPCNN under different transformer operating conditions. (a) Normal, (b) Loosen, (c) 30\% Third Harmonic Distortion, (d) 30\% Fifth Harmonic Distortion,  (e) 30\% Seventh Harmonic Distortion, (f) 10kV Overload, (g) Pure Third Harmonic, (h) Pure Fifth Harmonic, (i) Pure Seventh Harmonic, and (j) Partial Discharge.}
 	\label{Fig: Fused images}
-\end{figure}     
+\end{figure*}
 
 After processing by the proposed AW-DPCNN, the fused feature maps exhibit enhanced structural clarity and improved discrimination among different fault types. Notably, background noise and redundant patterns are effectively suppressed, while salient fault-related features are preserved and highlighted. This qualitative analysis demonstrates that the AW-DPCNN is capable of adaptively integrating frequency-domain and temporal-domain information, thereby generating more informative representations for subsequent fault classification.
 
@@ -551,7 +570,7 @@ The key hyperparameters of the AW-DPCNN fusion module are summarized in Table~\r
 		\hline
 	\end{tabular}
 \end{table}
-\begin{table}
+\begin{table*}
 	\centering
 	\caption{Configuration of the Proposed MSCA-VGG16 Network}
 	\begin{tabular}{lcccc}
@@ -568,12 +587,12 @@ The key hyperparameters of the AW-DPCNN fusion module are summarized in Table~\r
 		\bottomrule
 	\end{tabular}
 	\label{tab:msca_vgg16}
-\end{table}
+\end{table*}
 
 
 
 To evaluate the effectiveness of the proposed classification network, a comparative experiment was conducted using several representative deep learning backbones, including Baseline CNN, AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16. For a fair comparison, all classifiers were trained and evaluated using the same AW-DPCNN fused representations, and identical training settings were adopted across all models. It can be observed from Table~\ref{tab:network_comparison} that different backbone networks exhibit varying performance in transformer fault classification. The baseline model achieves relatively limited results, with an accuracy of 73.31\% and an F1-score of 69.59\%. By adopting deeper architectures such as AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16, the classification performance improves to different extents, indicating that more powerful feature extraction networks can better capture discriminative acoustic characteristics. Among all compared methods, the proposed MSCA-VGG16 achieves the best performance across all evaluation metrics. Specifically, it obtains an accuracy of 87.45\%, an F1-score of 86.97\%, and a G-mean of 85.69\%, which are significantly higher than those of the other backbone models. Compared with the baseline model, the accuracy improves by more than 14\%. Moreover, the balanced accuracy and Kappa coefficient reach 87.50\% and 86.03\%, respectively, indicating improved classification consistency and robustness across different fault categories. These results demonstrate the effectiveness of the proposed MSCA-VGG16 framework for transformer acoustic fault diagnosis.
-\begin{table}
+\begin{table*}
 	\centering
 	\caption{Performance Comparison with Different Backbone Networks}
 	\label{tab:network_comparison}
@@ -598,53 +617,7 @@ To evaluate the effectiveness of the proposed classification network, a comparat
 		& \textbf{87.50} & \textbf{86.03} \\
 		\bottomrule
 	\end{tabular}
-\end{table}
-
-
-
-
-% \begin{figure*}[!t]
-% 	\centering
-% 	\begin{subfigure}{0.32\textwidth}
-% 		\centering
-% 		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_baseline}
-% 		\caption{Baseline}
-% 	\end{subfigure}
-% 	\hfill
-% 	\begin{subfigure}{0.32\textwidth}
-% 		\centering
-% 		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_alexnet}
-% 		\caption{AlexNet}
-% 	\end{subfigure}
-% 	\hfill
-% 	\begin{subfigure}{0.32\textwidth}
-% 		\centering
-% 		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_resnet18}
-% 		\caption{ResNet18}
-% 	\end{subfigure}
-% 	\vspace{3mm}
-% 	\begin{subfigure}{0.32\textwidth}
-% 		\centering
-% 		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_convnext_tiny}
-% 		\caption{ConvNeXt-Tiny}
-% 	\end{subfigure}
-% 	\hfill
-% 	\begin{subfigure}{0.32\textwidth}
-% 		\centering
-% 		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix_vgg16}
-% 		\caption{VGG16}
-% 	\end{subfigure}
-% 	\hfill
-% 	\begin{subfigure}{0.32\textwidth}
-% 		\centering
-% 		\includegraphics[width=\linewidth]{confusion_matrix/confusion_matrix__MSCA_VGG16}
-% 		\caption{MSCA-VGG16 (Ours)}
-% 	\end{subfigure}
-% 	\caption{Confusion matrices of different network backbones trained using the AW-DPCNN fusion representations. The proposed MSCA-VGG16 achieves the most accurate classification performance with significantly reduced inter-class confusion.}
-% 	\label{fig:confusion_matrix}
-% \end{figure*}
-
-
+\end{table*}
 
 
 To evaluate the classification performance of the proposed MSCA-VGG16 model, confusion matrices were employed to visualize the recognition accuracy across ten fault categories, as shown in Fig.~\ref{fig:confusion_matrix}. A hierarchical comparison was conducted among the baseline model, several representative deep learning architectures, and the proposed MSCA-enhanced framework. 
@@ -673,7 +646,7 @@ When the proposed AW-DPCNN fusion mechanism is applied (E4), the model achieves 
 \textbf{4) Overall performance analysis.}
 The results indicate that adaptive multi-representation fusion is more effective than simple feature aggregation. By dynamically adjusting the contribution of heterogeneous acoustic representations, the AW-DPCNN module can better exploit complementary information and enhance discriminative representation learning for transformer fault diagnosis.
 
-\begin{figure}[!htbp]
+\begin{figure*}[!htbp]
 	\centering
 	\begin{subfigure}{0.48\textwidth}
 		\centering
@@ -705,7 +678,7 @@ The results indicate that adaptive multi-representation fusion is more effective
 	\caption{t-SNE visualization of feature distributions under different fusion mechanisms. (a) E1: Mel features. (b) E2: GADF features. (c) E3: Mel+GADF with concatenation fusion. (d) E4: Mel+GADF with the proposed AW-DPCNN fusion.}
 	\label{Fig:tsne}
 	\vspace{-5pt}
-\end{figure}
+\end{figure*}
 
 
 
@@ -736,7 +709,7 @@ The results indicate that adaptive multi-representation fusion is more effective
 
 In addition to the quantitative metrics derived from the confusion matrix, t-SNE visualization is applied to the feature embeddings extracted before the final classification layer, as illustrated in Fig. \ref{Fig:tsne}. The visualization results for Exp. 1–Exp. 4 defined in Table \ref{tab:fusion_exp_simple} show that the proposed AW-DPCNN fusion yields the most compact intra class clusters and the clearest inter class separation.
 
-\begin{figure}
+\begin{figure*}
 	\centering
 
 	\begin{subfigure}{0.48\textwidth}
@@ -775,7 +748,7 @@ In addition to the quantitative metrics derived from the confusion matrix, t-SNE
 
 	\vspace{-3mm}
 
-\end{figure}
+\end{figure*}
 
 To analyze the contribution of each architectural component, an ablation study was conducted on VGG16-based models, as summarized in Table~\ref{tab:ablation_vgg16}. The baseline VGG16 (M1) achieves an accuracy of 78.15\% and an F1-score of 75.82\%, indicating limited discriminative capability for acoustic fault diagnosis. Introducing individual components, including channel attention (M2), multi-scale convolution (M3), and the compact embedding head (M4), all leads to performance improvements compared with the baseline, demonstrating the effectiveness of each module in enhancing representation. When all proposed components are integrated, the full MSCA-VGG16 model (M5) achieves the best performance with an accuracy of 87.45\% and an F1-score of 86.97\%. Meanwhile, the Kappa coefficient increases from 75.76\% in the baseline model to 86.03\%, indicating a higher level of agreement between the predicted labels and ground truth. The consistent improvement across all evaluation metrics indicates that the multi-scale feature enhancement, channel attention mechanism, and compact embedding head work cooperatively to strengthen discriminative representation learning and improve diagnostic performance.
 
@@ -847,8 +820,6 @@ As summarized in Table~\ref{tab:cwru_ablation}, the single-representation (A1 an
 \end{table}
 
 
-
-
 The t-SNE visualization results in Fig.~\ref{Fig:tsne_CWRU} further support these findings. Compared with the scattered distributions of the single representation and the partially overlapping clusters under concatenation fusion, the features produced by AW-DPCNN exhibit more compact intra-class distributions and clearer inter-class boundaries. This demonstrates that the proposed AW-DPCNN effectively enhances the discriminative capability of fused acoustic representations.
 
 \section{Conclusion}
@@ -857,9 +828,8 @@ To overcome the limitations of single-representation and low accuracy in transfo
 
 In future work, we aim to further optimize the proposed framework to improve recognition accuracy under more diverse and complex operating conditions, with the ultimate goal of enhancing the reliability and applicability of intelligent transformer faults diagnosis systems.
 
+\bibliographystyle{IEEEtran}
 \bibliography{references}
-
-\bibliographystyle{iopart-num}
 
 
 \end{document}
