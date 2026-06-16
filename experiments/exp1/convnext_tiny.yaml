@@ -3,7 +3,7 @@ device: cuda
 
 model:
   name: convnext_tiny
-  num_classes: 4
+  num_classes: 5
   pretrained: true
 
 train:

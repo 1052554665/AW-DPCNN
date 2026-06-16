@@ -2,11 +2,11 @@ experiment_name: exp1_MSCA_VGG16
 device: cuda
 model:
   name: MSCA_VGG16
-  num_classes: 8
+  num_classes: 5
   pretrained: true
 
 train:
-  epochs: 50
+  epochs: 30
   lr: 1e-6
   optimizer: adamw
   weight_decay: 1e-3

@@ -2,7 +2,7 @@ experiment_name: exp1_vit
 
 model:
   name: vit
-  num_classes: 4
+  num_classes: 5
   in_channels: 3
   img_size: 224
   patch_size: 16
@@ -14,7 +14,7 @@ model:
 
 train:
   epochs: 30
-  lr: 1e-4
+  lr: 1e-6
   optimizer: adamw
   weight_decay: 1e-3
 

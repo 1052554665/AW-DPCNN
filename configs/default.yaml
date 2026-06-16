@@ -4,8 +4,8 @@ seed: 42
 device: auto
 
 dataset:
-  root_dir: ./datasets/cwru_within
-  # root_dir: ./datasets/transformer-five
+  # root_dir: ./datasets/cwru_within
+  root_dir: ./datasets/transformer-five
   # root_dir: ./datasets/Group2_4
   train_split: train
   val_split: val

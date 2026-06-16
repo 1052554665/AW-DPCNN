@@ -30,27 +30,40 @@ class MSCA_Block(nn.Module):
 
 
 class MSCA_VGG16(nn.Module):
-    def __init__(self, num_classes=10, pretrained=True, embed_dim=1024):
+    """Lightweight MSCA-VGG16 with global average pooling.
+
+    Uses VGG16_bn backbone + MSCA block + compact classification head.
+    Global average pooling replaces the original 7×7 pool, shrinking the
+    classifier from ~103M to ~0.5M parameters — a >200× reduction that
+    prevents overfitting on small/medium fault diagnosis datasets.
+
+    Args:
+        num_classes: number of output classes (default 4).
+        pretrained:  load ImageNet pre-trained weights.
+        embed_dim:   embedding dimension (default 256, was 1024).
+        dropout:     dropout rate in fc/embed layers (default 0.5).
+    """
+
+    def __init__(self, num_classes=4, pretrained=True, embed_dim=256, dropout=0.5):
         super().__init__()
         weights = VGG16_BN_Weights.IMAGENET1K_V1 if pretrained else None
         base = vgg16_bn(weights=weights)
 
-        self.features = base.features
-        self.msca = MSCA_Block(512)
-        self.avgpool = base.avgpool
+        self.features = base.features              # → 512 × 7 × 7
+        self.msca = MSCA_Block(512)                # → 512 × 7 × 7
+        self.avgpool = nn.AdaptiveAvgPool2d(1)     # → 512 × 1 × 1  (was 7×7)
 
         self.fc1 = nn.Sequential(
-            nn.Linear(512 * 7 * 7, 4096),
-            nn.ReLU(),
-            nn.Dropout(0.5)
+            nn.Linear(512, 1024),
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout),
         )
 
-        # 判别性嵌入层（核心创新点）
         self.embed = nn.Sequential(
-            nn.Linear(4096, embed_dim),
+            nn.Linear(1024, embed_dim),
             nn.BatchNorm1d(embed_dim),
-            nn.ReLU(),
-            nn.Dropout(0.5)
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout),
         )
 
         self.classifier = nn.Linear(embed_dim, num_classes)
