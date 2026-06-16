@@ -74,7 +74,9 @@ from tqdm import tqdm
 
 def aw_dpcnn_single_channel(S1: np.ndarray, S2: np.ndarray,
                             n_iter: int = 20,
-                            gamma: float = 4.0) -> np.ndarray:
+                            gamma: float = 4.0,
+                            alpha_L: float = 0.001,
+                            alpha_T: float = 0.001) -> np.ndarray:
     """Fuse two single-channel images with AW-DPCNN.
 
     Parameters
@@ -82,6 +84,8 @@ def aw_dpcnn_single_channel(S1: np.ndarray, S2: np.ndarray,
     S1, S2 : ndarray  – normalised input channels (Mel, GADF).
     n_iter : int      – PCNN iteration count (paper: N = 20).
     gamma  : float    – contrast amplification factor (paper: γ = 4).
+    alpha_L: float    – linking decay coefficient.
+    alpha_T: float    – threshold decay coefficient.
     """
     S1 = S1.astype(np.float32)
     S2 = S2.astype(np.float32)
@@ -89,7 +93,7 @@ def aw_dpcnn_single_channel(S1: np.ndarray, S2: np.ndarray,
     S1 = (S1 - S1.min()) / (S1.max() - S1.min() + 1e-6)
     S2 = (S2 - S2.min()) / (S2.max() - S2.min() + 1e-6)
 
-    alpha_L, alpha_T, V_T, sigma = 0.001, 0.001, 20, 0.1
+    V_T, sigma = 20, 0.1
 
     W1 = np.array([
         [-0.5, -0.5, 1, -0.5, -0.5],
@@ -137,7 +141,9 @@ def aw_dpcnn_single_channel(S1: np.ndarray, S2: np.ndarray,
 
 def aw_dpcnn_fusion_color(mel_img: np.ndarray, gaf_img: np.ndarray,
                           n_iter: int = 20,
-                          gamma: float = 4.0) -> np.ndarray:
+                          gamma: float = 4.0,
+                          alpha_L: float = 0.001,
+                          alpha_T: float = 0.001) -> np.ndarray:
     """Fuse two BGR images channel‑wise with AW-DPCNN."""
     if mel_img.shape[:2] != gaf_img.shape[:2]:
         gaf_img = cv2.resize(gaf_img, (mel_img.shape[1], mel_img.shape[0]))
@@ -148,7 +154,8 @@ def aw_dpcnn_fusion_color(mel_img: np.ndarray, gaf_img: np.ndarray,
     fused = []
     for i in range(3):
         f = aw_dpcnn_single_channel(mel_ch[i], gaf_ch[i],
-                                     n_iter=n_iter, gamma=gamma)
+                                     n_iter=n_iter, gamma=gamma,
+                                     alpha_L=alpha_L, alpha_T=alpha_T)
         fused.append((f * 255).astype(np.uint8))
 
     return cv2.merge(fused)

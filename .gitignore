@@ -1,5 +1,6 @@
 # Python
 experiments/experiment_result/
+experiments/hyperparameter_sensitivity/
 __pycache__/
 *.py[cod]
 *$py.class
