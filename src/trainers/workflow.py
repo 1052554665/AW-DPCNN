@@ -1,6 +1,6 @@
 from collections import Counter
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 import torch
 import torch.nn as nn
@@ -86,8 +86,8 @@ def _build_loss(train_cfg: Dict, dataset, num_classes: int, device: torch.device
     return nn.CrossEntropyLoss(weight=class_weights)
 
 
-def train_and_evaluate(config: Dict, run_dir: Path, device: torch.device):
-    loaders, class_names = build_dataloaders(config, device=device)
+def train_and_evaluate(config: Dict, run_dir: Path, device: torch.device, seed: Optional[int] = None):
+    loaders, class_names = build_dataloaders(config, device=device, seed=seed)
     num_classes = len(class_names)
     model = build_model(config).to(device)
 

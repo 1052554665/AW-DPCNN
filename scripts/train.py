@@ -1,5 +1,12 @@
 import argparse
+import sys
 import warnings
+from pathlib import Path
+
+# Ensure project root is on sys.path for src imports.
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
 
 import torch
 
@@ -13,6 +20,7 @@ def parse_args():
     parser.add_argument("--config", default="configs/default.yaml", help="Base config YAML path")
     parser.add_argument("--exp-config", default="", help="Experiment override YAML path")
     parser.add_argument("--device", default="", help="Override device (e.g. cuda, cuda:0, cpu)")
+    parser.add_argument("--seed", type=int, default=None, help="Override random seed (for repeated trials)")
     return parser.parse_args()
 
 
@@ -51,8 +59,9 @@ def main():
     args = parse_args()
     config = load_config(args.config, args.exp_config)
 
-    seed = int(config.get("seed", 42))
+    seed = args.seed if args.seed is not None else int(config.get("seed", 42))
     set_seed(seed)
+    config["seed"] = seed  # propagate resolved seed for run_dir naming
 
     device = resolve_device(config.get("device", "auto"), args.device)
 
@@ -61,8 +70,9 @@ def main():
 
     print(f"Run directory: {run_dir}")
     print(f"Device: {device}")
+    print(f"Seed: {seed}")
 
-    results = train_and_evaluate(config, run_dir, device)
+    results = train_and_evaluate(config, run_dir, device, seed=seed)
     dump_json(run_dir / "results" / "test_metrics.json", results)
 
     print("==== Final Test Metrics ====")

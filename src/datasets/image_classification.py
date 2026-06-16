@@ -5,6 +5,8 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 
+from src.utils.experiment import seed_worker
+
 
 def _build_transforms(img_size: int, augment: bool, normalize_mean: List[float], normalize_std: List[float]):
     train_ops = []
@@ -34,7 +36,7 @@ def _build_transforms(img_size: int, augment: bool, normalize_mean: List[float],
     return transforms.Compose(train_ops), transforms.Compose(eval_ops)
 
 
-def build_dataloaders(config: Dict, device: Optional[torch.device] = None) -> Tuple[Dict[str, DataLoader], List[str]]:
+def build_dataloaders(config: Dict, device: Optional[torch.device] = None, seed: Optional[int] = None) -> Tuple[Dict[str, DataLoader], List[str]]:
     data_cfg = config["dataset"]
     root_dir = Path(data_cfg["root_dir"]).expanduser().resolve()
 
@@ -67,6 +69,11 @@ def build_dataloaders(config: Dict, device: Optional[torch.device] = None) -> Tu
     num_workers = int(data_cfg.get("num_workers", 4))
     batch_size = int(data_cfg.get("batch_size", 32))
 
+    # Reproducible DataLoader: use a Generator for train shuffling.
+    g = torch.Generator()
+    if seed is not None:
+        g.manual_seed(seed)
+
     loaders = {
         "train": DataLoader(
             train_set,
@@ -75,6 +82,8 @@ def build_dataloaders(config: Dict, device: Optional[torch.device] = None) -> Tu
             num_workers=num_workers,
             pin_memory=pin_memory,
             persistent_workers=bool(num_workers > 0),
+            generator=g,
+            worker_init_fn=seed_worker if seed is not None else None,
         ),
         "val": DataLoader(
             val_set,
