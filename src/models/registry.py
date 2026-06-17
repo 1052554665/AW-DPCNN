@@ -2,6 +2,7 @@ from typing import Dict
 
 from src.models.convnext_tiny import ConvNeXtTiny
 from src.models.efficientnet import EfficientNetB0
+from src.models.harmonic_cnn import HarmonicCNN
 from src.models.mobilenetv3 import MobileNetV3Small
 from src.models.MSCA_VGG16 import MSCA_VGG16
 from src.models.vgg16 import VGG16
@@ -25,6 +26,13 @@ def build_model(config: Dict):
 
     if name in {"mobilenetv3", "mobilenet_v3", "mobilenetv3_small"}:
         return MobileNetV3Small(num_classes=num_classes, pretrained=pretrained)
+
+    if name == "harmonic_cnn":
+        return HarmonicCNN(
+            num_classes=num_classes,
+            in_channels=int(model_cfg.get("in_channels", 3)),
+            dropout=float(model_cfg.get("dropout", 0.5)),
+        )
 
     if name == "msca_vgg16":
         return MSCA_VGG16(

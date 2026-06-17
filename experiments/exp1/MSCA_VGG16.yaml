@@ -3,7 +3,7 @@ device: cuda
 model:
   name: MSCA_VGG16
   num_classes: 9
-  pretrained: true
+  pretrained: false  # ImageNet features don't transfer to spectrograms
 
 train:
   epochs: 30
@@ -18,6 +18,9 @@ scheduler:
   patience: 5
   min_lr: 0.000001
 
+dropout:
+  rate: 0.5
+  
 visualization:
   tsne: true
 
