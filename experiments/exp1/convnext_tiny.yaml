@@ -3,12 +3,12 @@ device: cuda
 
 model:
   name: convnext_tiny
-  num_classes: 5
-  pretrained: true
+  num_classes: 9
+  pretrained: false # ImageNet features don't help for spectrograms
 
 train:
   epochs: 30
-  lr: 1e-4
+  lr: 1e-3
   optimizer: adamw
   weight_decay: 1e-3
 

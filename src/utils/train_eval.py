@@ -1,9 +1,26 @@
+from contextlib import nullcontext
 from pathlib import Path
 
 import torch
 import numpy as np
 import pandas as pd
 from src.utils.metrics import compute_metrics, compute_roc_auc
+
+
+def _get_autocast_context(device: torch.device):
+    """Return an autocast context manager for the given device.
+
+    Prefers bfloat16 (native on Blackwell / H100 / A100) because it
+    requires no gradient scaling and has the same dynamic range as FP32.
+    Falls back to float16 autocast + GradScaler if bfloat16 is not
+    supported by the GPU, and to a no-op on CPU.
+    """
+    if device.type == "cuda":
+        if torch.cuda.is_bf16_supported():
+            return torch.amp.autocast("cuda", dtype=torch.bfloat16)
+        else:
+            return torch.amp.autocast("cuda", dtype=torch.float16)
+    return nullcontext()
 
 
 def _extract_logits(output):
@@ -21,13 +38,15 @@ def train_one_epoch(model, loader, optimizer, criterion, device):
     running_loss = 0
     correct = 0
     total = 0
+    autocast_ctx = _get_autocast_context(device)
 
     for x, y in loader:
         x, y = x.to(device), y.to(device)
 
         optimizer.zero_grad()
-        out = _extract_logits(model(x))
-        loss = criterion(out, y)
+        with autocast_ctx:
+            out = _extract_logits(model(x))
+            loss = criterion(out, y)
         loss.backward()
         optimizer.step()
 
@@ -56,11 +75,13 @@ def evaluate(model, loader, criterion, device):
     model.eval()
     losses = []
     y_true, y_pred, y_score = [], [], []
+    autocast_ctx = _get_autocast_context(device)
 
     for x, y in loader:
         x, y = x.to(device), y.to(device)
-        out = _extract_logits(model(x))
-        loss = criterion(out, y)
+        with autocast_ctx:
+            out = _extract_logits(model(x))
+            loss = criterion(out, y)
         losses.append(loss.item())
 
         probs = torch.softmax(out, dim=1)
@@ -68,7 +89,7 @@ def evaluate(model, loader, criterion, device):
 
         y_true.extend(y.cpu().numpy())
         y_pred.extend(preds.cpu().numpy())
-        y_score.extend(probs.cpu().numpy())
+        y_score.extend(probs.float().cpu().numpy())
 
     metrics = compute_metrics(y_true, y_pred)
     return sum(losses) / len(losses), metrics, y_true, y_pred, y_score

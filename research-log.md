@@ -205,3 +205,188 @@ python scripts/build_group2_4_harmonic.py
 # Custom ratio and workers
 python scripts/build_group2_4_harmonic.py --file-split 50,25,25 --workers 16
 ```
+
+# training speed
+>The current training speed is slow, does the train processing use the right precision? Is BF16 support been used during the training?
+
+## Analysis
+
+**No mixed precision is used at all.** The training runs entirely in **FP32**, confirmed by zero usage of `autocast`, `GradScaler`, or any AMP-related API across the entire codebase (train_eval.py, workflow.py).
+
+Your GPU — **NVIDIA RTX 5090 (Compute Capability 12.0, Blackwell)** — has native **BF16 tensor core** support. BF16 is the ideal choice here:
+
+| | FP32 (current) | BF16 (proposed) |
+|---|---|---|
+| **Speed** | Baseline | ~1.5–2× faster |
+| **VRAM** | Baseline | ~30–40% less |
+| **Dynamic range** | Full | Same as FP32 (8-bit exponent) |
+| **Stability** | Perfect | Near-identical (no GradScaler needed) |
+| **Tensor Core** | Not leveraged | ✅ Native Blackwell support |
+
+## Changes Made — train_eval.py
+
+### What was done
+
+Added a `_get_autocast_context()` helper and wrapped both `train_one_epoch()` and `evaluate()` forward passes with BF16 autocast:
+
+```python
+# Precision selection strategy
+if device == CUDA and BF16 supported:  → torch.bfloat16   (RTX 5090 ✅)
+if device == CUDA but no BF16:         → torch.float16    (older GPUs)
+if device == CPU:                      → no-op (FP32)
+```
+
+### Design choices
+
+| Decision | Rationale |
+|---|---|
+| **BF16, not FP16** | Same exponent range as FP32 → no `GradScaler` needed, no gradient underflow |
+| **`loss.backward()` outside autocast** | Gradients accumulate in FP32 for numerical stability |
+| **One context per function** | Created once, reused for all batches — zero per-iteration overhead |
+| **`torch.amp.autocast("cuda", ...)`** | Modern API (PyTorch ≥1.10); not deprecated `torch.cuda.amp.autocast` |
+
+### Expected impact on RTX 5090
+
+| Metric | Before (FP32) | After (BF16) |
+|---|---|---|
+| **Training speed** | Baseline | **~1.5–2× faster** |
+| **GPU memory** | Baseline | **~30% less** |
+| **Tensor core utilization** | ❌ None | ✅ Blackwell native BF16 |
+| **Numerical accuracy** | Reference | ~identical (BF16 = FP32 range) |
+
+
+# Experiment Result Analysis
+
+### 1. ConvNeXT-Tiny (seed=42) — The Core Problem
+
+```
+Train Acc: 29.8% → 93.4%   (Δ = +63.6%)
+Val Acc:   10.8% → 20.4%   (Δ = +9.6%,  stagnates ~10–21% throughout)
+Val Loss:  4.79  → 8.55    (INCREASING — diverging from train loss)
+Train Loss: 1.40 → 0.14    (monotonically decreasing)
+```
+
+**Diagnosis: Catastrophic overfitting.** The model is memorizing the training set perfectly while completely failing to generalize. The validation loss *increases* while training loss decreases — the textbook signature of overfitting.
+
+### 2. Cross-Model Comparison
+
+| Model | Seed | Train Acc (final) | Val Acc (final) | Status |
+|---|---|---|---|---|
+| **ConvNeXT-Tiny** | 42 | 93.4% | **20.4%** | Severe overfitting |
+| **ConvNeXT-Tiny** | 123 | 100% | **100%** | ⚠️ Suspicious (likely data leakage) |
+| **MSCA-VGG16** | 42 | 55.3% | 19.4% | Overfitting (less severe) |
+| **VGG16** | 42 | 34.9% | 12.6% | Early stage (epoch 1) |
+
+The seed=123 result with 100% val accuracy at epoch 5 is a **red flag** — this indicates probable data leakage in that specific split (chunks from the same file leaking across splits, or the random seed producing a pathological partition).
+
+---
+
+### 3. Root Cause Analysis
+
+The fundamental issue is a **small-sample-size problem masked by sliding-window augmentation**:
+
+```mermaid
+graph TD
+    A["2–3 source .wav files per class"] --> B["Sliding windows → 300–500 images/class"]
+    B --> C["High inter-window correlation within same file"]
+    C --> D["Model memorizes file-specific artifacts"]
+    D --> E["Train acc ≈ 93%"]
+    D --> F["Val acc ≈ 12% (chance level for 9-class)"]
+    
+    style D fill:#ff6b6b,color:#fff
+    style E fill:#ffd93d
+    style F fill:#ff6b6b,color:#fff
+```
+
+**Why this happens:**
+
+| Factor | Impact |
+|---|---|
+| **Only 2–3 source files per class** | Effective diversity ≈ 2–3 distinct acoustic recordings, not 300+ |
+| **High window overlap** (8192/4096 = 50% hop) | Adjacent windows share 50% of samples → highly redundant |
+| **Same-file windows in same split** | All train windows from a single file look nearly identical; model learns file identity, not class |
+| **Pretrained ConvNeXT on spectrograms** | ImageNet features (edges, textures, objects) don't transfer well to spectrogram energy patterns |
+| **9-class harmonic task is inherently hard** | 10p/20p/30p differ only in amplitude; 3rd/5th/7th differ in frequency-bin position — subtle differences |
+
+### 4. Recommended Solutions
+
+#### 🔴 Immediate fixes (highest priority)
+
+**A. Reduce window overlap (increase hop length)**
+```bash
+python scripts/build_group2_4_harmonic.py --hop-len 8192 --overwrite
+```
+Currently hop=4096 with win=8192 → 50% overlap. Setting hop=8192 eliminates overlap entirely, reducing intra-file redundancy.
+
+**B. Disable pretrained weights**
+```yaml
+# experiments/exp1/convnext_tiny.yaml
+model:
+  pretrained: false   # ImageNet features don't help for spectrograms
+```
+Train from scratch with spectrogram-appropriate initialization.
+
+**C. Add strong regularization**
+```yaml
+train:
+  weight_decay: 1e-2        # was 1e-3 — stronger L2
+  label_smoothing: 0.1      # prevent overconfident predictions
+  
+# Add dropout to model
+model:
+  dropout: 0.5
+```
+
+#### 🟡 Medium-term improvements
+
+**D. Cross-group validation strategy**
+Instead of random file-level split, use **leave-one-group-out**:
+- Train on G3 + G4 → Test on G2 (only for 30p* classes)
+- Or: Train on G2 + G3 → Test on G4
+This tests true generalization to unseen recording conditions.
+
+**E. Hierarchical classifier (Option B from research log)**
+```
+Shared backbone → ├── Harmonic order head (3rd/5th/7th) — 3 classes
+                   └── Severity head (10p/20p/30p) — 3 classes
+```
+Reduces the problem from 9-class to two 3-class problems, each with more samples per class.
+
+**F. Simpler model first**
+Start with a lightweight CNN (4–5 conv layers) trained from scratch, not a large pretrained model:
+```yaml
+model:
+  name: custom_cnn_small   # <1M params
+  pretrained: false
+```
+
+#### 🟢 Long-term strategy
+
+**G. Data augmentation at signal level** (before image generation)
+- Add Gaussian noise at different SNRs
+- Time stretching / pitch shifting
+- Mixup between different files of the same class
+
+**H. Few-shot learning / metric learning approach**
+With only 2–3 recordings per class, frame this as a few-shot problem using prototypical networks or Siamese networks.
+
+---
+
+### 5. TL;DR
+
+| Problem | Root Cause | Primary Fix |
+|---|---|---|
+| Train 93% / Val 20% | 2–3 files/class → model memorizes files, not classes | Non-overlapping windows + train from scratch + strong regularization |
+| Seed 123 = 100% val | Suspected data leakage from chunking | Audit `_file_level_split_small` for seed 123 |
+| All models overfit | Task intrinsically hard with <3 recordings/class | Cross-group validation + hierarchical classifier |
+
+The single most impactful change: **rebuild the dataset with `--hop-len 8192`** (no overlap) and **train a simple CNN from scratch** before attempting large pretrained models.
+
+Completed: *Diagnose root cause and recommend fixes* (4/4)
+
+Would you like me to implement any of these fixes now? The most actionable first steps would be:
+
+1. **Rebuild dataset with non-overlapping windows** (`--hop-len 8192`)
+2. **Create a modified config** without pretrained weights and with stronger regularization
+3. **Audit the seed=123 split** to check for data leakage
+

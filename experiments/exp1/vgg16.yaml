@@ -3,7 +3,7 @@ device: cuda
 
 model:
   name: vgg16
-  num_classes: 4
+  num_classes: 9
   pretrained: true
 
 train:
