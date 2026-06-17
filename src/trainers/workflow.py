@@ -91,6 +91,21 @@ def train_and_evaluate(config: Dict, run_dir: Path, device: torch.device, seed: 
     num_classes = len(class_names)
     model = build_model(config).to(device)
 
+    # --- torch.compile (PyTorch 2.0+) ---
+    _compile_enabled = bool(config.get("train", {}).get("compile", True))
+    if _compile_enabled and hasattr(torch, "compile") and device.type == "cuda":
+        try:
+            # Enable TF32 tensor cores for matmul (safe speedup on Ampere+).
+            torch.set_float32_matmul_precision("high")
+            # "default" mode gives ~30-50% speedup with no CUDA-graph issues.
+            # "reduce-overhead" / "max-autotune" offer more speed but require
+            # CUDA-graph-compatible models and careful tensor lifetime mgmt.
+            compile_mode = str(config.get("train", {}).get("compile_mode", "default"))
+            model = torch.compile(model, mode=compile_mode)
+            print(f"[torch.compile] Model compiled (mode={compile_mode})")
+        except Exception as exc:
+            print(f"[torch.compile] Compilation failed ({exc}); falling back to eager mode.")
+
     # --- Model complexity metrics ---
     n_params = count_parameters(model, trainable_only=True)
     img_size = int(config.get("dataset", {}).get("img_size", 224))
