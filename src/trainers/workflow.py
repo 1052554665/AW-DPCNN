@@ -91,12 +91,18 @@ def train_and_evaluate(config: Dict, run_dir: Path, device: torch.device, seed: 
     num_classes = len(class_names)
     model = build_model(config).to(device)
 
+    # --- cuDNN / CUDA performance tuning ---
+    # set_seed() disables these for reproducibility; re-enable for training speed.
+    # - benchmark=True: cuDNN auto-tuner finds the fastest conv algo for this input size
+    # - TF32 matmul: leverages Ampere+ tensor cores for float32 matmul (~2× faster)
+    if device.type == "cuda":
+        torch.backends.cudnn.benchmark = True
+        torch.set_float32_matmul_precision("high")
+
     # --- torch.compile (PyTorch 2.0+) ---
     _compile_enabled = bool(config.get("train", {}).get("compile", True))
     if _compile_enabled and hasattr(torch, "compile") and device.type == "cuda":
         try:
-            # Enable TF32 tensor cores for matmul (safe speedup on Ampere+).
-            torch.set_float32_matmul_precision("high")
             # "default" mode gives ~30-50% speedup with no CUDA-graph issues.
             # "reduce-overhead" / "max-autotune" offer more speed but require
             # CUDA-graph-compatible models and careful tensor lifetime mgmt.
