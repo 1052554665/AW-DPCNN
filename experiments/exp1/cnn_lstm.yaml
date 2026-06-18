@@ -1,0 +1,31 @@
+experiment_name: exp1_cnn_lstm
+device: cuda
+
+model:
+  name: cnn_lstm
+  num_classes: 9
+  in_channels: 3
+  cnn_out_channels: 128
+  lstm_hidden: 256
+  lstm_layers: 1
+  bidirectional: true
+  dropout: 0.5
+
+train:
+  epochs: 30
+  lr: 1e-4
+  optimizer: adamw
+  weight_decay: 1e-3
+
+scheduler:
+  type: plateau
+  mode: max
+  factor: 0.5
+  patience: 5
+  min_lr: 0.000001
+
+visualization:
+  tsne: true
+
+output:
+  root_dir: ./experiments/experiment_result/exp1/cnn_lstm

@@ -1,6 +1,7 @@
 from typing import Dict
 
 from src.models.convnext_tiny import ConvNeXtTiny
+from src.models.cnn_lstm import CNNLSTM
 from src.models.efficientnet import EfficientNetB0
 from src.models.harmonic_cnn import HarmonicCNN
 from src.models.mobilenetv3 import MobileNetV3Small
@@ -31,6 +32,17 @@ def build_model(config: Dict):
         return HarmonicCNN(
             num_classes=num_classes,
             in_channels=int(model_cfg.get("in_channels", 3)),
+            dropout=float(model_cfg.get("dropout", 0.5)),
+        )
+
+    if name in {"cnn_lstm", "cnn-lstm", "cnnlstm"}:
+        return CNNLSTM(
+            num_classes=num_classes,
+            in_channels=int(model_cfg.get("in_channels", 3)),
+            cnn_out_channels=int(model_cfg.get("cnn_out_channels", 128)),
+            lstm_hidden=int(model_cfg.get("lstm_hidden", 256)),
+            lstm_layers=int(model_cfg.get("lstm_layers", 1)),
+            bidirectional=bool(model_cfg.get("bidirectional", True)),
             dropout=float(model_cfg.get("dropout", 0.5)),
         )
 
