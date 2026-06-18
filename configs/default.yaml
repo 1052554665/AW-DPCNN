@@ -4,10 +4,11 @@ seed: 42
 device: auto
 
 dataset:
-  # root_dir: ./datasets/cwru_within
+  root_dir: ./datasets/cwru_within
   # root_dir: ./datasets/rep_compare/cwt_gadf
   # root_dir: ./datasets/Group2_4
-  root_dir: ./datasets/Group2_4_harmonic
+
+  # root_dir: ./datasets/Group2_4_harmonic
   train_split: train
   val_split: val
   test_split: test

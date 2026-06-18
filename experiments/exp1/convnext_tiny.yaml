@@ -3,7 +3,7 @@ device: cuda
 
 model:
   name: convnext_tiny
-  num_classes: 9
+  num_classes: 4
   pretrained: false # ImageNet features don't help for spectrograms
 
 train:
