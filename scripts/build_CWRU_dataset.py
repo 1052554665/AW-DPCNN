@@ -208,28 +208,36 @@ def generate_gadf_image(signal: np.ndarray,
     Parameters
     ----------
     sequence_length : int or None
-        Number of time‑steps to resample to before GAF.
-        Default ``None`` — uses the full signal without resampling.
+        Number of time‑segments used in the GAF matrix (controls GAF resolution).
+        This sets the ``image_size`` of ``GramianAngularField``.
+        The output is always resized to ``img_size × img_size``.
+        Default ``None`` → same as ``img_size`` (current behaviour).
     """
     import librosa
     signal = signal.astype(np.float32)
 
-    # Optionally resample to control sequence length
-    if sequence_length is not None and len(signal) > sequence_length:
+    # Determine GAF resolution
+    gaf_res = sequence_length if sequence_length is not None else img_size
+
+    # Pre‑resample for performance if signal is much longer than needed
+    max_samples = max(gaf_res * 4, 256)
+    if len(signal) > max_samples:
         signal = librosa.resample(
-            signal, orig_sr=len(signal), target_sr=sequence_length,
+            signal, orig_sr=len(signal), target_sr=max_samples,
         )
 
     signal = (signal - signal.min()) / (signal.max() - signal.min() + 1e-8)
     signal = signal * 2.0 - 1.0
     signal = np.clip(signal, -1.0, 1.0)
 
-    # Reuse a single transformer — not thread‑safe, so instantiate per call
-    gadf_trans = GramianAngularField(image_size=img_size, method=method)
+    # GAF with controlled resolution
+    gadf_trans = GramianAngularField(image_size=gaf_res, method=method)
     gadf = gadf_trans.fit_transform(signal.reshape(1, -1))[0]
 
     gadf_norm = (gadf - gadf.min()) / (gadf.max() - gadf.min() + 1e-8)
     gadf_uint8 = (gadf_norm * 255).astype(np.uint8)
+    # Resize to target img_size (no‑op when gaf_res == img_size)
+    gadf_uint8 = cv2.resize(gadf_uint8, (img_size, img_size))
     return _gray_to_pseudo(gadf_uint8, cmap)
 
 

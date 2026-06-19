@@ -63,7 +63,7 @@ Usage::
     # Custom split ratio
     python scripts/build_group2_4_harmonic.py --file-split 50,25,25 --workers 16
 
-    python scripts/build_group2_4_harmonic.py  --win-len 8192 --hop-len 8192 --n-fft 4096 --n-iter 10 --sequence-length 300 --gamma 10 --workers 32
+    python scripts/build_group2_4_harmonic.py  --win-len 8192 --hop-len 8192 --n-fft 4096 --n-iter 10 --sequence-length 224 --gamma 10 --workers 32
 """
 
 import argparse

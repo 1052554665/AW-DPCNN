@@ -1,29 +1,38 @@
->how to ensure if there is a class imbalance and solve it?
+>why there is noting change in the images before and after applying the parameter of `sequence_length`?
 
->is there a way to control the GAF images generation? the parameter maybe called `sequence_length`? if so, add this parameter to script `build_group2_4_harmonic.py` and `build_ablation_datasets.py`
+Good question. The issue is that `sequence_length` currently only controls how many raw samples go **into** the GAF transform, but `GramianAngularField` always reduces them to `img_size` (224) segments via PAA (Piecewise Aggregate Approximation) regardless. So whether you feed 8192 or 3000 samples, PAA averages them down to exactly 224 bins — the output is visually near-identical.
 
-The `sequence_length` parameter controls how many time points from the signal are used before GAF computation — in `_time_series_to_image` this is currently hardcoded to `img_size * 4`, and in `generate_gadf_image` the full signal is used without resampling.
+The fix is to make `sequence_length` control the **`image_size` parameter of `GramianAngularField`** itself (which sets the number of time segments in the GAF matrix), then resize back to `img_size`. This directly changes the GAF resolution.
 
-### Files modified
 
-| File | Changes |
-|---|---|
-| representation_comparison.py | Added `sequence_length` to `_time_series_to_image` (default=`img_size * 4`) and `generate_gadf` |
-| build_CWRU_dataset.py | Added `sequence_length` to `generate_gadf_image` (default=`None`=full signal), `process_one_window`, `_append_window_tasks`, `_collect_tasks`, and CLI |
-| build_group2_4_harmonic.py | Added `--sequence-length` CLI arg, threaded through `_collect_window_tasks` → task tuples → `process_one_window` |
-| build_ablation_datasets.py | Added `--sequence-length` CLI arg, threaded through all 3 `_build_*` / `_process_*` pipelines |
+| Function | `GramianAngularField(image_size=...)` | What `sequence_length` actually does |
+|---|---|---|
+| `generate_gadf_image` | Always `img_size` (224) | Pre-resamples signal → PAA still reduces to 224 bins |
+| `_time_series_to_image` | Always `img_size` (224), baked into transformer | Same — pre-resamples, but PAA always → 224 bins |
 
-### Usage examples
+**The fix**: Make `sequence_length` directly control `GramianAngularField`'s `image_size` (the number of time segments in the GAF matrix), then resize back to `img_size`. This changes the GAF resolution and will be visually apparent.
 
-```bash
-# Harmonic dataset with GAF limited to 896 time-steps
-python scripts/build_group2_4_harmonic.py --sequence-length 896
+## Root cause & fix
 
-# Ablation datasets with GAF limited to 512 time-steps
-python scripts/build_ablation_datasets.py --sequence-length 512 --workers 16
+**Before**: `sequence_length` only pre-resampled the raw signal before feeding it to `GramianAngularField(image_size=img_size)`. Since PAA inside `GramianAngularField` always reduced the signal to 224 bins regardless, the output was near-identical.
+
+**After**: `sequence_length` now directly controls `GramianAngularField(image_size=sequence_length)` — i.e., the **number of time segments in the GAF matrix**. The resulting matrix is then resized to `img_size × img_size`. A lower value (e.g., 32) produces a coarse, blocky GAF; a higher value (e.g., 256) produces a fine-grained GAF.
+
+```
+sequence_length=32   →  32×32 GAF matrix  →  resize to 224×224  (coarse)
+sequence_length=128  →  128×128 GAF matrix →  resize to 224×224  (medium)
+sequence_length=None →  224×224 GAF matrix →  no resize          (default)
 ```
 
-### Default behavior (backward compatible)
+### Usage
 
-- **build_group2_4_harmonic.py** / **build_CWRU_dataset.py**: `None` → uses the full window signal (same as before)
-- **`build_ablation_datasets.py`** (via representation_comparison.py): `None` → uses `img_size * 4` (same hardcoded `224*4=896` as before)
+```bash
+# Coarse GAF (fast)
+python scripts/build_group2_4_harmonic.py --sequence-length 32
+
+# Fine-grained GAF (slower but more detail)
+python scripts/build_group2_4_harmonic.py --sequence-length 256
+
+# Default (same as --sequence-length 224)
+python scripts/build_group2_4_harmonic.py
+```

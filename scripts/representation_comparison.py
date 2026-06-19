@@ -143,9 +143,9 @@ def _time_series_to_image(signal: np.ndarray, img_size: int,
     Parameters
     ----------
     sequence_length : int or None
-        Max number of time‑steps to use before GAF/Markov/RP transform.
-        If longer, the signal is downsampled to this length.
-        Default ``None`` → ``img_size * 4``.
+        Number of time‑segments for the temporal encoding matrix
+        (controls resolution).  Used for pre‑resampling the signal
+        before the transform.  Default ``None`` → ``img_size * 4``.
     """
     import librosa
     sig = signal.astype(np.float64)
@@ -172,19 +172,41 @@ def _time_series_to_image(signal: np.ndarray, img_size: int,
 
 def generate_gadf(signal: np.ndarray, img_size: int = 224,
                   sequence_length: int = None) -> np.ndarray:
+    """Generate GADF pseudo‑colour image.
+
+    Parameters
+    ----------
+    sequence_length : int or None
+        GAF matrix resolution (passed as ``image_size`` to
+        ``GramianAngularField``).  Lower values → coarser GAF;
+        higher values → finer GAF.  Output is always ``img_size × img_size``.
+        Default ``None`` → same as ``img_size``.
+    """
     from pyts.image import GramianAngularField
+    gaf_res = sequence_length if sequence_length is not None else img_size
     return _time_series_to_image(
         signal, img_size,
-        GramianAngularField(image_size=img_size, method='difference'),
+        GramianAngularField(image_size=gaf_res, method='difference'),
         sequence_length=sequence_length,
     )
 
 
-def generate_gasf(signal: np.ndarray, img_size: int = 224) -> np.ndarray:
+def generate_gasf(signal: np.ndarray, img_size: int = 224,
+                  sequence_length: int = None) -> np.ndarray:
+    """Generate GASF pseudo‑colour image.
+
+    Parameters
+    ----------
+    sequence_length : int or None
+        GAF matrix resolution (passed as ``image_size`` to
+        ``GramianAngularField``).  Default ``None`` → same as ``img_size``.
+    """
     from pyts.image import GramianAngularField
+    gaf_res = sequence_length if sequence_length is not None else img_size
     return _time_series_to_image(
         signal, img_size,
-        GramianAngularField(image_size=img_size, method='summation'),
+        GramianAngularField(image_size=gaf_res, method='summation'),
+        sequence_length=sequence_length,
     )
 
 
