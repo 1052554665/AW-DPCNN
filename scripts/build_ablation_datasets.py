@@ -11,6 +11,11 @@ B4+ use the existing full AW‑DPCNN dataset (datasets/transformer-five).
 
 All datasets share the same file‑level split for fair comparison.
 
+Revise the source directory and parameters if needed::
+
+    SRC_DIR = "raw-data/transformer-five"
+    WIN_LEN, HOP_LEN = 8192, 4096
+
 Usage::
 
     python scripts/build_ablation_datasets.py --workers 16
@@ -72,7 +77,8 @@ def _load_signals(files_by_class):
     return path_to_signal
 
 
-def _build_single_rep(rep_fn, name, split_map, path_to_signal):
+def _build_single_rep(rep_fn, name, split_map, path_to_signal,
+                      sequence_length=None):
     """Build a single‑representation dataset (B0, B1)."""
     output_dir = os.path.join(OUTPUT_ROOT, name)
     tasks = []
@@ -85,11 +91,12 @@ def _build_single_rep(rep_fn, name, split_map, path_to_signal):
                 stem = Path(fpath).stem
                 for start in range(0, len(signal) - WIN_LEN + 1, HOP_LEN):
                     window = signal[start:start + WIN_LEN]
-                    tasks.append((rep_fn, window, sr_val, out_cls_dir, f"{stem}_{len(tasks):05d}.png"))
+                    tasks.append((rep_fn, window, sr_val, out_cls_dir,
+                                  f"{stem}_{len(tasks):05d}.png", sequence_length))
     return tasks, output_dir
 
 
-def _build_concat(split_map, path_to_signal):
+def _build_concat(split_map, path_to_signal, sequence_length=None):
     """Build Mel+GADF pixel‑average dataset (B2)."""
     output_dir = os.path.join(OUTPUT_ROOT, "concat")
     tasks = []
@@ -102,11 +109,12 @@ def _build_concat(split_map, path_to_signal):
                 stem = Path(fpath).stem
                 for start in range(0, len(signal) - WIN_LEN + 1, HOP_LEN):
                     window = signal[start:start + WIN_LEN]
-                    tasks.append((window, sr_val, out_cls_dir, f"{stem}_{len(tasks):05d}.png"))
+                    tasks.append((window, sr_val, out_cls_dir,
+                                  f"{stem}_{len(tasks):05d}.png", sequence_length))
     return tasks, output_dir
 
 
-def _build_awdpcnn_gamma1(split_map, path_to_signal):
+def _build_awdpcnn_gamma1(split_map, path_to_signal, sequence_length=None):
     """Build AW‑DPCNN with γ=1 (B3)."""
     output_dir = os.path.join(OUTPUT_ROOT, "awdpcnn_gamma1")
     tasks = []
@@ -119,18 +127,20 @@ def _build_awdpcnn_gamma1(split_map, path_to_signal):
                 stem = Path(fpath).stem
                 for start in range(0, len(signal) - WIN_LEN + 1, HOP_LEN):
                     window = signal[start:start + WIN_LEN]
-                    tasks.append((window, sr_val, out_cls_dir, f"{stem}_{len(tasks):05d}.png"))
+                    tasks.append((window, sr_val, out_cls_dir,
+                                  f"{stem}_{len(tasks):05d}.png", sequence_length))
     return tasks, output_dir
 
 
 def _process_single_rep(args):
-    rep_fn, window, sr_val, out_cls_dir, fname = args
+    rep_fn, window, sr_val, out_cls_dir, fname, sequence_length = args
     try:
         # generate_mel takes (signal, sr, ...), generate_gadf takes (signal, ...)
         if rep_fn is generate_mel:
             img = rep_fn(window, sr_val, img_size=IMG_SIZE, cmap=CMAP)
         else:
-            img = rep_fn(window, img_size=IMG_SIZE)
+            img = rep_fn(window, img_size=IMG_SIZE,
+                         sequence_length=sequence_length)
         out_path = os.path.join(out_cls_dir, fname)
         os.makedirs(os.path.dirname(out_path), exist_ok=True)
         cv2.imwrite(out_path, img)
@@ -141,10 +151,11 @@ def _process_single_rep(args):
 
 
 def _process_concat(args):
-    window, sr_val, out_cls_dir, fname = args
+    window, sr_val, out_cls_dir, fname, sequence_length = args
     try:
         mel = generate_mel(window, sr_val, img_size=IMG_SIZE, cmap=CMAP)
-        gadf = generate_gadf(window, img_size=IMG_SIZE)
+        gadf = generate_gadf(window, img_size=IMG_SIZE,
+                             sequence_length=sequence_length)
         avg = ((mel.astype(np.float32) + gadf.astype(np.float32)) / 2).astype(np.uint8)
         out_path = os.path.join(out_cls_dir, fname)
         os.makedirs(os.path.dirname(out_path), exist_ok=True)
@@ -156,10 +167,11 @@ def _process_concat(args):
 
 
 def _process_awdpcnn_gamma1(args):
-    window, sr_val, out_cls_dir, fname = args
+    window, sr_val, out_cls_dir, fname, sequence_length = args
     try:
         mel = generate_mel(window, sr_val, img_size=IMG_SIZE, cmap=CMAP)
-        gadf = generate_gadf(window, img_size=IMG_SIZE)
+        gadf = generate_gadf(window, img_size=IMG_SIZE,
+                             sequence_length=sequence_length)
         fused = aw_dpcnn_fusion_color(mel, gadf, n_iter=20, gamma=1.0)
         out_path = os.path.join(out_cls_dir, fname)
         os.makedirs(os.path.dirname(out_path), exist_ok=True)
@@ -173,6 +185,9 @@ def _process_awdpcnn_gamma1(args):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--workers", type=int, default=os.cpu_count() or 4)
+    parser.add_argument("--sequence-length", type=int, default=None,
+                        help="Max time‑steps for GAF (resample if longer). "
+                             "None = use img_size * 4.")
     args = parser.parse_args()
 
     files_by_class = _collect_files()
@@ -188,7 +203,8 @@ def main():
 
     # ── B0: Mel‑only ──
     print("\n[B0] Mel-only...")
-    tasks, _ = _build_single_rep(generate_mel, "mel_only", split_map, path_to_signal)
+    tasks, _ = _build_single_rep(generate_mel, "mel_only", split_map, path_to_signal,
+                                 sequence_length=args.sequence_length)
     print(f"  Tasks: {len(tasks)}")
     with ProcessPoolExecutor(max_workers=args.workers) as ex:
         results = list(tqdm(ex.map(_process_single_rep, tasks, chunksize=8),
@@ -197,7 +213,8 @@ def main():
 
     # ── B1: GADF‑only ──
     print("\n[B1] GADF-only...")
-    tasks, _ = _build_single_rep(generate_gadf, "gadf_only", split_map, path_to_signal)
+    tasks, _ = _build_single_rep(generate_gadf, "gadf_only", split_map, path_to_signal,
+                                 sequence_length=args.sequence_length)
     print(f"  Tasks: {len(tasks)}")
     with ProcessPoolExecutor(max_workers=args.workers) as ex:
         results = list(tqdm(ex.map(_process_single_rep, tasks, chunksize=8),
@@ -206,7 +223,8 @@ def main():
 
     # ── B2: Concat ──
     print("\n[B2] Concat (Mel+GADF average)...")
-    tasks, _ = _build_concat(split_map, path_to_signal)
+    tasks, _ = _build_concat(split_map, path_to_signal,
+                             sequence_length=args.sequence_length)
     print(f"  Tasks: {len(tasks)}")
     with ProcessPoolExecutor(max_workers=args.workers) as ex:
         results = list(tqdm(ex.map(_process_concat, tasks, chunksize=8),
@@ -215,7 +233,8 @@ def main():
 
     # ── B3: AW‑DPCNN γ=1 ──
     print("\n[B3] AW-DPCNN γ=1...")
-    tasks, _ = _build_awdpcnn_gamma1(split_map, path_to_signal)
+    tasks, _ = _build_awdpcnn_gamma1(split_map, path_to_signal,
+                                     sequence_length=args.sequence_length)
     print(f"  Tasks: {len(tasks)}")
     with ProcessPoolExecutor(max_workers=args.workers) as ex:
         results = list(tqdm(ex.map(_process_awdpcnn_gamma1, tasks, chunksize=8),

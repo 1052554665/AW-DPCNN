@@ -50,6 +50,8 @@ Pipeline (per sliding window)
   2. GADF image (pseudo‑colour)
   3. AW‑DPCNN fusion (γ = 4, N = 20)
 
+!!! Check the source directory and parameters if needed
+
 Usage::
 
     # Default parameters (recommended)
@@ -60,6 +62,8 @@ Usage::
 
     # Custom split ratio
     python scripts/build_group2_4_harmonic.py --file-split 50,25,25 --workers 16
+
+    python scripts/build_group2_4_harmonic.py  --win-len 8192 --hop-len 8192 --n-fft 4096 --n-iter 10 --sequence-length 300 --gamma 10 --workers 32
 """
 
 import argparse
@@ -331,6 +335,7 @@ def _collect_window_tasks(
     gaf_method: str,
     gamma: float,
     overwrite: bool,
+    sequence_length: int = None,
 ) -> Tuple[list, list]:
     """Build task list + metadata rows from file‑level split maps."""
     tasks = []
@@ -355,7 +360,7 @@ def _collect_window_tasks(
                     tasks.append((
                         signal, sr_val, out_path, img_size, n_iter,
                         n_fft, hop_length, n_mels, fmax, cmap,
-                        gaf_method, False, gamma,
+                        gaf_method, False, gamma, sequence_length,
                     ))
                     metadata_rows.append({
                         "filename": f"{stem}.png",
@@ -379,7 +384,7 @@ def _collect_window_tasks(
                         tasks.append((
                             window, sr_val, out_path, img_size, n_iter,
                             n_fft, hop_length, n_mels, fmax, cmap,
-                            gaf_method, False, gamma,
+                            gaf_method, False, gamma, sequence_length,
                         ))
                         metadata_rows.append({
                             "filename": fname,
@@ -442,6 +447,9 @@ def build_parser() -> argparse.ArgumentParser:
     # GADF
     p.add_argument("--gaf-method", default="difference",
                    choices=["difference", "summation"])
+    p.add_argument("--sequence-length", type=int, default=None,
+                   help="Max time‑steps for GAF (resample if longer). "
+                        "None = use full signal length.")
 
     # AW-DPCNN
     p.add_argument("--n-iter", type=int, default=20)
@@ -491,6 +499,7 @@ def main():
     print(f"  Output dir     : {args.output_dir}")
     print(f"  Sample rate    : {args.sr} Hz")
     print(f"  Window / Hop   : {args.win_len} / {args.hop_len}")
+    print(f"  GAF seq len    : {args.sequence_length if args.sequence_length else 'full signal'}")
     print(f"  File split     : {args.file_split}  (seed={args.split_seed})")
     print(f"  Workers        : {args.workers}")
     print(f"  Dry run        : {args.dry_run}")
@@ -523,6 +532,7 @@ def main():
         sys.exit(1)
 
     # ── File‑level split ──
+
     train_map, val_map, test_map = _file_level_split_small(
         files_by_class, ratios, args.split_seed,
     )
@@ -578,6 +588,7 @@ def main():
         gaf_method=args.gaf_method,
         gamma=args.gamma,
         overwrite=args.overwrite,
+        sequence_length=args.sequence_length,
     )
 
     print(f"\n[INFO] Total fusion tasks: {len(tasks)}")

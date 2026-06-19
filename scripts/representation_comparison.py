@@ -136,14 +136,26 @@ def generate_cwt(signal: np.ndarray, sr: int, img_size: int = 224,
 # ═══════════════════════════════════════════════════════════════════════
 
 def _time_series_to_image(signal: np.ndarray, img_size: int,
-                          transformer, flatten: bool = True) -> np.ndarray:
-    """Convert a 1‑d signal to an image using a pyts transformer."""
+                          transformer, flatten: bool = True,
+                          sequence_length: int = None) -> np.ndarray:
+    """Convert a 1‑d signal to an image using a pyts transformer.
+
+    Parameters
+    ----------
+    sequence_length : int or None
+        Max number of time‑steps to use before GAF/Markov/RP transform.
+        If longer, the signal is downsampled to this length.
+        Default ``None`` → ``img_size * 4``.
+    """
     import librosa
     sig = signal.astype(np.float64)
 
-    # If signal is too long for pyts, downsample temporally
-    if len(sig) > img_size * 4:
-        sig = librosa.resample(sig, orig_sr=len(sig), target_sr=img_size * 4)
+    # Determine target sequence length
+    target_len = sequence_length if sequence_length is not None else img_size * 4
+
+    # If signal is longer than target, downsample temporally
+    if len(sig) > target_len:
+        sig = librosa.resample(sig, orig_sr=len(sig), target_sr=target_len)
 
     sig = (sig - sig.min()) / (sig.max() - sig.min() + 1e-8)
     sig = sig * 2.0 - 1.0
@@ -158,11 +170,13 @@ def _time_series_to_image(signal: np.ndarray, img_size: int,
     return _gray_to_pseudo(img_u8, cv2.COLORMAP_VIRIDIS)
 
 
-def generate_gadf(signal: np.ndarray, img_size: int = 224) -> np.ndarray:
+def generate_gadf(signal: np.ndarray, img_size: int = 224,
+                  sequence_length: int = None) -> np.ndarray:
     from pyts.image import GramianAngularField
     return _time_series_to_image(
         signal, img_size,
         GramianAngularField(image_size=img_size, method='difference'),
+        sequence_length=sequence_length,
     )
 
 

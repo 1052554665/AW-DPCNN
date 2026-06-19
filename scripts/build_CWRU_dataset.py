@@ -201,9 +201,25 @@ def generate_mel_image(signal: np.ndarray, sr: int,
 def generate_gadf_image(signal: np.ndarray,
                         img_size: int = 224,
                         method: str = 'difference',
-                        cmap: int = cv2.COLORMAP_VIRIDIS) -> np.ndarray:
-    """Compute GADF and return a BGR pseudo‑colour image (H,W,3)."""
+                        cmap: int = cv2.COLORMAP_VIRIDIS,
+                        sequence_length: int = None) -> np.ndarray:
+    """Compute GADF and return a BGR pseudo‑colour image (H,W,3).
+
+    Parameters
+    ----------
+    sequence_length : int or None
+        Number of time‑steps to resample to before GAF.
+        Default ``None`` — uses the full signal without resampling.
+    """
+    import librosa
     signal = signal.astype(np.float32)
+
+    # Optionally resample to control sequence length
+    if sequence_length is not None and len(signal) > sequence_length:
+        signal = librosa.resample(
+            signal, orig_sr=len(signal), target_sr=sequence_length,
+        )
+
     signal = (signal - signal.min()) / (signal.max() - signal.min() + 1e-8)
     signal = signal * 2.0 - 1.0
     signal = np.clip(signal, -1.0, 1.0)
@@ -330,7 +346,8 @@ def process_one_window(args: tuple) -> int:
     Returns 1 on success, 0 on failure.
     """
     (signal, sr, out_path, img_size, n_iter, n_fft, hop_length,
-     n_mels, fmax, cmap, gaf_method, save_intermediates, gamma) = args
+     n_mels, fmax, cmap, gaf_method, save_intermediates, gamma,
+     sequence_length) = args
 
     try:
         mel_img = generate_mel_image(
@@ -339,6 +356,7 @@ def process_one_window(args: tuple) -> int:
         )
         gadf_img = generate_gadf_image(
             signal, img_size=img_size, method=gaf_method, cmap=cmap,
+            sequence_length=sequence_length,
         )
         fused = aw_dpcnn_fusion_color(mel_img, gadf_img,
                                        n_iter=n_iter, gamma=gamma)
@@ -381,6 +399,7 @@ def _collect_tasks(
     file_split_ratios: tuple = (),
     split_seed: int = 42,
     gamma: float = 4.0,
+    sequence_length: int = None,
 ) -> tuple:
     """Walk the input directory and build a flat list of window tasks.
 
@@ -463,7 +482,7 @@ def _collect_tasks(
                         signal, sr_val, out_cls_dir, prefix, win_len, hop_len,
                         img_size, n_iter, n_fft, hop_length, n_mels, fmax,
                         cmap, gaf_method, save_intermediates, overwrite,
-                        gamma, tasks,
+                        gamma, tasks, sequence_length,
                     )
                     # Metadata rows
                     if win_len > 0 and win_len < len(signal):
@@ -489,7 +508,7 @@ def _collect_tasks(
                     signal, sr_val, out_cls_dir, prefix, win_len, hop_len,
                     img_size, n_iter, n_fft, hop_length, n_mels, fmax,
                     cmap, gaf_method, save_intermediates, overwrite,
-                    gamma, tasks,
+                    gamma, tasks, sequence_length,
                 )
 
     return tasks, metadata_rows
@@ -499,7 +518,7 @@ def _append_window_tasks(
     signal, sr, out_cls_dir, prefix, win_len, hop_len,
     img_size, n_iter, n_fft, hop_length, n_mels, fmax,
     cmap, gaf_method, save_intermediates, overwrite,
-    gamma, tasks,
+    gamma, tasks, sequence_length=None,
 ):
     """Create window tasks for a single signal and append to *tasks* list."""
     if win_len <= 0 or win_len >= len(signal):
@@ -510,6 +529,7 @@ def _append_window_tasks(
             signal, sr, out_path, img_size, n_iter,
             n_fft, hop_length, n_mels, fmax, cmap,
             gaf_method, save_intermediates, gamma,
+            sequence_length,
         ))
     else:
         idx = 0
@@ -523,6 +543,7 @@ def _append_window_tasks(
                 window, sr, out_path, img_size, n_iter,
                 n_fft, hop_length, n_mels, fmax, cmap,
                 gaf_method, save_intermediates, gamma,
+                sequence_length,
             ))
             idx += 1
 
@@ -585,6 +606,9 @@ def build_parser() -> argparse.ArgumentParser:
     # --- GADF parameters ---
     p.add_argument('--gaf-method', default='difference',
                    choices=['difference', 'summation'])
+    p.add_argument('--sequence-length', type=int, default=None,
+                   help='Max time‑steps for GAF (resample if longer). '
+                        'None = use full signal length.')
 
     # --- AW-DPCNN parameters ---
     p.add_argument('--n-iter', type=int, default=20,
@@ -649,6 +673,7 @@ def main():
     print(f'  Image size      : {args.img_size}')
     print(f'  Colormap        : {args.cmap}')
     print(f'  PCNN iter / γ   : {args.n_iter} / {args.gamma}')
+    print(f'  GAF seq len     : {args.sequence_length if args.sequence_length else "full signal"}')
     print(f'  File split      : {args.file_split if args.file_split else "none"}')
     print(f'  Metadata        : {args.metadata}')
     print(f'  Workers         : {args.workers}')
@@ -676,6 +701,7 @@ def main():
         file_split_ratios=file_split_ratios,
         split_seed=args.split_seed,
         gamma=args.gamma,
+        sequence_length=args.sequence_length,
     )
 
     print(f'\n[INFO] Total fusion tasks: {len(tasks)}')

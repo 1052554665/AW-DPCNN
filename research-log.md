@@ -1,46 +1,29 @@
+>how to ensure if there is a class imbalance and solve it?
 
-## CNN-LSTM Hybrid Model (2026-06-18)
+>is there a way to control the GAF images generation? the parameter maybe called `sequence_length`? if so, add this parameter to script `build_group2_4_harmonic.py` and `build_ablation_datasets.py`
 
-Created `src/models/cnn_lstm.py` — a lightweight CNN‑BiLSTM hybrid for spectrogram‑based fault diagnosis.
+The `sequence_length` parameter controls how many time points from the signal are used before GAF computation — in `_time_series_to_image` this is currently hardcoded to `img_size * 4`, and in `generate_gadf_image` the full signal is used without resampling.
 
-### Architecture
-```
-Input [B, 3, 224, 224]
-  │
-  ├─ Frequency‑aware stem (7×1 + 3×3 conv, 32 ch)
-  ├─ Block2 (32→64, /2) ── 2× Conv-BN-ReLU + MaxPool
-  ├─ Block3 (64→128, /2) ── 2× Conv-BN-ReLU + MaxPool
-  ├─ Block4 (128→128, /2) ── 2× Conv-BN-ReLU + MaxPool
-  │                           → [B, 128, 14, 14]
-  ├─ Temporal pool (mean over freq axis) → [B, 128, 14]
-  ├─ Permute → [B, 14, 128]
-  ├─ BiLSTM (hidden=256, 1 layer) → [B, 14, 512]
-  ├─ Last timestep → [B, 512]
-  └─ FC (512→128) + Dropout + FC (128→num_classes)
-```
+### Files modified
 
-### Key specs
-| Property | Value |
-|----------|-------|
-| Parameters | **1.44M** (lightweight) |
-| CNN channels | 32→64→128→128 |
-| LSTM | 1‑layer BiLSTM, hidden=256 |
-| Bidirectional output | 512 dim |
-| Weight init | Kaiming (CNN) + default (LSTM) |
+| File | Changes |
+|---|---|
+| representation_comparison.py | Added `sequence_length` to `_time_series_to_image` (default=`img_size * 4`) and `generate_gadf` |
+| build_CWRU_dataset.py | Added `sequence_length` to `generate_gadf_image` (default=`None`=full signal), `process_one_window`, `_append_window_tasks`, `_collect_tasks`, and CLI |
+| build_group2_4_harmonic.py | Added `--sequence-length` CLI arg, threaded through `_collect_window_tasks` → task tuples → `process_one_window` |
+| build_ablation_datasets.py | Added `--sequence-length` CLI arg, threaded through all 3 `_build_*` / `_process_*` pipelines |
 
-### Design rationale
-- CNN extracts local spectral features per time column
-- Average-pooling over frequency axis preserves temporal structure
-- BiLSTM explicitly models time‑axis dependencies — physically meaningful for
-  vibration/acoustic signals where harmonic patterns evolve over time
-- Much lighter than VGG16 (134M) or ConvNeXt‑Tiny (27.8M)
+### Usage examples
 
-### Files created
-- `src/models/cnn_lstm.py` — model definition
-- `experiments/exp1/cnn_lstm.yaml` — experiment config
-- Model registered in `src/models/registry.py` as `cnn_lstm` / `cnn-lstm` / `cnnlstm`
-
-### Usage
 ```bash
-python scripts/train.py --config configs/default.yaml --exp-config experiments/exp1/cnn_lstm.yaml
+# Harmonic dataset with GAF limited to 896 time-steps
+python scripts/build_group2_4_harmonic.py --sequence-length 896
+
+# Ablation datasets with GAF limited to 512 time-steps
+python scripts/build_ablation_datasets.py --sequence-length 512 --workers 16
 ```
+
+### Default behavior (backward compatible)
+
+- **build_group2_4_harmonic.py** / **build_CWRU_dataset.py**: `None` → uses the full window signal (same as before)
+- **`build_ablation_datasets.py`** (via representation_comparison.py): `None` → uses `img_size * 4` (same hardcoded `224*4=896` as before)
