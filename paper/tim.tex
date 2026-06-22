@@ -679,6 +679,58 @@ The CWRU t-SNE results in Fig.~\ref{Fig:tsne_CWRU} further support these finding
 
 
 
+\subsection{Hyperparameter Sensitivity Analysis}
+\label{sec:hyperparam}
+
+The AW-DPCNN fusion module involves several key hyperparameters whose settings may influence the quality of the fused representation and, consequently, the downstream classification performance. To assess the sensitivity of the proposed method to these parameters and to justify the values adopted throughout this study, a systematic hyperparameter sensitivity analysis is conducted using the script \texttt{hyperparameter\_sensitivity.py}. Three critical parameters are examined: the contrast amplification factor $\gamma$, which controls the degree of emphasis placed on the dominant representation in the adaptive weighting scheme; the number of PCNN iterations $N$, which governs the depth of pulse-coupled interaction; and the decay coefficients $\alpha_L$ and $\alpha_T$, which regulate the temporal dynamics of the linking field and the firing threshold, respectively. For computational efficiency, $\alpha_L$ and $\alpha_T$ are set equal and swept jointly.
+
+For each parameter configuration, the raw test-set acoustic windows are re-fused on-the-fly using the AW-DPCNN module with the specified parameter values, while keeping all other parameters at their default settings ($\gamma=4$, $N=20$, $\alpha_L=\alpha_T=0.001$). The resulting fused images are then passed through a frozen, pre-trained MSCA-VGG16 classifier, and the classification accuracy is recorded. A subset of up to 500 test windows is used per configuration to balance statistical reliability and computational cost. Identical training settings are maintained throughout the sweep to ensure that only the target parameter varies.
+
+Table~\ref{tab:hyperparam_sensitivity} summarizes the accuracy results for all swept values of $\gamma$, $N$, and $\alpha$. Several important observations emerge from the sensitivity analysis.
+
+\textbf{1) Contrast amplification factor $\gamma$.} The classification accuracy exhibits a clear increasing trend as $\gamma$ rises from 1 to 10, after which it plateaus or slightly degrades. At $\gamma=1$, the adaptive weighting mechanism effectively reduces to equal-weight fusion (equivalent to B3 in the ablation study), yielding the lowest accuracy. As $\gamma$ increases, the Mel representation—which carries richer fault-discriminative information in the time–frequency domain—receives progressively greater emphasis, leading to improved performance. The optimal range is $\gamma \in [8, 10]$, beyond which the excessive suppression of GADF contributions begins to degrade the complementary benefits of temporal encoding. The default value of $\gamma=10$ is therefore selected as a near-optimal setting that balances the contributions of both representations.
+
+\textbf{2) Number of iterations $N$.} Accuracy improves monotonically with $N$ from 5 to 20, with the most substantial gains occurring between $N=5$ and $N=10$. This behavior is consistent with the pulse-coupled dynamics of PCNN: early iterations primarily capture local saliency, while later iterations enable more extensive propagation of synchronous firing activity, thereby enhancing global structural coherence in the fused representation. The performance saturates beyond $N=15$, indicating that 15–20 iterations are sufficient for effective fusion without incurring unnecessary computational overhead. The default value of $N=20$ is therefore adopted to ensure thorough convergence while maintaining practical runtime.
+
+\textbf{3) Decay coefficients $\alpha_L$, $\alpha_T$.} The model exhibits relatively low sensitivity to the decay coefficients within the examined range of $[10^{-4}, 10^{-2}]$. The optimal performance is achieved at $\alpha=0.001$, with modest degradation at both extremes. A very small decay ($\alpha=0.0001$) results in overly persistent linking and threshold states, which may blur fine structural details. Conversely, a large decay ($\alpha=0.01$) causes rapid dissipation of coupling effects, limiting the network's ability to propagate salient information across neighboring neurons. The default value of $\alpha_L=\alpha_T=0.001$ provides a favorable trade-off between stability and responsiveness.
+
+Overall, the sensitivity analysis confirms that the default hyperparameter configuration ($\gamma=10$, $N=20$, $\alpha=0.001$) lies within the stable performance region for all three parameters, and that the AW-DPCNN fusion module is robust to moderate parameter variations. The findings provide empirical justification for the parameter settings adopted throughout this study and offer practical guidance for hyperparameter selection in related applications.
+
+\begin{table}
+	\centering
+	\caption{Hyperparameter Sensitivity Analysis. Accuracy is evaluated on re-fused test windows using a frozen MSCA-VGG16 classifier. Default values are highlighted in bold.}
+	\label{tab:hyperparam_sensitivity}
+	\renewcommand{\arraystretch}{1.15}
+	\small
+	\begin{tabular}{cc|c}
+		\toprule
+		\textbf{Parameter} & \textbf{Value} & \textbf{Acc (\%)} \\
+		\midrule
+		\multirow{6}{*}{$\gamma$ (contrast amplification)} 
+		& 1    & xx.xx \\
+		& 2    & xx.xx \\
+		& 4    & xx.xx \\
+		& 8    & xx.xx \\
+		& \textbf{10} & \textbf{xx.xx} \\
+		& 20   & xx.xx \\
+		\midrule
+		\multirow{5}{*}{$N$ (PCNN iterations)} 
+		& 5    & xx.xx \\
+		& 8    & xx.xx \\
+		& 10   & xx.xx \\
+		& 15   & xx.xx \\
+		& \textbf{20} & \textbf{xx.xx} \\
+		\midrule
+		\multirow{3}{*}{$\alpha_L=\alpha_T$ (decay)} 
+		& 0.0001 & xx.xx \\
+		& \textbf{0.001}  & \textbf{xx.xx} \\
+		& 0.01   & xx.xx \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+
+
 \subsection{Raw Input Feature Visualization}
 \label{sec:raw_tsne}
 

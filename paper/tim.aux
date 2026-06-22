@@ -126,10 +126,10 @@
 \newlabel{sub@subfig:tsne_msca_vgg16_awdpcnn}{{d}{12}}
 \@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces t-SNE visualization of feature distributions under different fusion configurations. (a) B0: Mel-only. (b) B1: GADF-only. (c) B2: Mel+GADF concatenation. (d) B4: Full AW-DPCNN fusion, which yields the most compact intra-class clusters and the clearest inter-class separation.\relax }}{12}{}\protected@file@percent }
 \newlabel{Fig:tsne}{{8}{12}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}Raw Input Feature Visualization}{13}{}\protected@file@percent }
-\newlabel{sec:raw_tsne}{{\mbox  {V-E}}{13}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-F}}Representation Comparison}{13}{}\protected@file@percent }
-\newlabel{sec:rep_compare}{{\mbox  {V-F}}{13}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}Hyperparameter Sensitivity Analysis}{13}{}\protected@file@percent }
+\newlabel{sec:hyperparam}{{\mbox  {V-E}}{13}}
+\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces Hyperparameter Sensitivity Analysis. Accuracy is evaluated on re-fused test windows using a frozen MSCA-VGG16 classifier. Default values are highlighted in bold.\relax }}{13}{}\protected@file@percent }
+\newlabel{tab:hyperparam_sensitivity}{{VII}{13}}
 \newlabel{subfig:tsne_cwru_mel}{{9a}{14}}
 \newlabel{sub@subfig:tsne_cwru_mel}{{a}{14}}
 \newlabel{subfig:tsne_cwru_gadf}{{9b}{14}}
@@ -140,15 +140,17 @@
 \newlabel{sub@subfig:tsne_cwru_awdpcnn}{{d}{14}}
 \@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces t-SNE visualization on the CWRU dataset under different fusion strategies. The AW-DPCNN fused representation (d) achieves the most compact intra-class clusters and the clearest inter-class boundaries, consistent with the transformer dataset results.\relax }}{14}{}\protected@file@percent }
 \newlabel{Fig:tsne_CWRU}{{9}{14}}
-\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces Representation Comparison Across Time--Frequency and Temporal Encoding Methods. All combinations are fused via AW-DPCNN and classified by MSCA-VGG16 under identical training settings.\relax }}{15}{}\protected@file@percent }
-\newlabel{tab:rep_compare}{{VII}{15}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-F}}Raw Input Feature Visualization}{14}{}\protected@file@percent }
+\newlabel{sec:raw_tsne}{{\mbox  {V-F}}{14}}
 \@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces t-SNE visualization of raw input pixels (PCA 50 $\rightarrow $ t-SNE) for the transformer acoustic dataset. Classes are severely overlapped, demonstrating that raw pixel features are not inherently separable.\relax }}{15}{}\protected@file@percent }
 \newlabel{fig:raw_tsne_transformer}{{10}{15}}
-\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Average Accuracy by Time--Frequency and Temporal Encoding Method\relax }}{15}{}\protected@file@percent }
-\newlabel{tab:rep_compare_avg}{{VIII}{15}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-G}}Representation Comparison}{15}{}\protected@file@percent }
+\newlabel{sec:rep_compare}{{\mbox  {V-G}}{15}}
 \@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces t-SNE visualization of raw input pixels for the CWRU bearing dataset. The four classes (B, IR, N, OR) exhibit substantial overlap in the raw pixel space.\relax }}{15}{}\protected@file@percent }
 \newlabel{fig:raw_tsne_cwru}{{11}{15}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-G}}Generalization Validation on the CWRU Dataset}{15}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-H}}Generalization Validation on the CWRU Dataset}{16}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Conclusion}{16}{}\protected@file@percent }
+\newlabel{section6}{{VI}{16}}
 \bibstyle{IEEEtran}
 \bibdata{references}
 \bibcite{10491111}{1}
@@ -166,14 +168,16 @@
 \bibcite{6338347}{13}
 \bibcite{8742596}{14}
 \bibcite{9444355}{15}
-\@writefile{toc}{\contentsline {section}{\numberline {VI}Conclusion}{16}{}\protected@file@percent }
-\newlabel{section6}{{VI}{16}}
-\@writefile{toc}{\contentsline {section}{References}{16}{}\protected@file@percent }
 \bibcite{10848019}{16}
 \bibcite{8746999}{17}
 \bibcite{4344292}{18}
 \bibcite{10341267}{19}
 \bibcite{18184994}{20}
+\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Representation Comparison Across Time--Frequency and Temporal Encoding Methods. All combinations are fused via AW-DPCNN and classified by MSCA-VGG16 under identical training settings.\relax }}{17}{}\protected@file@percent }
+\newlabel{tab:rep_compare}{{VIII}{17}}
+\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Average Accuracy by Time--Frequency and Temporal Encoding Method\relax }}{17}{}\protected@file@percent }
+\newlabel{tab:rep_compare_avg}{{IX}{17}}
+\@writefile{toc}{\contentsline {section}{References}{17}{}\protected@file@percent }
 \bibcite{7033433}{21}
 \bibcite{ahsanEnhancedFaultDiagnosis2025}{22}
 \bibcite{guNovelFaultDiagnosis2022}{23}
@@ -195,6 +199,6 @@
 \bibcite{Li_2018}{39}
 \bibcite{kangEnhancementAlgorithmColor2021}{40}
 \bibcite{9770845}{41}
-\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces  Validation on the Public CWRU Dataset. Rep.: Representation; Prec.: Precision; Rec.: Recall; Gm.: G-mean. \relax }}{17}{}\protected@file@percent }
-\newlabel{tab:cwru_ablation}{{IX}{17}}
-\gdef \@abspage@last{17}
+\@writefile{lot}{\contentsline {table}{\numberline {X}{\ignorespaces  Validation on the Public CWRU Dataset. Rep.: Representation; Prec.: Precision; Rec.: Recall; Gm.: G-mean. \relax }}{18}{}\protected@file@percent }
+\newlabel{tab:cwru_ablation}{{X}{18}}
+\gdef \@abspage@last{18}
