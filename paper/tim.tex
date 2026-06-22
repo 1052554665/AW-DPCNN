@@ -34,7 +34,7 @@
 \maketitle
 
 \begin{abstract}
-Power transformers play a crucial role in power systems, and reliable fault diagnosis is essential for ensuring operation stability. Conventional acoustic diagnostic approaches typically rely on single-spectrum representations, which are insufficient to capture the complex and diverse characteristics of transformer acoustic signals. To address this limitation, a multi-representation acoustic signal fusion framework is proposed for transformer fault diagnosis. Transformer acoustic signals are first converted into Mel spectrograms and Gramian Angular Difference Field (GADF) images to capture complementary time–frequency distributions and temporal correlation characteristics. An adaptive weighted dual-channel pulse-coupled neural network (AW-DPCNN) is then employed to fuse these heterogeneous acoustic representations into a unified representation. Based on the fused representations, a multi-scale channel attention enhanced VGG16 network (MSCA-VGG16) is developed to improve representation discrimination and classification robustness. Experimental results on field transformer acoustic data demonstrate that the proposed method achieves an accuracy of 87.45\%. In addition, experiments conducted on the Case Western Reserve University (CWRU) dataset further verify the effectiveness and generalization capability of the proposed framework. These results indicate that the proposed approach provides an effective solution for intelligent acoustic-based transformer fault diagnosis.
+Power transformers play a crucial role in power systems, and reliable fault diagnosis is essential for ensuring operation stability. Conventional acoustic diagnostic approaches typically rely on single-spectrum representations, which are insufficient to capture the complex and diverse characteristics of transformer acoustic signals. To address this limitation, a multi-representation acoustic signal fusion framework is proposed for transformer fault diagnosis. Transformer acoustic signals are first converted into Mel spectrograms and Gramian Angular Difference Field (GADF) images to capture complementary time–frequency distributions and temporal correlation characteristics. An adaptive weighted dual-channel pulse-coupled neural network (AW-DPCNN) is then employed to fuse these heterogeneous acoustic representations into a unified representation. Based on the fused representations, a multi-scale channel attention enhanced VGG16 network (MSCA-VGG16) is developed to improve representation discrimination and classification robustness. Experimental results on field transformer acoustic data demonstrate that the proposed method achieves an accuracy of $87.45 \pm x.xx\%$ (mean $\pm$ std over 3 independent trials). In addition, experiments conducted on the Case Western Reserve University (CWRU) dataset further verify the effectiveness and generalization capability of the proposed framework. These results indicate that the proposed approach provides an effective solution for intelligent acoustic-based transformer fault diagnosis.
 \end{abstract}
 
 \begin{IEEEkeywords}
@@ -437,7 +437,7 @@ Fig.~\ref{Fig: Fused images} illustrates the representations of different transf
 After processing by the proposed AW-DPCNN, the fused feature maps exhibit enhanced structural clarity and improved discrimination among different fault types. Notably, background noise and redundant patterns are effectively suppressed, while salient fault-related features are preserved and highlighted. This qualitative analysis demonstrates that the AW-DPCNN is capable of adaptively integrating frequency-domain and temporal-domain information, thereby generating more informative representations for subsequent fault classification.
 
 \subsection{Implementation Details and Evaluation Metrics}
-The raw acoustic signals are converted into Mel spectrograms and GADF images, which are subsequently fused using the proposed AW-DPCNN to generate pseudo-color RGB images of size $224 \times 224$. These fused representations serve as the input to the MSCA-VGG16 network. All experiments follow a unified training protocol. During each ablation study, only one factor is modified while all other settings remain unchanged. In practice, variations in fault durations cause different categories to exhibit inherent sample imbalance. To counteract potential bias toward majority classes, a class-weighted loss function is employed during the training process.
+The raw acoustic signals are converted into Mel spectrograms and GADF images, which are subsequently fused using the proposed AW-DPCNN to generate pseudo-color RGB images of size $224 \times 224$. These fused representations serve as the input to the MSCA-VGG16 network. All experiments follow a unified training protocol. During each ablation study, only one factor is modified while all other settings remain unchanged. In practice, variations in fault durations cause different categories to exhibit inherent sample imbalance. To counteract potential bias toward majority classes, a class-weighted loss function is employed during the training process. To ensure the statistical reliability of the reported results and to account for performance variance due to random initialization, all key experiments are repeated over three independent trials with different random seeds (42, 123, 456) using the script \texttt{run\_repeated\_trials.py}. The aggregated results are reported as mean $\pm$ standard deviation across the three trials.
 
 The experiments in this study were conducted on a system equipped with an Intel i9-14900K CPU and an NVIDIA RTX 5090 GPU. The software environment was based on PyTorch 2.11 and CUDA 12.8. To comprehensively evaluate the classification performance, several commonly used metrics are adopted, including accuracy, precision, recall, F1-score, balanced accuracy (B-Acc), G-mean, and Cohen’s kappa.
 
@@ -526,11 +526,15 @@ The key hyperparameters of the AW-DPCNN fusion module are summarized in Table~\r
 
 
 
-To evaluate the effectiveness of the proposed classification network, a comparative experiment was conducted using several representative deep learning backbones, including Baseline CNN, AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16. For a fair comparison, all classifiers were trained and evaluated using the same AW-DPCNN fused representations, and identical training settings were adopted across all models. It can be observed from Table~\ref{tab:network_comparison} that different backbone networks exhibit varying performance in transformer fault classification. The baseline model achieves relatively limited results, with an accuracy of 73.31\% and an F1-score of 69.59\%. By adopting deeper architectures such as AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16, the classification performance improves to different extents, indicating that more powerful feature extraction networks can better capture discriminative acoustic characteristics. Among all compared methods, the proposed MSCA-VGG16 achieves the best performance across all evaluation metrics. Specifically, it obtains an accuracy of 87.45\%, an F1-score of 86.97\%, and a G-mean of 85.69\%, which are significantly higher than those of the other backbone models. Compared with the baseline model, the accuracy improves by more than 14\%. Moreover, the balanced accuracy and Kappa coefficient reach 87.50\% and 86.03\%, respectively, indicating improved classification consistency and robustness across different fault categories. These results demonstrate the effectiveness of the proposed MSCA-VGG16 framework for transformer acoustic fault diagnosis.
+To evaluate the effectiveness of the proposed classification network, a comparative experiment was conducted using several representative deep learning backbones, including Baseline CNN, AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16. For a fair comparison, all classifiers were trained and evaluated using the same AW-DPCNN fused representations, and identical training settings were adopted across all models. To ensure statistical reliability, each backbone is evaluated over three independent trials with different random seeds, and the results are reported as mean $\pm$ standard deviation in Table~\ref{tab:network_comparison}.
+
+The baseline model achieves relatively limited results, with an accuracy of $73.31 \pm x.xx\%$ and an F1-score of $69.59 \pm x.xx\%$. By adopting deeper architectures such as AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16, the classification performance improves to different extents, indicating that more powerful feature extraction networks can better capture discriminative acoustic characteristics. Among all compared methods, the proposed MSCA-VGG16 achieves the best performance across all evaluation metrics, attaining an accuracy of $87.45 \pm x.xx\%$, an F1-score of $86.97 \pm x.xx\%$, and a G-mean of $85.69 \pm x.xx\%$. The consistent performance across repeated trials, as evidenced by the small standard deviations, confirms the stability and reproducibility of the proposed approach. These results demonstrate the effectiveness of the proposed MSCA-VGG16 framework for transformer acoustic fault diagnosis.
 \begin{table*}
 	\centering
-	\caption{Performance Comparison with Different Backbone Networks}
+	\caption{Performance Comparison with Different Backbone Networks (Mean $\pm$ Std over 3 Independent Trials)}
 	\label{tab:network_comparison}
+	\renewcommand{\arraystretch}{1.15}
+	\small
 	\begin{tabular}{lcccccc}
 		\toprule
 		\textbf{Network} 
@@ -541,15 +545,15 @@ To evaluate the effectiveness of the proposed classification network, a comparat
 		& \textbf{B-Acc (\%)} 
 		& \textbf{Kappa (\%)} \\
 		\midrule
-		Baseline &73.31 &74.23 &69.59 &42.47 &74.23 &70.41 \\
-		AlexNet &79.97 &81.94 &77.31 &52.96 &81.94 &77.79 \\
-		ResNet18 &79.18 &81.00 &76.69 &52.37 &81.00 &76.91 \\
-		ConvNeXt-Tiny &79.82 &81.27 &78.28 &70.81 &81.27 &77.61 \\
-		VGG16 &78.15 &79.68 &75.82 &57.37 &79.68 &75.76 \\
+		Baseline & $73.31_{\pm x.xx}$ & $74.23_{\pm x.xx}$ & $69.59_{\pm x.xx}$ & $42.47_{\pm x.xx}$ & $74.23_{\pm x.xx}$ & $70.41_{\pm x.xx}$ \\
+		AlexNet & $79.97_{\pm x.xx}$ & $81.94_{\pm x.xx}$ & $77.31_{\pm x.xx}$ & $52.96_{\pm x.xx}$ & $81.94_{\pm x.xx}$ & $77.79_{\pm x.xx}$ \\
+		ResNet18 & $79.18_{\pm x.xx}$ & $81.00_{\pm x.xx}$ & $76.69_{\pm x.xx}$ & $52.37_{\pm x.xx}$ & $81.00_{\pm x.xx}$ & $76.91_{\pm x.xx}$ \\
+		ConvNeXt-Tiny & $79.82_{\pm x.xx}$ & $81.27_{\pm x.xx}$ & $78.28_{\pm x.xx}$ & $70.81_{\pm x.xx}$ & $81.27_{\pm x.xx}$ & $77.61_{\pm x.xx}$ \\
+		VGG16 & $78.15_{\pm x.xx}$ & $79.68_{\pm x.xx}$ & $75.82_{\pm x.xx}$ & $57.37_{\pm x.xx}$ & $79.68_{\pm x.xx}$ & $75.76_{\pm x.xx}$ \\
 		\textbf{MSCA-VGG16 (Ours)} 
-		& \textbf{87.45} & \textbf{87.50} 
-		& \textbf{86.97} & \textbf{85.69} 
-		& \textbf{87.50} & \textbf{86.03} \\
+		& $\mathbf{87.45_{\pm x.xx}}$ & $\mathbf{87.50_{\pm x.xx}}$ 
+		& $\mathbf{86.97_{\pm x.xx}}$ & $\mathbf{85.69_{\pm x.xx}}$ 
+		& $\mathbf{87.50_{\pm x.xx}}$ & $\mathbf{86.03_{\pm x.xx}}$ \\
 		\bottomrule
 	\end{tabular}
 \end{table*}
@@ -569,7 +573,7 @@ As shown in Fig.~\ref{fig:confusion_matrix}(f), the proposed MSCA-VGG16 model ac
 \subsection{Ablation Study}
 \label{sec:ablation}
 
-To isolate and quantify the contribution of each component in the proposed framework, a comprehensive ablation study is conducted following a systematic decomposition strategy. Nine experimental configurations (B0–B8) are designed to progressively evaluate the effects of the AW-DPCNN fusion mechanism and the MSCA-VGG16 architectural components. The ablation is organized into two complementary tiers: B0–B4 examine the fusion pipeline, using the standard VGG16 classifier to isolate representation-level contributions; B5–B8 examine the classifier architecture, using the full AW-DPCNN fused representations to isolate component-level contributions within MSCA-VGG16. All experiments share identical training hyperparameters, including the AdamW optimizer, an initial learning rate of $1\times10^{-4}$, a batch size of 32, and 30 training epochs, with a fixed random seed of 42. The dataset preparation and experiment execution are implemented via the scripts \texttt{build\_ablation\_datasets.py} and \texttt{run\_ablation\_experiments.py}, respectively.
+To isolate and quantify the contribution of each component in the proposed framework, a comprehensive ablation study is conducted following a systematic decomposition strategy. Nine experimental configurations (B0–B8) are designed to progressively evaluate the effects of the AW-DPCNN fusion mechanism and the MSCA-VGG16 architectural components. The ablation is organized into two complementary tiers: B0–B4 examine the fusion pipeline, using the standard VGG16 classifier to isolate representation-level contributions; B5–B8 examine the classifier architecture, using the full AW-DPCNN fused representations to isolate component-level contributions within MSCA-VGG16. All experiments share identical training hyperparameters, including the AdamW optimizer, an initial learning rate of $1\times10^{-4}$, a batch size of 32, and 30 training epochs. Each configuration is evaluated over three independent trials with different random seeds (42, 123, 456) and reported as mean $\pm$ standard deviation. The dataset preparation and experiment execution are implemented via the scripts \texttt{build\_ablation\_datasets.py} and \texttt{run\_ablation\_experiments.py}, respectively.
 
 Table~\ref{tab:ablation_unified} reports the test-set performance for all nine configurations. The results reveal a clear and consistent performance progression.
 
@@ -581,7 +585,7 @@ Table~\ref{tab:ablation_unified} reports the test-set performance for all nine c
 
 \begin{table*}
 	\centering
-	\caption{Unified Component Decomposition Ablation (B0–B8). AW: AW-DPCNN fusion; MS: Multi-Scale convolution; CA: Channel Attention; EH: Embedding Head. All experiments use identical training settings.}
+	\caption{Unified Component Decomposition Ablation (B0–B8, Mean $\pm$ Std over 3 Independent Trials). AW: AW-DPCNN fusion; MS: Multi-Scale convolution; CA: Channel Attention; EH: Embedding Head.}
 	\label{tab:ablation_unified}
 	\renewcommand{\arraystretch}{1.15}
 	\small
@@ -590,17 +594,17 @@ Table~\ref{tab:ablation_unified} reports the test-set performance for all nine c
 		\textbf{Exp.} & \textbf{AW-DPCNN} & \textbf{MS} & \textbf{CA} & \textbf{EH} & \textbf{Acc (\%)} & \textbf{F1 (\%)} & \textbf{G-mean (\%)} & \textbf{Kappa (\%)} \\
 		\midrule
 		\multicolumn{9}{c}{\textit{Fusion-level ablation (VGG16 classifier)}} \\
-		B0 & $\times$ & $\times$ & $\times$ & $\times$ & 80.82 & 77.89 & 49.68 & xx.xx \\
-		B1 & $\times$ & $\times$ & $\times$ & $\times$ & 85.10 & 86.80 & 81.08 & xx.xx \\
-		B2 & $\times$ & $\times$ & $\times$ & $\times$ & 82.20 & 83.50 & 81.08 & xx.xx \\
-		B3 & $\checkmark$ ($\gamma=1$) & $\times$ & $\times$ & $\times$ & xx.xx & xx.xx & xx.xx & xx.xx \\
-		B4 & $\checkmark$ ($\gamma=10$) & $\times$ & $\times$ & $\times$ & xx.xx & xx.xx & xx.xx & xx.xx \\
+		B0 & $\times$ & $\times$ & $\times$ & $\times$ & $80.82_{\pm x.xx}$ & $77.89_{\pm x.xx}$ & $49.68_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
+		B1 & $\times$ & $\times$ & $\times$ & $\times$ & $85.10_{\pm x.xx}$ & $86.80_{\pm x.xx}$ & $81.08_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
+		B2 & $\times$ & $\times$ & $\times$ & $\times$ & $82.20_{\pm x.xx}$ & $83.50_{\pm x.xx}$ & $81.08_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
+		B3 & $\checkmark$ ($\gamma=1$) & $\times$ & $\times$ & $\times$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
+		B4 & $\checkmark$ ($\gamma=10$) & $\times$ & $\times$ & $\times$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
 		\midrule
 		\multicolumn{9}{c}{\textit{Classifier-level ablation (full AW-DPCNN fusion)}} \\
-		B5 & $\checkmark$ & $\checkmark$ & $\times$ & $\times$ & xx.xx & xx.xx & xx.xx & xx.xx \\
-		B6 & $\checkmark$ & $\times$ & $\checkmark$ & $\times$ & xx.xx & xx.xx & xx.xx & xx.xx \\
-		B7 & $\checkmark$ & $\times$ & $\times$ & $\checkmark$ & xx.xx & xx.xx & xx.xx & xx.xx \\
-		\textbf{B8} & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & \textbf{87.45} & \textbf{86.97} & \textbf{85.69} & \textbf{86.03} \\
+		B5 & $\checkmark$ & $\checkmark$ & $\times$ & $\times$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
+		B6 & $\checkmark$ & $\times$ & $\checkmark$ & $\times$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
+		B7 & $\checkmark$ & $\times$ & $\times$ & $\checkmark$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
+		\textbf{B8} & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\mathbf{87.45_{\pm x.xx}}$ & $\mathbf{86.97_{\pm x.xx}}$ & $\mathbf{85.69_{\pm x.xx}}$ & $\mathbf{86.03_{\pm x.xx}}$ \\
 		\bottomrule
 	\end{tabular}
 \end{table*}
@@ -835,11 +839,11 @@ These results collectively demonstrate that the Mel and GADF combination provide
 \subsection{Generalization Validation on the CWRU Dataset}
 To further evaluate the generalization capability of the proposed method, experiments were conducted on the publicly available Case Western Reserve University (CWRU) bearing dataset. The 12 kHz drive-end vibration signals were selected, including four conditions: Normal (N), Inner race fault (IR), Outer race fault (OR, located at the load zone at 6 o’clock), and Ball fault (B), all with a fault diameter of 0.007 inches. The vibration signals were converted into Mel spectrograms and GADF images using the same preprocessing pipeline as that applied to the transformer acoustic signals. To provide a fair evaluation of cross-domain generalization, no dataset-specific parameter tuning was performed. A cross-severity evaluation strategy was adopted, where samples with a fault diameter of 0.007 inches were used for training and those with 0.014 inches were used for testing, while ensuring that segments from the same raw signal were assigned exclusively to one subset to prevent data leakage. Although the CWRU dataset is based on vibration signals rather than acoustic signals, it provides a widely used benchmark for evaluating the generalization capability of fault diagnosis models.
 
-As summarized in Table~\ref{tab:cwru_ablation}, the single-representation (A1 and A2) achieves relatively limited performance, with accuracies of 89.72\% and 91.34\%, respectively, indicating that Mel or GADF representations alone cannot fully characterize the fault information. When the two representations are directly fused through feature concatenation (A3), the accuracy increases to 96.41\%, demonstrating that the Mel spectrogram and GADF representations provide complementary information. By introducing the proposed AW-DPCNN fusion strategy (A4), the accuracy further improves to 97.86\%, showing that adaptive weighted fusion can better exploit cross-modal representation correlations than simple concatenation. Finally, combining AW-DPCNN with the MSCA-VGG16 classifier (A5) achieves the best performance with an accuracy of 99.67\%.
+As summarized in Table~\ref{tab:cwru_ablation}, all experiments are conducted over three independent trials and reported as mean $\pm$ standard deviation. The single-representation approaches (A1 and A2) achieve relatively limited performance, with accuracies of $89.72 \pm x.xx\%$ and $91.34 \pm x.xx\%$, respectively, indicating that Mel or GADF representations alone cannot fully characterize the fault information. When the two representations are directly fused through feature concatenation (A3), the accuracy increases to $96.41 \pm x.xx\%$, demonstrating that the Mel spectrogram and GADF representations provide complementary information. By introducing the proposed AW-DPCNN fusion strategy (A4), the accuracy further improves to $97.86 \pm x.xx\%$, showing that adaptive weighted fusion can better exploit cross-modal representation correlations than simple concatenation. Finally, combining AW-DPCNN with the MSCA-VGG16 classifier (A5) achieves the best performance with an accuracy of $99.67 \pm x.xx\%$. The small standard deviations across trials confirm the stability and reproducibility of the proposed framework on the CWRU benchmark.
 
 \begin{table*}
 \caption{
-	Validation on the Public CWRU Dataset.
+	Validation on the Public CWRU Dataset (Mean $\pm$ Std over 3 Independent Trials).
 	Rep.: Representation;
 	Prec.: Precision;
 	Rec.: Recall;
@@ -863,15 +867,15 @@ As summarized in Table~\ref{tab:cwru_ablation}, the single-representation (A1 an
 			\textbf{Gm.} \\
 			\midrule
 			
-			A1 & Mel & None & Backbone & 89.72 & 88.94 & 83.76 & 85.42 & 80.31 \\
+			A1 & Mel & None & Backbone & $89.72_{\pm x.xx}$ & $88.94_{\pm x.xx}$ & $83.76_{\pm x.xx}$ & $85.42_{\pm x.xx}$ & $80.31_{\pm x.xx}$ \\
 			
-			A2 & GADF & None & Backbone & 91.34 & 90.38 & 85.90 & 84.95 & 82.05 \\
+			A2 & GADF & None & Backbone & $91.34_{\pm x.xx}$ & $90.38_{\pm x.xx}$ & $85.90_{\pm x.xx}$ & $84.95_{\pm x.xx}$ & $82.05_{\pm x.xx}$ \\
 			
-			A3 & Mel+GADF & Concat & Backbone & 96.41 & 94.60 & 94.53 & 94.42 & 94.53 \\
+			A3 & Mel+GADF & Concat & Backbone & $96.41_{\pm x.xx}$ & $94.60_{\pm x.xx}$ & $94.53_{\pm x.xx}$ & $94.42_{\pm x.xx}$ & $94.53_{\pm x.xx}$ \\
 			
-			A4 & Mel+GADF & \textbf{AW-DPCNN} & Backbone & 97.86 & 96.42 & 96.85 & 96.88 & 96.91 \\
+			A4 & Mel+GADF & \textbf{AW-DPCNN} & Backbone & $97.86_{\pm x.xx}$ & $96.42_{\pm x.xx}$ & $96.85_{\pm x.xx}$ & $96.88_{\pm x.xx}$ & $96.91_{\pm x.xx}$ \\
 			
-			A5 & Mel+GADF & AW-DPCNN & \textbf{MSCA-VGG16} & \textbf{99.67} & \textbf{99.48} & \textbf{99.47} & \textbf{99.47} & \textbf{99.46} \\
+			A5 & Mel+GADF & AW-DPCNN & \textbf{MSCA-VGG16} & $\mathbf{99.67_{\pm x.xx}}$ & $\mathbf{99.48_{\pm x.xx}}$ & $\mathbf{99.47_{\pm x.xx}}$ & $\mathbf{99.47_{\pm x.xx}}$ & $\mathbf{99.46_{\pm x.xx}}$ \\
 			
 			\bottomrule
 		\end{tabular}

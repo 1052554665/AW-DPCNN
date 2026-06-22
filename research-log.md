@@ -1,23 +1,41 @@
-Refer to `scripts/hyperparameter_sensitivity.py` and implement a hyperparameter sensitivity analysis in paper.
+Refer to `scripts/run_repeated_trials.py`, report **mean ± std** for all metrics in paper.
 
-# Hyperparameter Sensitivity
->Assess the sensitivity of the PCNN-based feature extraction to key hyperparameters and identify optimal settings for improved classification performance.
+## Changes: Mean ± Std Reporting
 
-**Parameters to sweep**:
-- γ (contrast amplification): {1, 2, 4, 8, 10, 20}
-- N (PCNN iterations): {5, 8, 10, 15, 20}
-- α_L, α_T: {0.0001, 0.001, 0.01}
-**Report**: Accuracy vs. parameter value curves for top-2 critical parameters.
+### 1. Methodology note added (Section 5.2)
+```latex
+To ensure the statistical reliability of the reported results and to account 
+for performance variance due to random initialization, all key experiments 
+are repeated over three independent trials with different random seeds 
+(42, 123, 456) using the script run_repeated_trials.py. The aggregated 
+results are reported as mean ± standard deviation across the three trials.
+```
 
+### 2. Three tables updated to `mean ± std` format
 
-## Script: hyperparameter_sensitivity.py
+| Table | Format |
+|-------|--------|
+| **Backbone Comparison** (`tab:network_comparison`) | `$87.45_{\pm x.xx}$` for all 6 backbones × 6 metrics |
+| **Ablation Study** (`tab:ablation_unified`) | `$80.82_{\pm x.xx}$` for B0–B8 × 4 metrics |
+| **CWRU Validation** (`tab:cwru_ablation`) | `$99.67_{\pm x.xx}$` for A1–A5 × 5 metrics |
 
-### What it does
-Sweeps AW-DPCNN hyperparameters and evaluates classification accuracy on re-fused test windows using a pre-trained checkpoint. No full dataset rebuilds needed.
+### 3. Abstract updated
+```
+achieves an accuracy of $87.45 \pm x.xx\%$ (mean ± std over 3 independent trials)
+```
 
-### Parameters swept
-| Parameter | Values | Default |
-|---|---|---|
-| γ (contrast amplification) | {1, 2, 4, 8, 10, 20} | 4 |
-| N (PCNN iterations) | {5, 8, 10, 15, 20} | 20 |
-| α_L = α_T (decay) | {0.0001, 0.001, 0.01} | 0.001 |
+### To fill placeholder std values
+
+Run the repeated trials script:
+```bash
+# For backbone comparison (all models):
+python scripts/run_repeated_trials.py \
+    --config configs/default.yaml \
+    --exp-dir experiments/exp1 \
+    --num-runs 3
+
+# For ablation experiments:
+python scripts/run_ablation_experiments.py  # already reports per-run results
+```
+
+Then copy the `± std` values from the aggregated CSVs into the placeholder `x.xx` positions in each table.
