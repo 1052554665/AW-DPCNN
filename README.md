@@ -313,7 +313,7 @@ Usage::
 ```
 
 
-### Transformer dataset preparation
+### Dataset preparation
 #### dataset 1: five classes (DCBias, Harmonic, Loosen, Normal, PartialDischarge)
 ```bash
 # Enter the project root directory

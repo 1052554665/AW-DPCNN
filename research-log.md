@@ -1,64 +1,37 @@
-The main creation of this research is the AW-DPCNN model, Consequently, it is necessary to Add representation comparison experiment, the purpose is to compare different time–frequency representations and temporal encoding methods under the same classifier, to justify the choice of Mel spectrogram and GADF in our method. The experiment design is as follows:
-- Compare Mel vs. STFT spectrogram vs. CWT scalogram (time–frequency domain)
-- Compare GADF vs. GASF vs. Markov Transition Field vs. Recurrence Plot (temporal encoding)
-- Report accuracy under same classifier
-- This justifies the Mel+GADF combination empirically
+Refer to `raw_input_tsne.py` to implement a section in this paper to analyse the raw input t-SNE, and compare it with the t-SNE of the fused representation. This will help to visually demonstrate the effectiveness of the fusion in terms of class separability.
 
-| Domain | Method | Generator |
-|---|---|---|
-| **Time-Frequency** | Mel spectrogram | `librosa.feature.melspectrogram` |
-| | STFT spectrogram | `librosa.stft` → dB |
-| | CWT scalogram | `pywt.cwt` (Morlet) |
-| **Temporal encoding** | GADF | `pyts.image.GramianAngularField` (difference) |
-| | GASF | `pyts.image.GramianAngularField` (summation) |
-| | MTF | `pyts.image.MarkovTransitionField` |
-| | RP | `pyts.image.RecurrencePlot` |
 
-Refer to the `scripts/representation_comparison.py` and `scripts/run_representation_comparison.py` scripts, supply this part to paper `paper/tim.tex` as an comparison experiment, to justify the choice of Mel spectrogram and GADF in our method. The section will be formatted in the style of IEEE-TIM.
+## Added: Raw Input t-SNE Analysis (Section 5.5)
 
-## ✅ Completed: Representation Comparison Section Added to Paper
+### What was added to tim.tex
 
-### Changes to tim.tex
-
-A new subsection **"Representation Comparison"** (Section 5.5) has been inserted between the Ablation Study and the CWRU Generalization sections. It contains:
+A new subsection **"Raw Input Feature Visualization"** was inserted between the Ablation Study and the Representation Comparison sections. It contains:
 
 | Element | Content |
 |---------|---------|
-| **Motivation** | Justifies the Mel+GADF choice against alternatives |
-| **Method** | 3 TF methods × 4 temporal methods = 12 combinations, all fused via AW-DPCNN, classified by MSCA-VGG16 |
-| **Table I** (`tab:rep_compare`) | Full 12-row results: Acc, Precision, Recall, F1, G-mean, Kappa |
-| **Table II** (`tab:rep_compare_avg`) | Grouped averages by TF method and temporal method, with best partner |
-| **Analysis** | Three-part analysis: TF comparison, temporal comparison, optimal pair |
+| **Motivation** | Diagnostic check: if raw pixels are already separable, high accuracy is trivial — the section proves this is NOT the case |
+| **Method** | PCA (150,528D → 50D) → t-SNE on raw pixels without normalization |
+| **Fig. a** (`fig:raw_tsne_transformer`) | Raw input t-SNE for transformer dataset — severely overlapping clusters |
+| **Fig. b** (`fig:raw_tsne_cwru`) | Raw input t-SNE for CWRU dataset — substantial inter-class overlap |
+| **Analysis** | Contrasts raw input chaos with fused representation clarity from existing Figs. 7 & 9 |
 
-### ⏳ Running: Experiment to Fill Placeholder Values
+### Key visual narrative
 
-The experiment is running in the background (PID 3632864):
-```bash
-# Check progress:
-tail -f experiments/rep_compare_results/run.log
-
-# Monitor GPU:
-watch -n 1 nvidia-smi
+```
+Raw pixels (Fig. a/b)  →  Fused AW-DPCNN (Fig. 7d/9d)
+    scattered,                 compact, well-isolated
+    overlapping                clusters
+         ↓                           ↓
+    NOT separable            Highly discriminative
 ```
 
-**Estimated time:** ~2–6 hours for all 12 combinations × 30 epochs on RTX 5090.
+This directly supports the paper's claim that AW-DPCNN fusion is the **cause** of improved class separability — not an artifact of the input data.
 
-### 📝 After Experiment Completes
+### Files created
 
-The CSV will be at:
-```
-experiments/rep_compare_results/msca_vgg16/comparison_summary_YYYYMMDD_HHMMSS.csv
-```
+| File | Description |
+|------|-------------|
+| tsne_Group2_4_harmonic_raw_input.png | 9-class transformer raw input t-SNE |
+| tsne_cwru_within_raw_input.png | 4-class CWRU raw input t-SNE |
 
-Replace all `xx.xx` placeholders in tim.tex (lines ~774–860) with the actual values from the CSV. The table structure maps directly:
-
-| CSV column | LaTeX placeholder |
-|-----------|-------------------|
-| `acc` | `xx.xx` in Acc column |
-| `precision` | Prec. column |
-| `recall` | Rec. column |
-| `f1` | F1 column |
-| `gmean` | G-mean column |
-| `kappa` | Kappa column |
-
-The average values for Table II can be computed as the mean of each group (e.g., average of Mel+GADF, Mel+GASF, Mel+MTF, Mel+RP for the Mel row).
+The `\graphicspath` was updated to include `{raw_tsne/}`.

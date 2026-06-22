@@ -13,7 +13,7 @@
 \captionsetup{font=small,labelfont=bf}
 
 % add common graphics paths to simplify includes
-\graphicspath{{framework/}{representation/}{AW-DPCNN/}{MSCA-VGG16/}{Fused images/}{equipment/}{confusion_matrix/}{tsne/}{tsne_cwru/}}
+\graphicspath{{framework/}{representation/}{AW-DPCNN/}{MSCA-VGG16/}{Fused images/}{equipment/}{confusion_matrix/}{tsne/}{tsne_cwru/}{raw_tsne/}}
 
 \hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
 
@@ -771,6 +771,33 @@ To analyze the contribution of each architectural component, an ablation study w
 \end{table}
 
 
+
+\subsection{Raw Input Feature Visualization}
+\label{sec:raw_tsne}
+
+To further validate the effectiveness of the proposed AW-DPCNN fusion in enhancing class separability, t-SNE visualization is directly applied to the raw input pixel space before any model transformation. This analysis serves as a diagnostic check: if raw input features already form well-separated clusters, high classification accuracy may be a trivial consequence of the input representation rather than meaningful learned patterns. Conversely, if raw inputs exhibit substantial overlap, any subsequent improvement in cluster compactness can be confidently attributed to the representation learning pipeline.
+
+The raw input t-SNE loads images from the test split with minimal preprocessing (only resizing to $224\times224$ and conversion to tensor, without any normalization). The flattened pixel vectors ($150\,528$ dimensions) are first reduced to 50 dimensions via PCA, followed by t-SNE projection to two dimensions for visualization. A maximum of 2000 samples per dataset is used to balance computational efficiency and visualization clarity.
+
+Fig.~\ref{fig:raw_tsne_transformer} presents the t-SNE embeddings of raw input pixels for the transformer acoustic dataset. Compared with the t-SNE visualizations of Mel, GADF, concatenated, and AW-DPCNN fused representations shown in Fig.~\ref{Fig:tsne}, the raw input features exhibit severely overlapping clusters with no clear class boundaries. Individual classes are widely dispersed and intermingled, indicating that the original pixel space does not provide a linearly separable feature representation. This observation confirms that the classification performance reported in this study is not a trivial consequence of the input representation, but rather a result of effective feature learning through the proposed AW-DPCNN fusion and MSCA-VGG16 classification pipeline.
+
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=\linewidth]{raw_tsne/tsne_Group2_4_harmonic_raw_input}
+	\caption{t-SNE visualization of raw input pixels (PCA 50 $\rightarrow$ t-SNE) for the transformer acoustic dataset. Classes are severely overlapped, demonstrating that raw pixel features are not inherently separable.}
+	\label{fig:raw_tsne_transformer}
+\end{figure}
+
+Fig.~\ref{fig:raw_tsne_cwru} shows the corresponding raw input t-SNE for the CWRU bearing dataset. Similar to the transformer dataset, the raw pixel features of CWRU vibration signals also exhibit substantial inter-class overlap, with no clearly defined decision boundaries. This stands in stark contrast to the AW-DPCNN fused t-SNE shown in Fig.~\ref{Fig:tsne_CWRU}, where the four bearing conditions form compact, well-isolated clusters. The visual comparison between raw input and fused representation t-SNE maps provides compelling qualitative evidence that the AW-DPCNN fusion mechanism effectively enhances class separability by suppressing noise components while amplifying discriminative structural patterns shared across heterogeneous representations.
+
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=\linewidth]{raw_tsne/tsne_cwru_within_raw_input}
+	\caption{t-SNE visualization of raw input pixels for the CWRU bearing dataset. The four classes (B, IR, N, OR) exhibit substantial overlap in the raw pixel space.}
+	\label{fig:raw_tsne_cwru}
+\end{figure}
+
+Collectively, these visualizations demonstrate that the proposed AW-DPCNN fusion framework transforms initially non-separable raw representations into highly discriminative feature spaces, thereby enabling the MSCA-VGG16 classifier to achieve superior diagnostic accuracy. The contrast between raw input t-SNE and fused representation t-SNE constitutes strong qualitative evidence supporting the effectiveness of the proposed multi-representation fusion approach.
 
 \subsection{Representation Comparison}
 \label{sec:rep_compare}
