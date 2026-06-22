@@ -20,8 +20,7 @@ Key features
 Supported models (via ``--model``)::
 
     msca_vgg16  (default)    vgg16       convnext_tiny
-    efficientnet_b0           mobilenetv3_small
-    harmonic_cnn              cnn_lstm      vit
+    efficientnet_b0           mobilenetv3_small    vit
 
 Usage::
 
