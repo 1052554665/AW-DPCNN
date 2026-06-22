@@ -270,13 +270,112 @@ All models (except `baseline` and `alexnet_se`) support ImageNet pretrained weig
 | Python | 3.10+ |
 | Environment | Conda recommended |
 
+### Representation Comparison — Dataset Builder
 
-### CWRU dataset preparation
+Generates parallel datasets for every combination of time‑frequency
+representation × temporal encoding, using the same file‑level split
+so that comparisons are strictly fair.
 
-```plaintext
+Time‑frequency methods
+----------------------
+  mel        Mel spectrogram (librosa)
+  stft       STFT spectrogram (librosa → dB)
+  cwt        Morlet CWT scalogram (pywt)
+
+Temporal encoding methods
+-------------------------
+  gadf       Gramian Angular Difference Field (pyts)
+  gasf       Gramian Angular Summation Field (pyts)
+  mtf        Markov Transition Field (pyts)
+  rp         Recurrence Plot (pyts)
+
+All combinations are fused via AW‑DPCNN (γ=4, N=20).
+
+Output structure::
+
+    datasets/rep_compare/
+        mel_gadf/    mel_gasf/    mel_mtf/    mel_rp/
+        stft_gadf/   stft_gasf/   stft_mtf/   stft_rp/
+        cwt_gadf/    cwt_gasf/    cwt_mtf/    cwt_rp/
+            train/{Class}/  val/{Class}/  test/{Class}/  metadata.csv
+
+```bash
+Usage::
+
+    # All 12 combinations (default)
+    python scripts/representation_comparison.py --workers 16
+
+    # Single combination
+    python scripts/representation_comparison.py --tf mel --temporal gadf
+
+    # Dry-run
+    python scripts/representation_comparison.py --dry-run
+```
+
+
+### Transformer dataset preparation
+#### dataset 1: five classes (DCBias, Harmonic, Loosen, Normal, PartialDischarge)
+```bash
+# Enter the project root directory
+cd AW-DPCNN
+
+# Default parameters (recommended)
+python scripts/build_transformer_five.py
+
+# Custom parameters
+python scripts/build_transformer_five.py \\
+    --win-len 4096 --hop-len 1024 \\
+    --n-fft 2048 --n-mels 128 --fmax 8000 \\
+    --file-split 60,20,20 \\
+    --workers 32 --metadata --verify
+```
+
+#### dataset 2: eigth classes (10pFifthHarmonic, 10pSeventhHarmonic, 10pThirdHarmonic, 20pFifthHarmonic, 20pSeventhHarmonic, 20pThirdHarmonic, Normal, Overload)
+```bash
+# Default parameters (recommended)
+python scripts/build_group2_4.py
+
+# Dry-run (preview the split plan)
+python scripts/build_group2_4.py --dry-run
+
+# Custom split ratio
+python scripts/build_group2_4.py --file-split 50,25,25 --workers 16
+```
+
+#### dataset 3: nine harmonic classes
+
+- 10pThirdHarmonic
+- 10pFifthHarmonic           
+- 10pSeventhHarmonic        
+- 20pThirdHarmonic         
+- 20pFifthHarmonic     
+- 20pSeventhHarmonic   
+- 30pThirdHarmonic    
+- 30pFifthHarmonic
+- 30pSeventhHarmonic
+
+
+```bash
+# Default parameters (recommended)
+python scripts/build_group2_4_harmonic.py
+
+# Dry-run (preview the split plan)
+python scripts/build_group2_4_harmonic.py --dry-run
+
+# Custom split ratio
+python scripts/build_group2_4_harmonic.py --file-split 50,25,25 --workers 16
+
+python scripts/build_group2_4_harmonic.py  --win-len 8192 --hop-len 8192 --n-fft 4096 --n-iter 10 --sequence-length 224 --gamma 10 --workers 32
+```
+
+
+
+
+#### dataset 4: CWRU
+```bash
 Usage (CWRU .mat, with file‑level split)::
 
-    python scripts/build_fused_dataset.py \
+    python scripts/build_cwru_dataset.py \
         --input-dir ./raw-data/cwru_raw_007 \
         --output-dir ./datasets/cwru_within \
         --input-format mat --sr 12000 \
@@ -287,35 +386,39 @@ Usage (CWRU .mat, with file‑level split)::
 
 Usage (CWRU cross‑severity — no split, two separate runs)::
 
-    python scripts/build_fused_dataset.py \
+    python scripts/build_cwru_dataset.py \
         --input-dir ./raw-data/cwru_raw_007 --output-dir ./datasets/cwru_cross/train \
         --input-format mat --sr 12000 \
         --win-len 2048 --hop-len 1024 \
         --n-fft 1024 --n-mels 128 --fmax 6000
 
-    python scripts/build_fused_dataset.py \
+    python scripts/build_cwru_dataset.py \
         --input-dir ./raw-data/cwru_raw_014 --output-dir ./datasets/cwru_cross/test \
         --input-format mat --sr 12000 \
         --win-len 2048 --hop-len 1024 \
         --n-fft 1024 --n-mels 128 --fmax 6000
 ```
 
-- For each model, just change the `name_classes` and `epochs` in the experiment YAML.
+#### ablation dataset
 
+Build ablation datasets for component decomposition experiments (B0–B3).
+- B0 — Mel‑only  (pseudo‑colour Mel spectrogram, no fusion)
+- B1 — GADF‑only (pseudo‑colour GADF image, no fusion)
+- B2 — Concat    (pixel‑wise average of Mel + GADF pseudo‑colour images)
+- B3 — AW‑DPCNN γ=1  (fixed‑weight PCNN fusion, no adaptive weighting)
+- B4+ use the existing full AW‑DPCNN dataset
 
-### Transformer dataset preparation
+All datasets share the same file‑level split for fair comparison.
 
 ```bash
-# Enter the project root directory
-cd AW-DPCNN
-# Default parameters (recommended)
-python scripts/build_transformer_dataset.py --workers 16 --metadata --verify
+Revise the source directory and parameters if needed::
 
-# Custom window / Mel parameters
-python scripts/build_transformer_dataset.py \
-    --win-len 4096 --hop-len 1024 \
-    --n-fft 2048 --n-mels 128 --fmax 8000 \
-    --workers 16 --metadata --verify
+    SRC_DIR = "raw-data/transformer-five"
+    WIN_LEN, HOP_LEN = 8192, 4096
+
+Usage::
+
+    python scripts/build_ablation_datasets.py --workers 16
 ```
 
 
@@ -476,7 +579,141 @@ The framework computes **7 classification metrics** for every validation and tes
 
 > Implemented in `src/utils/metrics.py` using `scikit-learn` and `scipy`.
 
----
+
+
+### Raw Input t-SNE Visualization
+
+Visualises t-SNE embeddings of **raw input pixels** (before any model
+transformation) to check whether the input features are already linearly
+separable.
+
+If raw pixel features already form well‑separated clusters, high
+classification accuracy may be a trivial consequence of the input
+representation rather than meaningful learned patterns.
+
+```bash
+Usage::
+    # Group2_4_harmonic dataset
+    python scripts/raw_input_tsne.py --data-dir ./datasets/Group2_4_harmonic/test --output ./experiments/tsne_raw_input/ --max-samples 2000
+
+    # CWRU dataset
+    python scripts/raw_input_tsne.py --data-dir ./datasets/cwru_within/test --output ./experiments/tsne_raw_input/ --max-samples 2000
+```
+
+
+
+### Hyperparameter Sensitivity Analysis
+Hyperparameter Sensitivity Analysis for AW-DPCNN
+=================================================
+Sweeps key PCNN hyperparameters and evaluates classification accuracy
+on a fixed test set using a pre‑trained checkpoint.
+
+For each parameter combination, raw test‑set windows are re‑fused
+on‑the‑fly (Mel + GADF + AW‑DPCNN) with the specified parameters,
+then passed through the frozen classifier.
+
+Parameters swept
+----------------
+  γ  — contrast amplification factor   {1, 2, 4, 8, 10, 20}
+  N  — PCNN iteration count            {5, 8, 10, 15, 20}
+  α  — decay coefficient (α_L = α_T)   {0.0001, 0.001, 0.01}
+
+```bash
+Usage::
+
+    # Full sweep (requires a trained checkpoint)
+    python scripts/hyperparameter_sensitivity.py \\
+        --config configs/default.yaml \\
+        --checkpoint PATH/TO/best.pt
+
+    # With auto-checkpoint discovery
+    python scripts/hyperparameter_sensitivity.py \\
+        --config configs/default.yaml \\
+        --exp-config experiments/exp1/MSCA_VGG16.yaml \\
+        --auto-checkpoint
+```
+
+### Noise Robustness Evaluation
+
+Evaluate trained models under additive Gaussian noise at multiple SNR
+levels.  Produces accuracy‑vs‑SNR curves and a summary CSV.
+
+Noise is injected in **pixel space** (before normalisation) to simulate
+acoustic measurement noise propagating through the fused representation.
+
+```bash
+Usage::
+
+    # Single model
+    python scripts/noise_robustness.py \\
+        --config configs/default.yaml \\
+        --exp-config experiments/exp1/MSCA_VGG16.yaml \\
+        --checkpoint PATH/TO/best.pt
+
+    # Batch: evaluate all models in an experiment directory
+    python scripts/noise_robustness.py \\
+        --config configs/default.yaml \\
+        --exp-dir experiments/exp1 \\
+        --auto-checkpoint  # picks best.pt from the latest run of each config
+
+    # Custom SNR range
+    python scripts/noise_robustness.py \\
+        --config configs/default.yaml \\
+        --exp-config experiments/exp1/vgg16.yaml \\
+        --checkpoint .../best.pt \\
+        --snr -10 -5 0 5 10 15 20
+```
+
+
+
+### Repeated Independent Trials Runner
+Run N independent training trials with different random seeds and
+aggregate results into **mean ± std** format for publication.
+
+This directly addresses the reviewer comment:
+  "Run 3 independent runs with different random seeds;
+   report mean ± std for all metrics."
+
+```bash
+Usage::
+
+    # 3 independent runs (default)
+    python scripts/run_repeated_trials.py \\
+        --config configs/default.yaml \\
+        --exp-config experiments/exp1/vgg16.yaml
+
+    # 5 independent runs with custom seeds
+    python scripts/run_repeated_trials.py \\
+        --config configs/default.yaml \\
+        --exp-config experiments/exp1/MSCA_VGG16.yaml \\
+        --num-runs 5
+
+    # Batch: run repeated trials for all configs in an exp directory
+    python scripts/run_repeated_trials.py \\
+        --config configs/default.yaml \\
+        --exp-dir experiments/exp1 \\
+        --num-runs 3
+
+    # Dry-run: print commands without executing
+    python scripts/run_repeated_trials.py \\
+        --config configs/default.yaml \\
+        --exp-config experiments/exp1/vgg16.yaml \\
+        --dry-run
+
+Output structure::
+
+    experiments/experiment_result/{exp_name}/
+        aggregated/
+            aggregated_metrics.json   # Full aggregated stats
+            aggregated_metrics.csv    # CSV table
+            aggregated_metrics.md     # Publication-ready Markdown table
+        trial_seed42/
+            resolved_config.yaml
+            results/test_metrics.json
+            ...
+        trial_seed123/
+        trial_seed456/
+```
 
 ## 10) Environment Setup
 

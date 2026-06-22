@@ -1,38 +1,53 @@
->why there is noting change in the images before and after applying the parameter of `sequence_length`?
-
-Good question. The issue is that `sequence_length` currently only controls how many raw samples go **into** the GAF transform, but `GramianAngularField` always reduces them to `img_size` (224) segments via PAA (Piecewise Aggregate Approximation) regardless. So whether you feed 8192 or 3000 samples, PAA averages them down to exactly 224 bins — the output is visually near-identical.
-
-The fix is to make `sequence_length` control the **`image_size` parameter of `GramianAngularField`** itself (which sets the number of time segments in the GAF matrix), then resize back to `img_size`. This directly changes the GAF resolution.
+For feature comparison experiment in script `script/representation_comparison.py`, create a script to compare the accuracy and other metrics of different features under the same classifier. Only one command used to run the script, and the script will automatically load the features, train the classifier, and output the results.
 
 
-| Function | `GramianAngularField(image_size=...)` | What `sequence_length` actually does |
-|---|---|---|
-| `generate_gadf_image` | Always `img_size` (224) | Pre-resamples signal → PAA still reduces to 224 bins |
-| `_time_series_to_image` | Always `img_size` (224), baked into transformer | Same — pre-resamples, but PAA always → 224 bins |
+## Created: run_representation_comparison.py
 
-**The fix**: Make `sequence_length` directly control `GramianAngularField`'s `image_size` (the number of time segments in the GAF matrix), then resize back to `img_size`. This changes the GAF resolution and will be visually apparent.
-
-## Root cause & fix
-
-**Before**: `sequence_length` only pre-resampled the raw signal before feeding it to `GramianAngularField(image_size=img_size)`. Since PAA inside `GramianAngularField` always reduced the signal to 224 bins regardless, the output was near-identical.
-
-**After**: `sequence_length` now directly controls `GramianAngularField(image_size=sequence_length)` — i.e., the **number of time segments in the GAF matrix**. The resulting matrix is then resized to `img_size × img_size`. A lower value (e.g., 32) produces a coarse, blocky GAF; a higher value (e.g., 256) produces a fine-grained GAF.
-
-```
-sequence_length=32   →  32×32 GAF matrix  →  resize to 224×224  (coarse)
-sequence_length=128  →  128×128 GAF matrix →  resize to 224×224  (medium)
-sequence_length=None →  224×224 GAF matrix →  no resize          (default)
-```
-
-### Usage
+**One command to run all 12 representation comparisons:**
 
 ```bash
-# Coarse GAF (fast)
-python scripts/build_group2_4_harmonic.py --sequence-length 32
-
-# Fine-grained GAF (slower but more detail)
-python scripts/build_group2_4_harmonic.py --sequence-length 256
-
-# Default (same as --sequence-length 224)
-python scripts/build_group2_4_harmonic.py
+python scripts/run_representation_comparison.py
 ```
+
+### What it does
+
+| Step | Description |
+|------|-------------|
+| 1 | Auto-discovers all 12 `datasets/rep_compare/{mel,stft,cwt}_{gadf,gasf,mtf,rp}/` directories |
+| 2 | For each combination, trains the **same** classifier with identical hyperparameters |
+| 3 | Saves per-run checkpoints, logs, and resolved configs |
+| 4 | Outputs a ranked comparison table + grouped analysis + CSV summary |
+
+### Key flags
+
+| Flag | Default | Purpose |
+|------|---------|---------|
+| `--model` | `msca_vgg16` | Classifier (vgg16, convnext_tiny, efficientnet_b0, etc.) |
+| `--epochs` | `30` | Training epochs per run |
+| `--tf` | `all` | Filter: `mel`, `stft`, `cwt`, or comma-separated |
+| `--temporal` | `all` | Filter: `gadf`, `gasf`, `mtf`, `rp` |
+| `--seed` | `42` | Random seed for reproducibility |
+| `--dry-run` | — | List combinations without training |
+
+### Example outputs
+
+```text
+ Rank  TF     Temporal    Acc %     F1 %   G-mean %   B-Acc %   Kappa %
+───────────────────────────────────────────────────────────────────────
+ 1     Mel    GADF       99.92   99.92     99.90    99.90    99.89
+ 2     CWT    GADF        ...
+ ...
+
+  Grouped by Time‑Frequency method (average Accuracy %)
+──────────────────────────────────────────────────────────────────────
+  Mel    avg Acc = xx.xx%  (n=4)
+  STFT   avg Acc = xx.xx%  (n=4)
+  CWT    avg Acc = xx.xx%  (n=4)
+
+  ★ Best: CWT × GADF  → Acc = xx.xx%, F1 = xx.xx%
+```
+
+Results are saved to `experiments/rep_compare_results/{model}/comparison_summary_{timestamp}.csv`.
+
+Made changes.
+

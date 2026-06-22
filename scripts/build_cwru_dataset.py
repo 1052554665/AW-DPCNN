@@ -16,7 +16,7 @@ written unless `--save-intermediates` is requested.
 
 Usage (CWRU .mat, with file‑level split)::
 
-    python scripts/build_fused_dataset.py \
+    python scripts/build_cwru_dataset.py \
         --input-dir ./raw-data/cwru_raw_007 \
         --output-dir ./datasets/cwru_within \
         --input-format mat --sr 12000 \
@@ -27,24 +27,17 @@ Usage (CWRU .mat, with file‑level split)::
 
 Usage (CWRU cross‑severity — no split, two separate runs)::
 
-    python scripts/build_fused_dataset.py \
+    python scripts/build_cwru_dataset.py \
         --input-dir ./raw-data/cwru_raw_007 --output-dir ./datasets/cwru_cross/train \
         --input-format mat --sr 12000 \
         --win-len 2048 --hop-len 1024 \
         --n-fft 1024 --n-mels 128 --fmax 6000
 
-    python scripts/build_fused_dataset.py \
+    python scripts/build_cwru_dataset.py \
         --input-dir ./raw-data/cwru_raw_014 --output-dir ./datasets/cwru_cross/test \
         --input-format mat --sr 12000 \
         --win-len 2048 --hop-len 1024 \
         --n-fft 1024 --n-mels 128 --fmax 6000
-
-Usage (transformer .wav, pre‑split)::
-
-    python scripts/build_fused_dataset.py \
-        --input-dir ./raw_wavs/train --output-dir ./datasets/train \
-        --win-len 3000 --hop-len 750 --img-size 224 \
-        --workers 16
 
 Output structure (ImageFolder‑compatible)::
 
