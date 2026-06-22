@@ -40,6 +40,8 @@
 \newlabel{section2}{{II}{2}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}Mel Spectrogram}{2}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}Gramian Angular Field}{2}{}\protected@file@percent }
+\newlabel{normalization}{{2}{2}}
+\newlabel{cosine angle}{{3}{2}}
 \citation{11278186}
 \citation{Li_2018}
 \citation{kangEnhancementAlgorithmColor2021}
@@ -48,14 +50,12 @@
 \newlabel{framework}{{1}{3}}
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Transformer acoustic signal representations.\relax }}{3}{}\protected@file@percent }
 \newlabel{representation}{{2}{3}}
-\newlabel{normalization}{{2}{3}}
-\newlabel{cosine angle}{{3}{3}}
 \newlabel{eq:gasf}{{4}{3}}
 \newlabel{eq:gadf}{{5}{3}}
 \@writefile{toc}{\contentsline {section}{\numberline {III}Adaptive Weighted Dual-Channel PCNN for Multi-Representation Fusion}{3}{}\protected@file@percent }
 \newlabel{section3}{{III}{3}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Input normalization}{4}{}\protected@file@percent }
-\newlabel{eq:normalization}{{6}{4}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Input normalization}{3}{}\protected@file@percent }
+\newlabel{eq:normalization}{{6}{3}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Contrast-Guided Adaptive Weighting}{4}{}\protected@file@percent }
 \newlabel{eq:local_mean}{{7}{4}}
 \newlabel{eq:eq:local_contrast}{{8}{4}}
@@ -70,20 +70,20 @@
 \newlabel{eq:pulse_output}{{16}{4}}
 \newlabel{eq:threshold_update}{{17}{4}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}Fused Representation}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {IV}MSCA-VGG16 for Fused representations Classification}{4}{}\protected@file@percent }
+\newlabel{section4}{{IV}{4}}
+\citation{9770845}
 \@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Architecture of the proposed adaptive weighted dual-channel PCNN (AW-DPCNN) for multi-representation acoustic signal fusion.\relax }}{5}{}\protected@file@percent }
 \newlabel{AW-DPCNN}{{3}{5}}
-\@writefile{toc}{\contentsline {section}{\numberline {IV}MSCA-VGG16 for Fused representations Classification}{5}{}\protected@file@percent }
-\newlabel{section4}{{IV}{5}}
 \newlabel{eq:cls_pipeline}{{21}{5}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Multi-Scale Channel Attention Module}{5}{}\protected@file@percent }
 \newlabel{eq:feature_map}{{22}{5}}
 \newlabel{eq:multi_scale_feature}{{23}{5}}
 \newlabel{eq:active_feature}{{24}{5}}
-\citation{9770845}
-\newlabel{eq:channel_embedding}{{26}{6}}
-\newlabel{eq:attention_score}{{27}{6}}
-\newlabel{eq:attention_feature}{{28}{6}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Compact and Discriminative Embedding for Classification}{6}{}\protected@file@percent }
+\newlabel{eq:channel_embedding}{{26}{5}}
+\newlabel{eq:attention_score}{{27}{5}}
+\newlabel{eq:attention_feature}{{28}{5}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Compact and Discriminative Embedding for Classification}{5}{}\protected@file@percent }
 \newlabel{eq:flatten_feature}{{29}{6}}
 \newlabel{eq:fc1_feature}{{30}{6}}
 \newlabel{eq:embedding}{{31}{6}}
@@ -92,20 +92,22 @@
 \newlabel{section5}{{V}{6}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Dataset Construction and Preprocessing}{6}{}\protected@file@percent }
 \newlabel{Dataset Construction and Preprocessing}{{\mbox  {V-A}}{6}}
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Transformer Operating Conditions and Corresponding Labels\relax }}{6}{}\protected@file@percent }
+\newlabel{tab:operating_conditions}{{I}{6}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Implementation Details and Evaluation Metrics}{6}{}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Overall architecture of the proposed MSCA-VGG16 network for transformer fault classification.\relax }}{7}{}\protected@file@percent }
 \newlabel{MSCA-VGG}{{4}{7}}
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Experimental platform of acoustic signal acquisition.\relax }}{7}{}\protected@file@percent }
 \newlabel{fig:equipment}{{5}{7}}
-\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Transformer Operating Conditions and Corresponding Labels\relax }}{7}{}\protected@file@percent }
-\newlabel{tab:operating_conditions}{{I}{7}}
-\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Composition of the Transformer Acoustic Dataset\relax }}{8}{}\protected@file@percent }
-\newlabel{dataset}{{II}{8}}
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Composition of the Transformer Acoustic Dataset\relax }}{7}{}\protected@file@percent }
+\newlabel{dataset}{{II}{7}}
 \@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Visualization of Mel spectrograms, GADF images, and adaptively fused representations generated by the proposed AW-DPCNN under different transformer operating conditions. (a) Normal, (b) Loosen, (c) 30\% Third Harmonic Distortion, (d) 30\% Fifth Harmonic Distortion, (e) 30\% Seventh Harmonic Distortion, (f) 10kV Overload, (g) Pure Third Harmonic, (h) Pure Fifth Harmonic, (i) Pure Seventh Harmonic, and (j) Partial Discharge.\relax }}{8}{}\protected@file@percent }
 \newlabel{Fig: Fused images}{{6}{8}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Implementation Details and Evaluation Metrics}{8}{}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-C}}Backbone Comparison}{8}{}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Confusion matrices of different network backbones trained using the AW-DPCNN fusion representations. The proposed MSCA-VGG16 achieves the most accurate classification performance with significantly reduced inter-class confusion.\relax }}{9}{}\protected@file@percent }
 \newlabel{fig:confusion_matrix}{{7}{9}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces \relax }}{10}{}\protected@file@percent }
+\newlabel{framework}{{8}{10}}
 \@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Key Hyperparameters of AW-DPCNN\relax }}{10}{}\protected@file@percent }
 \newlabel{tab:awdpcnn_params}{{III}{10}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-D}}Ablation Study}{10}{}\protected@file@percent }
@@ -118,42 +120,42 @@
 \newlabel{tab:ablation_unified}{{VI}{12}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}Hyperparameter Sensitivity Analysis}{12}{}\protected@file@percent }
 \newlabel{sec:hyperparam}{{\mbox  {V-E}}{12}}
-\newlabel{subfig:tsne_msca_vgg16_mel}{{8a}{13}}
+\newlabel{subfig:tsne_msca_vgg16_mel}{{9a}{13}}
 \newlabel{sub@subfig:tsne_msca_vgg16_mel}{{a}{13}}
-\newlabel{subfig:tsne_msca_vgg16_gadf}{{8b}{13}}
+\newlabel{subfig:tsne_msca_vgg16_gadf}{{9b}{13}}
 \newlabel{sub@subfig:tsne_msca_vgg16_gadf}{{b}{13}}
-\newlabel{subfig:tsne_msca_vgg16_concat}{{8c}{13}}
+\newlabel{subfig:tsne_msca_vgg16_concat}{{9c}{13}}
 \newlabel{sub@subfig:tsne_msca_vgg16_concat}{{c}{13}}
-\newlabel{subfig:tsne_msca_vgg16_awdpcnn}{{8d}{13}}
+\newlabel{subfig:tsne_msca_vgg16_awdpcnn}{{9d}{13}}
 \newlabel{sub@subfig:tsne_msca_vgg16_awdpcnn}{{d}{13}}
-\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces t-SNE visualization of feature distributions under different fusion configurations. (a) B0: Mel-only. (b) B1: GADF-only. (c) B2: Mel+GADF concatenation. (d) B4: Full AW-DPCNN fusion, which yields the most compact intra-class clusters and the clearest inter-class separation.\relax }}{13}{}\protected@file@percent }
-\newlabel{Fig:tsne}{{8}{13}}
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces t-SNE visualization of feature distributions under different fusion configurations. (a) B0: Mel-only. (b) B1: GADF-only. (c) B2: Mel+GADF concatenation. (d) B4: Full AW-DPCNN fusion, which yields the most compact intra-class clusters and the clearest inter-class separation.\relax }}{13}{}\protected@file@percent }
+\newlabel{Fig:tsne}{{9}{13}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-F}}Raw Input Feature Visualization}{13}{}\protected@file@percent }
 \newlabel{sec:raw_tsne}{{\mbox  {V-F}}{13}}
-\newlabel{subfig:tsne_cwru_mel}{{9a}{14}}
+\newlabel{subfig:tsne_cwru_mel}{{10a}{14}}
 \newlabel{sub@subfig:tsne_cwru_mel}{{a}{14}}
-\newlabel{subfig:tsne_cwru_gadf}{{9b}{14}}
+\newlabel{subfig:tsne_cwru_gadf}{{10b}{14}}
 \newlabel{sub@subfig:tsne_cwru_gadf}{{b}{14}}
-\newlabel{subfig:tsne_cwru_concat}{{9c}{14}}
+\newlabel{subfig:tsne_cwru_concat}{{10c}{14}}
 \newlabel{sub@subfig:tsne_cwru_concat}{{c}{14}}
-\newlabel{subfig:tsne_cwru_awdpcnn}{{9d}{14}}
+\newlabel{subfig:tsne_cwru_awdpcnn}{{10d}{14}}
 \newlabel{sub@subfig:tsne_cwru_awdpcnn}{{d}{14}}
-\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces t-SNE visualization on the CWRU dataset under different fusion strategies. The AW-DPCNN fused representation (d) achieves the most compact intra-class clusters and the clearest inter-class boundaries, consistent with the transformer dataset results.\relax }}{14}{}\protected@file@percent }
-\newlabel{Fig:tsne_CWRU}{{9}{14}}
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces t-SNE visualization on the CWRU dataset under different fusion strategies. The AW-DPCNN fused representation (d) achieves the most compact intra-class clusters and the clearest inter-class boundaries, consistent with the transformer dataset results.\relax }}{14}{}\protected@file@percent }
+\newlabel{Fig:tsne_CWRU}{{10}{14}}
 \@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces Hyperparameter Sensitivity Analysis. Accuracy is evaluated on re-fused test windows using a frozen MSCA-VGG16 classifier. Default values are highlighted in bold.\relax }}{15}{}\protected@file@percent }
 \newlabel{tab:hyperparam_sensitivity}{{VII}{15}}
-\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces t-SNE visualization of raw input pixels (PCA 50 $\rightarrow $ t-SNE) for the transformer acoustic dataset. Classes are severely overlapped, demonstrating that raw pixel features are not inherently separable.\relax }}{15}{}\protected@file@percent }
-\newlabel{fig:raw_tsne_transformer}{{10}{15}}
-\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces t-SNE visualization of raw input pixels for the CWRU bearing dataset. The four classes (B, IR, N, OR) exhibit substantial overlap in the raw pixel space.\relax }}{15}{}\protected@file@percent }
-\newlabel{fig:raw_tsne_cwru}{{11}{15}}
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces t-SNE visualization of raw input pixels (PCA 50 $\rightarrow $ t-SNE) for the transformer acoustic dataset. Classes are severely overlapped, demonstrating that raw pixel features are not inherently separable.\relax }}{15}{}\protected@file@percent }
+\newlabel{fig:raw_tsne_transformer}{{11}{15}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-G}}Representation Comparison}{15}{}\protected@file@percent }
 \newlabel{sec:rep_compare}{{\mbox  {V-G}}{15}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-H}}Generalization Validation on the CWRU Dataset}{16}{}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {VI}Conclusion}{16}{}\protected@file@percent }
-\newlabel{section6}{{VI}{16}}
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces t-SNE visualization of raw input pixels for the CWRU bearing dataset. The four classes (B, IR, N, OR) exhibit substantial overlap in the raw pixel space.\relax }}{15}{}\protected@file@percent }
+\newlabel{fig:raw_tsne_cwru}{{12}{15}}
 \bibstyle{IEEEtran}
 \bibdata{references}
 \bibcite{10491111}{1}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-H}}Generalization Validation on the CWRU Dataset}{16}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Conclusion}{16}{}\protected@file@percent }
+\newlabel{section6}{{VI}{16}}
 \bibcite{7480687}{2}
 \bibcite{10492658}{3}
 \bibcite{NIU2025127997}{4}
@@ -166,11 +168,6 @@
 \bibcite{9832890}{11}
 \bibcite{4305279}{12}
 \bibcite{6338347}{13}
-\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Representation Comparison Across Time--Frequency and Temporal Encoding Methods. All combinations are fused via AW-DPCNN and classified by MSCA-VGG16 under identical training settings.\relax }}{17}{}\protected@file@percent }
-\newlabel{tab:rep_compare}{{VIII}{17}}
-\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Average Accuracy by Time--Frequency and Temporal Encoding Method\relax }}{17}{}\protected@file@percent }
-\newlabel{tab:rep_compare_avg}{{IX}{17}}
-\@writefile{toc}{\contentsline {section}{References}{17}{}\protected@file@percent }
 \bibcite{8742596}{14}
 \bibcite{9444355}{15}
 \bibcite{10848019}{16}
@@ -182,6 +179,11 @@
 \bibcite{ahsanEnhancedFaultDiagnosis2025}{22}
 \bibcite{guNovelFaultDiagnosis2022}{23}
 \bibcite{zhangFaultDiagnosisRecognition2024}{24}
+\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Representation Comparison Across Time--Frequency and Temporal Encoding Methods. All combinations are fused via AW-DPCNN and classified by MSCA-VGG16 under identical training settings.\relax }}{17}{}\protected@file@percent }
+\newlabel{tab:rep_compare}{{VIII}{17}}
+\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Average Accuracy by Time--Frequency and Temporal Encoding Method\relax }}{17}{}\protected@file@percent }
+\newlabel{tab:rep_compare_avg}{{IX}{17}}
+\@writefile{toc}{\contentsline {section}{References}{17}{}\protected@file@percent }
 \bibcite{maBearingFaultDiagnosis2024}{25}
 \bibcite{11014495}{26}
 \bibcite{5352306}{27}

@@ -1,24 +1,32 @@
-remove the following model and relative configuration files.
-- cnn_lstm
-- harmonic_cnn
+for this project, how to explain the `roc_curve` and auc in the context of multi-class classification? and implement it in the paper.
 
 
-## Removed Files
+## Added: Multi-Class ROC-AUC Explanation (Section 5.2)
 
-| File | Description |
-|------|-------------|
-| `src/models/cnn_lstm.py` | CNN+LSTM hybrid model implementation |
-| `src/models/harmonic_cnn.py` | Harmonic CNN model implementation |
-| `experiments/exp1/cnn_lstm.yaml` | Experiment config |
-| `experiments/exp1/harmonic_cnn.yaml` | Experiment config |
+### Key points explained
 
-## Updated Files
+| Concept | Explanation |
+|---------|-------------|
+| **Strategy** | One-vs-Rest (OvR) — treat each class as positive, all others as negative |
+| **Per-class ROC** | $\mathrm{TPR}_c$ vs $\mathrm{FPR}_c$ at varying thresholds |
+| **Macro-averaged AUC** | $\mathrm{AUC}_{\mathrm{macro}} = \frac{1}{C} \sum \mathrm{AUC}_c$ — equal weight to all classes |
+| **Why macro** | Robust to class imbalance; each fault type contributes equally |
+| **Implementation** | `sklearn.roc_auc_score(multi_class="ovr", average="macro")` |
 
-| File | Change |
-|------|--------|
-| registry.py | Removed 2 imports + 2 registration blocks (lines 4, 6, 31–48) |
-| run_representation_comparison.py | Removed from docstring model list |
+### The math in the paper
 
-Verified: `from src.models import build_model` imports cleanly with no errors. No other files in the codebase reference these models.
+For $C$ classes, each class $c$ gets its own binary ROC. The macro AUC is the unweighted mean:
+
+$$\mathrm{AUC}_{\mathrm{macro}} = \frac{1}{C} \sum_{c=1}^{C} \mathrm{AUC}_c$$
+
+This matches how metrics.py computes it with `average="macro"` and `multi_class="ovr"`.
+
+### Contrast with alternatives (why not these)
+
+| Strategy | Why not used |
+|----------|-------------|
+| **Micro-average** | Weighted by class frequency → majority classes dominate, misleading under imbalance |
+| **Weighted-average** | Same problem as micro |
+| **OvO (One-vs-One)** | $\binom{C}{2}$ pairs → too many curves for 10 classes, hard to interpret |
 
 Made changes.
