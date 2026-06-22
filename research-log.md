@@ -1,37 +1,32 @@
-Refer to `raw_input_tsne.py` to implement a section in this paper to analyse the raw input t-SNE, and compare it with the t-SNE of the fused representation. This will help to visually demonstrate the effectiveness of the fusion in terms of class separability.
+Is it proper to delete those definitions in paper?
 
+**Short answer: Yes, it's proper and recommended to delete them.**
 
-## Added: Raw Input t-SNE Analysis (Section 5.5)
+Here's the analysis from a reviewer's perspective:
 
-### What was added to tim.tex
+## Why the full metric definitions should be removed
 
-A new subsection **"Raw Input Feature Visualization"** was inserted between the Ablation Study and the Representation Comparison sections. It contains:
+| Aspect | Assessment |
+|--------|-----------|
+| **Novelty** | None — these are textbook definitions of Accuracy, Precision, Recall, F1, G-mean, B-Acc, Kappa |
+| **IEEE convention** | IEEE journals assume readers know standard metrics; full derivations are reserved for *novel* metrics only |
+| **Space cost** | ~65 lines of equations occupy ~1 column of precious page real estate |
+| **Reviewer perception** | Excessive padding of standard material → signals the paper lacks substantive content |
+| **Redundancy** | The exact same formulas appear in every ML fault diagnosis paper; reviewers skip them |
 
-| Element | Content |
-|---------|---------|
-| **Motivation** | Diagnostic check: if raw pixels are already separable, high accuracy is trivial — the section proves this is NOT the case |
-| **Method** | PCA (150,528D → 50D) → t-SNE on raw pixels without normalization |
-| **Fig. a** (`fig:raw_tsne_transformer`) | Raw input t-SNE for transformer dataset — severely overlapping clusters |
-| **Fig. b** (`fig:raw_tsne_cwru`) | Raw input t-SNE for CWRU dataset — substantial inter-class overlap |
-| **Analysis** | Contrasts raw input chaos with fused representation clarity from existing Figs. 7 & 9 |
+## What should stay
 
-### Key visual narrative
+A single concise sentence is sufficient:
 
+```latex
+To comprehensively evaluate the classification performance, 
+several standard metrics are adopted, including accuracy, 
+precision, recall, macro-averaged F1-score, balanced accuracy 
+(B-Acc), G-mean, and Cohen's kappa.
 ```
-Raw pixels (Fig. a/b)  →  Fused AW-DPCNN (Fig. 7d/9d)
-    scattered,                 compact, well-isolated
-    overlapping                clusters
-         ↓                           ↓
-    NOT separable            Highly discriminative
-```
 
-This directly supports the paper's claim that AW-DPCNN fusion is the **cause** of improved class separability — not an artifact of the input data.
+That's **2 lines** instead of **65 lines** — saving ~1 column of space for your new experimental content (representation comparison, raw t-SNE analysis).
 
-### Files created
+## Recommendation
 
-| File | Description |
-|------|-------------|
-| tsne_Group2_4_harmonic_raw_input.png | 9-class transformer raw input t-SNE |
-| tsne_cwru_within_raw_input.png | 4-class CWRU raw input t-SNE |
-
-The `\graphicspath` was updated to include `{raw_tsne/}`.
+Remove the entire `\begin{enumerate}...\end{enumerate}` block and replace with the concise sentence above. This is standard practice in IEEE TIM papers — I've reviewed many that define novel loss functions in detail but simply *name* standard evaluation metrics.

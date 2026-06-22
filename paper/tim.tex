@@ -439,71 +439,7 @@ After processing by the proposed AW-DPCNN, the fused feature maps exhibit enhanc
 \subsection{Implementation Details and Evaluation Metrics}
 The raw acoustic signals are converted into Mel spectrograms and GADF images, which are subsequently fused using the proposed AW-DPCNN to generate pseudo-color RGB images of size $224 \times 224$. These fused representations serve as the input to the MSCA-VGG16 network. All experiments follow a unified training protocol. During each ablation study, only one factor is modified while all other settings remain unchanged. In practice, variations in fault durations cause different categories to exhibit inherent sample imbalance. To counteract potential bias toward majority classes, a class-weighted loss function is employed during the training process.
 
-The experiments in this study were conducted on a system equipped with an Intel i9-14900K CPU and an NVIDIA RTX 5090 GPU. The software environment was based on PyTorch 2.11 and CUDA 12.8. To comprehensively evaluate the classification performance, several commonly used metrics are adopted, including accuracy, precision, recall, F1-score, balanced accuracy (B-Acc), G-mean, and Cohen’s kappa. Let $C$ denote the number of classes and $m_{ij}$ represent the element of the confusion matrix indicating the number of samples belonging to class $i$ but predicted as class $j$.
-\begin{enumerate}
-	\item \textbf{Accuracy}
-	The overall classification accuracy is defined as
-	\begin{equation}
-		\mathrm{Accuracy} =
-		\frac{\sum_{c=1}^{C} m_{cc}}
-		{\sum_{i=1}^{C}\sum_{j=1}^{C} m_{ij}}.
-	\end{equation}
-	\item \textbf{Precision, Recall, and F1-score}
-	For class $c$, Precision and Recall are defined as
-	\begin{equation}
-		\mathrm{Precision}_c =
-		\frac{m_{cc}}
-		{\sum_{i=1}^{C} m_{ic}},
-	\end{equation}
-	\begin{equation}
-		\mathrm{Recall}_c =
-		\frac{m_{cc}}
-		{\sum_{j=1}^{C} m_{cj}}.
-	\end{equation}
-	The corresponding F1-score is given by
-	\begin{equation}
-		\mathrm{F1}_c =
-		\frac{2\,\mathrm{Precision}_c \cdot \mathrm{Recall}_c}
-		{\mathrm{Precision}_c + \mathrm{Recall}_c}.
-	\end{equation}
-	The macro-averaged F1-score is calculated as
-	\begin{equation}
-		\mathrm{F1}_{macro} =
-		\frac{1}{C}\sum_{c=1}^{C}\mathrm{F1}_c.
-	\end{equation}
-	\item \textbf{Balanced Accuracy (B-Acc)}
-	Balanced accuracy is defined as the average recall across all classes
-	\begin{equation}
-		\mathrm{B\text{-}Acc} =
-		\frac{1}{C}\sum_{c=1}^{C}\mathrm{Recall}_c.
-	\end{equation}
-	\item \textbf{G-mean}
-	The geometric mean of class-wise recall is defined as
-	\begin{equation}
-		\mathrm{G\text{-}Mean} =
-		\left(\prod_{c=1}^{C}\mathrm{Recall}_c\right)^{\frac{1}{C}}.
-	\end{equation}
-	\item \textbf{Cohen’s kappa}
-	The observed agreement is
-	\begin{equation}
-		P_o =
-		\frac{\sum_{c=1}^{C} m_{cc}}
-		{\sum_{i=1}^{C}\sum_{j=1}^{C} m_{ij}},
-	\end{equation}
-	and the expected agreement is
-	\begin{equation}
-		P_e =
-		\frac{\sum_{c=1}^{C}
-			\left(\sum_{j=1}^{C} m_{cj}\right)
-			\left(\sum_{i=1}^{C} m_{ic}\right)}
-		{\left(\sum_{i=1}^{C}\sum_{j=1}^{C} m_{ij}\right)^2}.
-	\end{equation}
-	Thus, Cohen’s kappa coefficient is defined as
-	\begin{equation}
-		\kappa =
-		\frac{P_o - P_e}{1 - P_e}.
-	\end{equation}
-\end{enumerate}
+The experiments in this study were conducted on a system equipped with an Intel i9-14900K CPU and an NVIDIA RTX 5090 GPU. The software environment was based on PyTorch 2.11 and CUDA 12.8. To comprehensively evaluate the classification performance, several commonly used metrics are adopted, including accuracy, precision, recall, F1-score, balanced accuracy (B-Acc), G-mean, and Cohen’s kappa.
 
 	\begin{figure*}
 		\centering
