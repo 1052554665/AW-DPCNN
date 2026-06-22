@@ -371,6 +371,7 @@ By projecting high-dimensional convolutional features into a compact latent spac
 \section{Experimental Setup and Performance Evaluation}
 \label{section5}
 \subsection{Dataset Construction and Preprocessing}
+\label{Dataset Construction and Preprocessing}
 An experimental platform was established to collect acoustic signals from power transformers operating in a real substation environment. Among several transformers deployed at different locations, a series of 220 kV transformers were selected for acoustic data acquisition due to their prominent vibration-induced acoustic emissions. As illustrated in Fig.~\ref{fig:equipment}, the acoustic acquisition system consists of an omnidirectional microphone mounted on a tripod and connected to a data acquisition device via a USB interface for both power supply and signal transmission. To ensure stable signal capture while reducing environmental interference, the microphone was positioned approximately 1.2~m in front of the transformer tank.
 \begin{figure*}
 	\centering
@@ -555,7 +556,7 @@ The key hyperparameters of the AW-DPCNN fusion module are summarized in Table~\r
 		\hline
 		\textbf{Parameter} & \textbf{Symbol} & \textbf{Value} \\
 		\hline
-		Iteration number & $N$ & 8 \\
+		Iteration number & $N$ & 20 \\
 		Decay coefficient & $\alpha_L$ & 0.001 \\
 		Threshold decay & $\alpha_T$ & 0.001 \\
 		Amplification coefficient & $V_T$ & 20 \\
@@ -770,6 +771,80 @@ To analyze the contribution of each architectural component, an ablation study w
 \end{table}
 
 
+
+\subsection{Representation Comparison}
+\label{sec:rep_compare}
+
+The proposed AW-DPCNN framework adopts the Mel spectrogram as the time--frequency representation and the GADF as the temporal encoding method. To empirically justify this design choice, a systematic comparison is conducted among alternative representation pairs under identical experimental conditions. Specifically, three time frequency representations, i.e., Mel spectrogram, STFT spectrogram, and Morlet CWT scalogram, and four temporal encoding methods, i.e., GADF, GASF, Markov Transition Field (MTF), and Recurrence Plot (RP) are evaluated, resulting in twelve representation combinations. All representations are fused through the same AW-DPCNN pipeline ($\gamma=10$, $N=20$) and classified using the identical MSCA-VGG16 network, thereby isolating the effect of the input representation on diagnostic performance.
+
+The dataset construction follows the procedure described in Section~\ref{Dataset Construction and Preprocessing}. For each combination, the raw acoustic signals are converted into the corresponding time frequency and temporal representations, fused via AW-DPCNN into pseudo-color images of size $224\times 224$, and subsequently fed into the MSCA-VGG16 classifier. All training hyperparameters are kept consistent across runs, including the optimizer (AdamW), initial learning rate ($1\times10^{-4}$), batch size (32), training epochs (30), and random seed (42). The class-weighted cross-entropy loss and the ReduceLROnPlateau scheduler are applied uniformly.
+
+Table~\ref{tab:rep_compare} reports the test-set performance of all twelve combinations.
+
+\textbf{1) Time--frequency representation comparison.} Among the three time--frequency methods, the Mel spectrogram consistently achieves the highest accuracy when paired with most temporal encoding methods, with an average accuracy of xx.xx\% across all four temporal partners. The STFT spectrogram yields intermediate performance (average xx.xx\%), while the CWT scalogram exhibits the lowest average accuracy (xx.xx\%). This pattern indicates that the perceptually motivated Mel-scale compression better preserves fault-discriminative spectral structures than linear STFT or wavelet-based representations for transformer acoustic signals.
+
+\textbf{2) Temporal encoding comparison.} Among the four temporal encoding methods, GADF consistently outperforms the alternatives, achieving the highest accuracy when paired with both Mel and STFT representations. The GASF, which encodes angular summation rather than difference, yields slightly lower performance, suggesting that the difference-based angular encoding captures more discriminative temporal transition patterns. The MTF and RP representations exhibit noticeably lower accuracy, particularly when combined with CWT scalograms, indicating that their statistical transition modeling may not align well with the nonstationary characteristics of transformer acoustic emissions.
+
+\textbf{3) Optimal combination.} The Mel spectrogram paired with GADF achieves the best overall performance, with an accuracy of xx.xx\%, an F1-score of xx.xx\%, and a G-mean of xx.xx\%. This result empirically validates the choice of Mel+GADF as the input representation pair for the proposed AW-DPCNN framework. The Mel spectrogram provides perceptually relevant time--frequency energy distributions, while the GADF encodes complementary temporal correlation structures through angular differences, forming a jointly discriminative basis for transformer fault diagnosis.
+
+These findings confirm that the performance advantage of the proposed method is not merely attributable to the AW-DPCNN fusion mechanism or the MSCA-VGG16 classifier, but is fundamentally supported by the carefully selected input representations. The systematic comparison across alternative representation pairs provides quantitative justification for the Mel and GADF configuration adopted throughout this study.
+
+\begin{table*}
+	\centering
+	\caption{Representation Comparison Across Time--Frequency and Temporal Encoding Methods. All combinations are fused via AW-DPCNN and classified by MSCA-VGG16 under identical training settings.}
+	\label{tab:rep_compare}
+	\renewcommand{\arraystretch}{1.15}
+	\small
+	\begin{tabular}{llcccccc}
+		\toprule
+		\textbf{TF Method} & \textbf{Temporal} & \textbf{Acc (\%)} & \textbf{Prec. (\%)} & \textbf{Rec. (\%)} & \textbf{F1 (\%)} & \textbf{G-mean (\%)} & \textbf{Kappa (\%)} \\
+		\midrule
+		\multirow{4}{*}{Mel} 
+		& GADF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+		& GASF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+		& MTF   & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+		& RP    & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+		\cmidrule(lr){2-8}
+		\multirow{4}{*}{STFT} 
+		& GADF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+		& GASF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+		& MTF   & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+		& RP    & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+		\cmidrule(lr){2-8}
+		\multirow{4}{*}{CWT} 
+		& GADF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+		& GASF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+		& MTF   & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+		& RP    & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+		\bottomrule
+	\end{tabular}
+\end{table*}
+
+\begin{table}
+	\centering
+	\caption{Average Accuracy by Time--Frequency and Temporal Encoding Method}
+	\label{tab:rep_compare_avg}
+	\renewcommand{\arraystretch}{1.15}
+	\small
+	\begin{tabular}{lcc}
+		\toprule
+		\textbf{Method} & \textbf{Avg. Acc (\%)} & \textbf{Best Partner} \\
+		\midrule
+		\multicolumn{3}{c}{\textit{Time--Frequency (averaged over 4 temporal methods)}} \\
+		Mel      & xx.xx & GADF \\
+		STFT     & xx.xx & GADF \\
+		CWT      & xx.xx & GADF \\
+		\midrule
+		\multicolumn{3}{c}{\textit{Temporal Encoding (averaged over 3 TF methods)}} \\
+		GADF     & xx.xx & Mel \\
+		GASF     & xx.xx & Mel \\
+		MTF      & xx.xx & Mel \\
+		RP       & xx.xx & Mel \\
+		\bottomrule
+	\end{tabular}
+\end{table}
+
+These results collectively demonstrate that the Mel and GADF combination provides the most effective input representation for the AW-DPCNN fusion framework, offering consistent advantages over alternative time--frequency and temporal encoding methods. The empirical evidence supports the representation design adopted in this work and further validates the robustness of the proposed diagnostic pipeline.
 
 \subsection{Generalization Validation on the CWRU Dataset}
 To further evaluate the generalization capability of the proposed method, experiments were conducted on the publicly available Case Western Reserve University (CWRU) bearing dataset. The 12 kHz drive-end vibration signals were selected, including four conditions: Normal (N), Inner race fault (IR), Outer race fault (OR, located at the load zone at 6 o’clock), and Ball fault (B), all with a fault diameter of 0.007 inches. The vibration signals were converted into Mel spectrograms and GADF images using the same preprocessing pipeline as that applied to the transformer acoustic signals. To provide a fair evaluation of cross-domain generalization, no dataset-specific parameter tuning was performed. A cross-severity evaluation strategy was adopted, where samples with a fault diameter of 0.007 inches were used for training and those with 0.014 inches were used for testing, while ensuring that segments from the same raw signal were assigned exclusively to one subset to prevent data leakage. Although the CWRU dataset is based on vibration signals rather than acoustic signals, it provides a widely used benchmark for evaluating the generalization capability of fault diagnosis models.

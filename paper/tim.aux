@@ -91,6 +91,7 @@
 \@writefile{toc}{\contentsline {section}{\numberline {V}Experimental Setup and Performance Evaluation}{6}{}\protected@file@percent }
 \newlabel{section5}{{V}{6}}
 \@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Dataset Construction and Preprocessing}{6}{}\protected@file@percent }
+\newlabel{Dataset Construction and Preprocessing}{{\mbox  {V-A}}{6}}
 \@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Overall architecture of the proposed MSCA-VGG16 network for transformer fault classification.\relax }}{7}{}\protected@file@percent }
 \newlabel{MSCA-VGG}{{4}{7}}
 \@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Experimental platform of acoustic signal acquisition.\relax }}{7}{}\protected@file@percent }
@@ -126,20 +127,8 @@
 \newlabel{tab:fusion_exp_simple}{{VI}{12}}
 \@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces Ablation Study on VGG16-Based Models. MS: Multi-Scale; CA: Channel Attention; EH: Embedding Head.\relax }}{13}{}\protected@file@percent }
 \newlabel{tab:ablation_vgg16}{{VII}{13}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}Generalization Validation on the CWRU Dataset}{13}{}\protected@file@percent }
-\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces  Validation on the Public CWRU Dataset. Rep.: Representation; Prec.: Precision; Rec.: Recall; Gm.: G-mean. \relax }}{13}{}\protected@file@percent }
-\newlabel{tab:cwru_ablation}{{VIII}{13}}
-\@writefile{toc}{\contentsline {section}{\numberline {VI}Conclusion}{13}{}\protected@file@percent }
-\newlabel{section6}{{VI}{13}}
-\bibstyle{IEEEtran}
-\bibdata{references}
-\bibcite{10491111}{1}
-\bibcite{7480687}{2}
-\bibcite{10492658}{3}
-\bibcite{NIU2025127997}{4}
-\bibcite{SHAN2023112408}{5}
-\bibcite{10606641}{6}
-\bibcite{4265659}{7}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-E}}Representation Comparison}{13}{}\protected@file@percent }
+\newlabel{sec:rep_compare}{{\mbox  {V-E}}{13}}
 \newlabel{subfig:tsne_cwru_mel}{{9a}{14}}
 \newlabel{sub@subfig:tsne_cwru_mel}{{a}{14}}
 \newlabel{subfig:tsne_cwru_gadf}{{9b}{14}}
@@ -150,7 +139,25 @@
 \newlabel{sub@subfig:tsne_cwru_awdpcnn}{{d}{14}}
 \@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces  t-SNE visualization of feature distributions under different strategies. (a) A1: Mel representation. (b) A2: GADF representation. (c) A3: Mel+GADF with concatenation fusion. (d) A4: Mel+GADF with the proposed AW-DPCNN fusion, which produces more compact intra-class clusters and clearer inter-class boundaries. \relax }}{14}{}\protected@file@percent }
 \newlabel{Fig:tsne_CWRU}{{9}{14}}
-\@writefile{toc}{\contentsline {section}{References}{14}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-F}}Generalization Validation on the CWRU Dataset}{14}{}\protected@file@percent }
+\bibstyle{IEEEtran}
+\bibdata{references}
+\bibcite{10491111}{1}
+\bibcite{7480687}{2}
+\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Representation Comparison Across Time--Frequency and Temporal Encoding Methods. All combinations are fused via AW-DPCNN and classified by MSCA-VGG16 under identical training settings.\relax }}{15}{}\protected@file@percent }
+\newlabel{tab:rep_compare}{{VIII}{15}}
+\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Average Accuracy by Time--Frequency and Temporal Encoding Method\relax }}{15}{}\protected@file@percent }
+\newlabel{tab:rep_compare_avg}{{IX}{15}}
+\@writefile{lot}{\contentsline {table}{\numberline {X}{\ignorespaces  Validation on the Public CWRU Dataset. Rep.: Representation; Prec.: Precision; Rec.: Recall; Gm.: G-mean. \relax }}{15}{}\protected@file@percent }
+\newlabel{tab:cwru_ablation}{{X}{15}}
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Conclusion}{15}{}\protected@file@percent }
+\newlabel{section6}{{VI}{15}}
+\@writefile{toc}{\contentsline {section}{References}{15}{}\protected@file@percent }
+\bibcite{10492658}{3}
+\bibcite{NIU2025127997}{4}
+\bibcite{SHAN2023112408}{5}
+\bibcite{10606641}{6}
+\bibcite{4265659}{7}
 \bibcite{7558591}{8}
 \bibcite{9760386}{9}
 \bibcite{9408662}{10}
@@ -185,4 +192,4 @@
 \bibcite{Li_2018}{39}
 \bibcite{kangEnhancementAlgorithmColor2021}{40}
 \bibcite{9770845}{41}
-\gdef \@abspage@last{15}
+\gdef \@abspage@last{17}

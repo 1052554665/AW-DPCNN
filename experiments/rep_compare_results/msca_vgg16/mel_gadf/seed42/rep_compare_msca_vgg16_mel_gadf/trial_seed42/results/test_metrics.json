@@ -1,0 +1,16 @@
+{
+  "test_loss": 0.03367933741695172,
+  "test_acc": 0.998303647158609,
+  "test_precision": 0.9988059701492539,
+  "test_recall": 0.997979797979798,
+  "test_f1": 0.9983859691783945,
+  "test_gmean": 0.9979725857338783,
+  "test_bal_acc": 0.997979797979798,
+  "test_kappa": 0.9978557983468369,
+  "test_auc": 1.0,
+  "best_epoch": 1,
+  "best_val_f1": 1.0,
+  "params": 26820709,
+  "flops": 15946682181,
+  "model_name": "msca_vgg16"
+}
