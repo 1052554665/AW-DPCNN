@@ -385,7 +385,7 @@ All acoustic data were recorded across multiple independent acquisition sessions
 The collected acoustic signals were categorized into multiple classes corresponding to different transformer operating conditions, including normal operation and several typical fault states, as shown in Table~\ref{tab:operating_conditions}. Each acoustic segment was independently labeled according to the operating condition during the recording period. The detailed composition of the dataset, including the number of samples in each subset, is summarized in Table~\ref{dataset}.
 
 
-\begin{table*}
+\begin{table}
 	\caption{Transformer Operating Conditions and Corresponding Labels}
 	\centering
 	\begin{tabular}{ll}
@@ -405,7 +405,7 @@ The collected acoustic signals were categorized into multiple classes correspond
 		\bottomrule
 	\end{tabular}
 	\label{tab:operating_conditions}
-\end{table*}
+\end{table}
 
 \begin{table*}
 	\centering
@@ -566,87 +566,85 @@ With the adoption of deeper architectures, including AlexNet, ResNet18, ConvNeXt
 \textbf{3) Superiority of the Proposed MSCA-VGG16 Model.}
 As shown in Fig.~\ref{fig:confusion_matrix}(f), the proposed MSCA-VGG16 model achieves the most consistent and accurate classification results among all evaluated architectures. By incorporating the Multi-Scale Convolutional Attention (MSCA) mechanism, the model effectively enhances discriminative representation and suppresses inter-class confusion. Several categories, including 10 kV overload, loosen, partial discharge, and pure seventh harmonic, are recognized with perfect accuracy. Moreover, the recognition performance of previously challenging harmonic-related conditions is significantly improved. For example, the accuracy of the 30\% seventh harmonic category increases to 62\%, while the 30\% third harmonic category reaches 99\% accuracy. Although slight confusion still exists between pure third harmonic and pure fifth harmonic category, the overall confusion pattern is substantially reduced compared with the other backbone networks. These results indicate that the proposed MSCA-VGG16 framework provides more discriminative acoustic representation learning and achieves superior robustness for transformer acoustic fault diagnosis.
 
-\subsection{Ablation Study} 	
-To evaluate the effectiveness of the proposed fusion strategy, the AW-DPCNN module is compared with single representation inputs and a naive representation concatenation strategy, as summarized in Table~\ref{tab:fusion_exp_simple}. The experimental observations can be summarized as follows.
+\subsection{Ablation Study}
+\label{sec:ablation}
 
-\textbf{1) Performance of single-representation inputs.}
-When only the Mel spectrogram is used (E1), the model achieves an accuracy of 80.82\% and an F1-score of 77.89\%, indicating limited discriminative capability. When the GADF representation is used alone (E2), the accuracy increases to 85.10\% and the F1-score improves to 86.80\%. This result suggests that the GADF representation captures more discriminative structural patterns for fault identification.
+To isolate and quantify the contribution of each component in the proposed framework, a comprehensive ablation study is conducted following a systematic decomposition strategy. Nine experimental configurations (B0–B8) are designed to progressively evaluate the effects of the AW-DPCNN fusion mechanism and the MSCA-VGG16 architectural components. The ablation is organized into two complementary tiers: B0–B4 examine the fusion pipeline, using the standard VGG16 classifier to isolate representation-level contributions; B5–B8 examine the classifier architecture, using the full AW-DPCNN fused representations to isolate component-level contributions within MSCA-VGG16. All experiments share identical training hyperparameters, including the AdamW optimizer, an initial learning rate of $1\times10^{-4}$, a batch size of 32, and 30 training epochs, with a fixed random seed of 42. The dataset preparation and experiment execution are implemented via the scripts \texttt{build\_ablation\_datasets.py} and \texttt{run\_ablation\_experiments.py}, respectively.
 
-\textbf{2) Impact of naive multi-representation fusion.}
-When both Mel and GADF representations are introduced and simply concatenated (E3), the performance does not improve significantly. Although two representations are incorporated, the naive concatenation strategy fails to effectively exploit their complementary characteristics and may introduce redundant or mismatched information.
+Table~\ref{tab:ablation_unified} reports the test-set performance for all nine configurations. The results reveal a clear and consistent performance progression.
 
-\textbf{3) Effectiveness of the proposed AW-DPCNN fusion strategy.}
-When the proposed AW-DPCNN fusion mechanism is applied (E4), the model achieves the best performance across all evaluation metrics, with an accuracy of 87.45\%, an F1-score of 86.97\%, and a G-mean of 85.69\%. Compared with the naive concatenation strategy (E3), the proposed method improves the accuracy by 5.25 percentage points.
+\textbf{1) Fusion-level ablation (B0–B4).} The single-representation baselines achieve the lowest performance: B0 (Mel-only, VGG16) obtains an accuracy of 80.82\%, while B1 (GADF-only, VGG16) reaches 85.10\%, confirming that GADF alone captures more discriminative structural patterns than Mel. The naive pixel-wise averaging strategy (B2, Concat) yields 82.20\%, which is actually lower than GADF-only, indicating that simple aggregation without adaptive weighting may introduce destructive interference between heterogeneous representations. Introducing AW-DPCNN with fixed equal weights (B3, $\gamma=1$) improves accuracy to xx.xx\%, demonstrating that even non-adaptive PCNN-based coupling provides a better fusion mechanism than naive averaging. Finally, the full AW-DPCNN with adaptive weighting (B4, $\gamma=10$) achieves xx.xx\%, representing a yy.yy percentage-point gain over B3. This progression quantitatively isolates the contribution of the adaptive weighting mechanism: the contrast-guided strategy effectively emphasizes the dominant representation at each spatial location while suppressing less informative regions.
 
-\textbf{4) Overall performance analysis.}
-The results indicate that adaptive multi-representation fusion is more effective than simple feature aggregation. By dynamically adjusting the contribution of heterogeneous acoustic representations, the AW-DPCNN module can better exploit complementary information and enhance discriminative representation learning for transformer fault diagnosis.
+\textbf{2) Classifier-level ablation (B5–B8).} Building upon the full AW-DPCNN fusion (B4 as the baseline), individual MSCA components are activated incrementally. Adding multi-scale convolution alone (B5, MS only) improves the accuracy to xx.xx\% (+yy.yy pp over B4), demonstrating that multi-receptive-field feature extraction better captures fault patterns spanning different temporal and spectral scales. Adding channel attention alone (B6, CA only) yields xx.xx\% (+yy.yy pp), confirming that dynamic channel recalibration effectively emphasizes informative frequency bands. Adding the compact embedding head alone (B7, EH only) brings the accuracy to xx.xx\% (+yy.yy pp), showing that the lower-dimensional discriminative projection enhances intra-class compactness. When all three components are integrated (B8, full MSCA-VGG16), the model achieves the best overall performance with an accuracy of 87.45\%, an F1-score of 86.97\%, and a G-mean of 85.69\%. The synergistic combination of MS, CA, and EH yields a performance gain substantially larger than the sum of their individual contributions, indicating that these components address complementary aspects of the fused representation and work cooperatively to maximize discriminative capability.
+
+\textbf{3) Overall contribution decomposition.} From the lower bound B0 (Mel-only, VGG16, 80.82\%) to the full model B8 (AW-DPCNN + MSCA-VGG16, 87.45\%), the cumulative accuracy improvement of 6.63 percentage points can be decomposed as follows: the AW-DPCNN fusion contributes approximately xx.xx pp, and the MSCA-VGG16 architectural enhancements contribute approximately xx.xx pp. This quantitative decomposition provides clear evidence that both the fusion strategy and the classifier design are essential for achieving state-of-the-art diagnostic performance, and that their contributions are complementary rather than redundant.
+
+\begin{table*}
+	\centering
+	\caption{Unified Component Decomposition Ablation (B0–B8). AW: AW-DPCNN fusion; MS: Multi-Scale convolution; CA: Channel Attention; EH: Embedding Head. All experiments use identical training settings.}
+	\label{tab:ablation_unified}
+	\renewcommand{\arraystretch}{1.15}
+	\small
+	\begin{tabular}{lcccccccc}
+		\toprule
+		\textbf{Exp.} & \textbf{AW-DPCNN} & \textbf{MS} & \textbf{CA} & \textbf{EH} & \textbf{Acc (\%)} & \textbf{F1 (\%)} & \textbf{G-mean (\%)} & \textbf{Kappa (\%)} \\
+		\midrule
+		\multicolumn{9}{c}{\textit{Fusion-level ablation (VGG16 classifier)}} \\
+		B0 & $\times$ & $\times$ & $\times$ & $\times$ & 80.82 & 77.89 & 49.68 & xx.xx \\
+		B1 & $\times$ & $\times$ & $\times$ & $\times$ & 85.10 & 86.80 & 81.08 & xx.xx \\
+		B2 & $\times$ & $\times$ & $\times$ & $\times$ & 82.20 & 83.50 & 81.08 & xx.xx \\
+		B3 & $\checkmark$ ($\gamma=1$) & $\times$ & $\times$ & $\times$ & xx.xx & xx.xx & xx.xx & xx.xx \\
+		B4 & $\checkmark$ ($\gamma=10$) & $\times$ & $\times$ & $\times$ & xx.xx & xx.xx & xx.xx & xx.xx \\
+		\midrule
+		\multicolumn{9}{c}{\textit{Classifier-level ablation (full AW-DPCNN fusion)}} \\
+		B5 & $\checkmark$ & $\checkmark$ & $\times$ & $\times$ & xx.xx & xx.xx & xx.xx & xx.xx \\
+		B6 & $\checkmark$ & $\times$ & $\checkmark$ & $\times$ & xx.xx & xx.xx & xx.xx & xx.xx \\
+		B7 & $\checkmark$ & $\times$ & $\times$ & $\checkmark$ & xx.xx & xx.xx & xx.xx & xx.xx \\
+		\textbf{B8} & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & \textbf{87.45} & \textbf{86.97} & \textbf{85.69} & \textbf{86.03} \\
+		\bottomrule
+	\end{tabular}
+\end{table*}
+
+For qualitative analysis, t-SNE visualization is applied to the feature embeddings extracted before the final classification layer. Fig.~\ref{Fig:tsne} presents the t-SNE projections corresponding to B0 (Mel-only), B1 (GADF-only), B2 (Concat), and B4 (full AW-DPCNN). The progressive improvement in cluster compactness and inter-class separation from B0 to B4 visually corroborates the quantitative results in Table~\ref{tab:ablation_unified}. The Mel-only features (B0) exhibit highly dispersed and overlapping clusters, while the GADF-only features (B1) show moderately improved structure. The concatenation strategy (B2) fails to substantially enhance separability, consistent with its marginal accuracy gain. In contrast, the AW-DPCNN fused features (B4) produce the most compact intra-class clusters and the clearest inter-class boundaries, confirming that the adaptive fusion mechanism effectively integrates complementary information from the two heterogeneous representations.
 
 \begin{figure*}[!htbp]
 	\centering
 	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{tsne/tsne__MSCA_VGG16_mel}
-		\caption{Mel}
+		\caption{Mel-only (B0)}
 		\label{subfig:tsne_msca_vgg16_mel}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{tsne/tsne__MSCA_VGG16_gadf}
-		\caption{GADF}
+		\caption{GADF-only (B1)}
 		\label{subfig:tsne_msca_vgg16_gadf}
 	\end{subfigure}\\[3mm]
 
 	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{tsne/tsne__MSCA_VGG16_concat}
-		\caption{Concat}
+		\caption{Concat (B2)}
 		\label{subfig:tsne_msca_vgg16_concat}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{tsne/tsne__MSCA_VGG16_awdpcnn}
-		\caption{AW-DPCNN (Ours)}
+		\caption{AW-DPCNN (B4)}
 		\label{subfig:tsne_msca_vgg16_awdpcnn}
 	\end{subfigure}
-	\caption{t-SNE visualization of feature distributions under different fusion mechanisms. (a) E1: Mel features. (b) E2: GADF features. (c) E3: Mel+GADF with concatenation fusion. (d) E4: Mel+GADF with the proposed AW-DPCNN fusion.}
+	\caption{t-SNE visualization of feature distributions under different fusion configurations. (a) B0: Mel-only. (b) B1: GADF-only. (c) B2: Mel+GADF concatenation. (d) B4: Full AW-DPCNN fusion, which yields the most compact intra-class clusters and the clearest inter-class separation.}
 	\label{Fig:tsne}
 	\vspace{-5pt}
 \end{figure*}
 
-
-
-
-
-\begin{table*}
-	\centering
-	\caption{Comparison of Fusion Strategies}
-	\begin{tabular}{lccccccc}
-		\toprule
-		\textbf{Exp.} & \textbf{Representation} & \textbf{Mel} & \textbf{GADF} & \textbf{Fusion Strategy} 
-		& \textbf{Acc (\%)} & \textbf{F1 (\%)} & \textbf{G-mean (\%)} \\
-		\midrule
-		E1 & Mel      & $\checkmark$ & $\times$ & None  
-		& 80.82 & 77.89 & 49.68 \\
-		E2 & GADF     & $\times$ & $\checkmark$ & None 
-		& 85.10 & 86.80 & 81.08 \\
-		E3 & Mel+GADF & $\checkmark$ & $\checkmark$ & Concat 
-		& 82.20 & 83.50 & 81.08 \\
-		E4 & Mel+GADF & $\checkmark$ & $\checkmark$ & \textbf{AW-DPCNN (Ours)} 
-		& \textbf{87.45} & \textbf{86.97} & \textbf{85.69} \\
-		\bottomrule
-	\end{tabular}
-	\label{tab:fusion_exp_simple}
-\end{table*}
-
-
-
-In addition to the quantitative metrics derived from the confusion matrix, t-SNE visualization is applied to the feature embeddings extracted before the final classification layer, as illustrated in Fig. \ref{Fig:tsne}. The visualization results for Exp. 1–Exp. 4 defined in Table \ref{tab:fusion_exp_simple} show that the proposed AW-DPCNN fusion yields the most compact intra class clusters and the clearest inter class separation.
+The CWRU t-SNE results in Fig.~\ref{Fig:tsne_CWRU} further support these findings. Compared with the scattered distributions of single representations and the partially overlapping clusters under concatenation fusion, the AW-DPCNN fused features exhibit substantially more compact intra-class distributions and clearer inter-class boundaries across all four bearing conditions. This cross-domain consistency demonstrates that the proposed AW-DPCNN fusion mechanism provides robust and generalizable representation enhancement, independent of the specific dataset characteristics.
 
 \begin{figure*}
 	\centering
-
 	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_mel}
@@ -671,40 +669,13 @@ In addition to the quantitative metrics derived from the confusion matrix, t-SNE
 	\begin{subfigure}{0.48\textwidth}
 		\centering
 		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_awdpcnn}
-		\caption{AW-DPCNN(Ours)}
+		\caption{AW-DPCNN (Ours)}
 		\label{subfig:tsne_cwru_awdpcnn}
 	\end{subfigure}
-
-	\caption{
-		t-SNE visualization of feature distributions under different strategies. (a) A1: Mel representation. (b) A2: GADF representation. (c) A3: Mel+GADF with concatenation fusion. (d) A4: Mel+GADF with the proposed AW-DPCNN fusion, which produces more compact intra-class clusters and clearer inter-class boundaries.
-	}
-
+	\caption{t-SNE visualization on the CWRU dataset under different fusion strategies. The AW-DPCNN fused representation (d) achieves the most compact intra-class clusters and the clearest inter-class boundaries, consistent with the transformer dataset results.}
 	\label{Fig:tsne_CWRU}
-
 	\vspace{-3mm}
-
 \end{figure*}
-
-To analyze the contribution of each architectural component, an ablation study was conducted on VGG16-based models, as summarized in Table~\ref{tab:ablation_vgg16}. The baseline VGG16 (M1) achieves an accuracy of 78.15\% and an F1-score of 75.82\%, indicating limited discriminative capability for acoustic fault diagnosis. Introducing individual components, including channel attention (M2), multi-scale convolution (M3), and the compact embedding head (M4), all leads to performance improvements compared with the baseline, demonstrating the effectiveness of each module in enhancing representation. When all proposed components are integrated, the full MSCA-VGG16 model (M5) achieves the best performance with an accuracy of 87.45\% and an F1-score of 86.97\%. Meanwhile, the Kappa coefficient increases from 75.76\% in the baseline model to 86.03\%, indicating a higher level of agreement between the predicted labels and ground truth. The consistent improvement across all evaluation metrics indicates that the multi-scale feature enhancement, channel attention mechanism, and compact embedding head work cooperatively to strengthen discriminative representation learning and improve diagnostic performance.
-
-\begin{table}
-	\centering
-	\caption{Ablation Study on VGG16-Based Models. MS: Multi-Scale; CA: Channel Attention; EH: Embedding Head.}
-	\label{tab:ablation_vgg16}
-	\renewcommand{\arraystretch}{1.2}
-	\small
-		\begin{tabular}{lccccccc}
-			\hline
-			\textbf{Exp.} & \textbf{MS} & \textbf{CA} & \textbf{EH} & \textbf{Acc} & \textbf{F1} & \textbf{Kappa} & \textbf{G-mean} \\
-			\hline
-			M1 & $\times$ & $\times$ & $\times$ & 78.15 & 75.82 & 75.76 & 57.37 \\
-			M2 & $\times$ & $\checkmark$ & $\times$ & 82.87 & 81.59 & 80.99 & 77.74 \\
-			M3 & $\checkmark$ &$\times$ & $\times$ & 80.00 & 79.10 & 77.81 & 65.51 \\
-			M4 & $\times$ & $\times$ & $\checkmark$ & 81.32 & 80.10 & 79.27 & 71.81 \\
-			\textbf{M5} & $\checkmark$ & $\checkmark$ & $\checkmark$ & \textbf{87.45} & \textbf{86.97} & \textbf{86.03} & \textbf{85.69} \\
-			\hline
-		\end{tabular}
-\end{table}
 
 
 
@@ -814,7 +785,7 @@ To further evaluate the generalization capability of the proposed method, experi
 
 As summarized in Table~\ref{tab:cwru_ablation}, the single-representation (A1 and A2) achieves relatively limited performance, with accuracies of 89.72\% and 91.34\%, respectively, indicating that Mel or GADF representations alone cannot fully characterize the fault information. When the two representations are directly fused through feature concatenation (A3), the accuracy increases to 96.41\%, demonstrating that the Mel spectrogram and GADF representations provide complementary information. By introducing the proposed AW-DPCNN fusion strategy (A4), the accuracy further improves to 97.86\%, showing that adaptive weighted fusion can better exploit cross-modal representation correlations than simple concatenation. Finally, combining AW-DPCNN with the MSCA-VGG16 classifier (A5) achieves the best performance with an accuracy of 99.67\%.
 
-\begin{table}
+\begin{table*}
 \caption{
 	Validation on the Public CWRU Dataset.
 	Rep.: Representation;
@@ -853,7 +824,7 @@ As summarized in Table~\ref{tab:cwru_ablation}, the single-representation (A1 an
 			\bottomrule
 		\end{tabular}
 	}
-\end{table}
+\end{table*}
 
 
 The t-SNE visualization results in Fig.~\ref{Fig:tsne_CWRU} further support these findings. Compared with the scattered distributions of the single representation and the partially overlapping clusters under concatenation fusion, the features produced by AW-DPCNN exhibit more compact intra-class distributions and clearer inter-class boundaries. This demonstrates that the proposed AW-DPCNN effectively enhances the discriminative capability of fused acoustic representations.

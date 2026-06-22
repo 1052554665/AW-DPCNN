@@ -605,8 +605,7 @@ Usage::
 ### Hyperparameter Sensitivity Analysis
 Hyperparameter Sensitivity Analysis for AW-DPCNN
 =================================================
-Sweeps key PCNN hyperparameters and evaluates classification accuracy
-on a fixed test set using a pre‑trained checkpoint.
+Sweeps key PCNN hyperparameters and evaluates classification accuracy on a fixed test set using a pre‑trained checkpoint.
 
 For each parameter combination, raw test‑set windows are re‑fused
 on‑the‑fly (Mel + GADF + AW‑DPCNN) with the specified parameters,
