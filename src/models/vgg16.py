@@ -1,49 +1,63 @@
-# Classical deep CNN with strong texture modeling capability.
-# 对于VGG16：使用 classifier 中最后一层 FC 之前的特征（4096 维）, t-SNE 用的是第二个 FC 输出（进入最后分类层之前）
+"""Reduced VGG16 baseline for comparison with MSCA-VGG16.
+
+Shares the same VGG16-BN backbone and FC projection (512→1024) as
+MSCA-VGG16, but strips the multi-scale convolutions, channel attention,
+and compact embedding head.  This provides a fair, lightweight baseline
+for ablation studies (configuration B0 in the paper).
+"""
+
 import torch
 import torch.nn as nn
 from torchvision.models import VGG16_BN_Weights, vgg16_bn
 
+
 class VGG16(nn.Module):
-    def __init__(self, num_classes=10, pretrained=True):
+    """VGG16-BN backbone + compact FC head (no MSCA enhancements).
+
+    Architecture:
+        VGG16-BN features  →  512 × 7 × 7
+        AdaptiveAvgPool2d  →  512
+        FC1                →  1024, ReLU, Dropout(0.5)
+        Classifier         →  num_classes
+
+    This is equivalent to MSCA-VGG16 with
+    ``use_ms=False, use_ca=False, use_eh=False``.
+
+    Args:
+        num_classes: number of output classes.
+        pretrained:  load ImageNet pre-trained weights.
+        dropout:     dropout rate in the FC projection layer (default 0.5).
+    """
+
+    def __init__(self, num_classes=10, pretrained=True, dropout=0.5):
         super().__init__()
 
         weights = VGG16_BN_Weights.IMAGENET1K_V1 if pretrained else None
-        base_model = vgg16_bn(weights=weights)
-        # base_model = vgg16_bn(pretrained=False)
+        base = vgg16_bn(weights=weights)
 
-        # backbone
-        self.features = base_model.features
-        self.avgpool = base_model.avgpool
+        # Backbone only — discard the original heavy classifier
+        self.features = base.features              # → 512 × 7 × 7
+        self.avgpool = nn.AdaptiveAvgPool2d(1)     # → 512 × 1 × 1
 
-        # classifier（拆开）
-        self.fc1 = base_model.classifier[0]   # 4096
-        self.relu1 = base_model.classifier[1]
-        self.drop1 = base_model.classifier[2]
-
-        self.fc2 = base_model.classifier[3]   # 4096
-        self.relu2 = base_model.classifier[4]
-        self.drop2 = base_model.classifier[5]
-
-        self.fc3 = nn.Linear(
-            base_model.classifier[6].in_features,
-            num_classes
+        # Compact FC projection (same as MSCA-VGG16 fc1)
+        self.fc1 = nn.Sequential(
+            nn.Linear(512, 1024),
+            nn.ReLU(inplace=True),
+            nn.Dropout(dropout),
         )
 
+        # Direct classifier — no embedding head
+        self.classifier = nn.Linear(1024, num_classes)
+
     def forward(self, x, return_feat=False):
-        x = self.features(x)
-        x = self.avgpool(x)
-        x = torch.flatten(x, 1)
+        x = self.features(x)           # → 512 × 7 × 7
+        x = self.avgpool(x)            # → 512 × 1 × 1
+        x = torch.flatten(x, 1)        # → 512
 
-        x = self.fc1(x)
-        x = self.relu1(x)
-        x = self.drop1(x)
+        x = self.fc1(x)                # → 1024
+        feat = x                       # t-SNE feature (before classifier)
 
-        feat = self.fc2(x)     # ← t-SNE 用这个特征
-        x = self.relu2(feat)
-        x = self.drop2(x)
-
-        out = self.fc3(x)
+        out = self.classifier(feat)    # → num_classes
 
         if return_feat:
             return feat, out
@@ -52,3 +66,4 @@ class VGG16(nn.Module):
 
 def build_vgg16(num_classes=10, pretrained=True):
     return VGG16(num_classes, pretrained)
+

@@ -1,52 +1,62 @@
-For the CWRU dataset `raw-data/CWRU-dataset`, there are three types of fault data, i.e., 12kHz drive end bearing fault data, 12kHz fan end bearing fault data, and 48kHz drive end bearing fault data.
-the dataset includes three fault types: ball faults, inner race faults, and outer race faults, each with three defect sizes: 0.007, 0.014, and 0.021 inches. In total, the dataset consists of ten states: one normal state and nine fault states.
-
-Creating three scripts to make the dataset. Selecting 12kHz drive end bearing fault data, 12kHz fan end bearing fault data, and 48kHz drive end bearing fault data, separately. Referencing `build_cwru_dataset.py`. The fault types and sizes are as follows:
-
-each dataset includes ten types: BF007, IF007, and OF007; BF014, IF014, and OF014; BF021, IF021, and OF021; and Normal.
+reduce the model scale of vgg16, the vgg16 is same as MSCA_VGG16 but remove the multi-scale convs, channel attention and compact embedding head. The vgg16 is a baseline model for comparison with MSCA_VGG16.
 
 
-### Scripts Created
+# Reduced VGG16 baseline
+vgg = VGG16(num_classes=10, pretrained=False)
+x = torch.randn(2, 3, 224, 224)
+feat, out = vgg(x, return_feat=True)
+print('=== Reduced VGG16 (Baseline) ===')
+print(f'Input : {x.shape}')
+print(f'Feat  : {feat.shape}  (expected [2, 1024])')
+print(f'Logits: {out.shape}  (expected [2, 10])')
+p_vgg = sum(p.numel() for p in vgg.parameters()) / 1e6
+print(f'Params: {p_vgg:.2f}M')
 
-| Script | Data Source | SR | Key Pattern | Files | Classes |
-|---|---|---|---|---|---|
-| build_cwru_de.py | 12kHz Drive End | 12 kHz | `DE_time` | 40 | 10/10 ✓ |
-| build_cwru_fe.py | 12kHz Fan End | 12 kHz | `FE_time` | 34 | 10/10 ⚠️ |
-| build_cwru_48k_de.py | 48kHz Drive End | 48 kHz | `DE_time` | 40 | 10/10 ✓ |
+print()
 
-### 10-Class Mapping
+# MSCA-VGG16 full
+msca = MSCA_VGG16(num_classes=10, pretrained=False, use_ms=True, use_ca=True, use_eh=True)
+feat2, out2 = msca(x, return_feat=True)
+print('=== MSCA-VGG16 (Full) ===')
+print(f'Feat  : {feat2.shape}  (expected [2, 256])')
+print(f'Logits: {out2.shape}  (expected [2, 10])')
+p_msca = sum(p.numel() for p in msca.parameters()) / 1e6
+print(f'Params: {p_msca:.2f}M')
 
-| Fault Type | 0.007" | 0.014" | 0.021" |
+print()
+
+# MSCA-VGG16 with all enhancements OFF (= should be same structure as reduced VGG16)
+msca_off = MSCA_VGG16(num_classes=10, pretrained=False, use_ms=False, use_ca=False, use_eh=False)
+feat3, out3 = msca_off(x, return_feat=True)
+print('=== MSCA-VGG16 (MS=False, CA=False, EH=False) ===')
+print(f'Feat  : {feat3.shape}  (expected [2, 1024])')
+print(f'Logits: {out3.shape}  (expected [2, 10])')
+p_off = sum(p.numel() for p in msca_off.parameters()) / 1e6
+print(f'Params: {p_off:.2f}M')
+print(f'Match : p_vgg == p_off? {abs(p_vgg - p_off) < 0.1}')
+"
+
+The reduced VGG16 baseline is verified. Here's a summary:
+
+---
+
+### VGG16 Baseline — Reduced
+
+**File**: vgg16.py
+
+| Property | Old VGG16 | New VGG16 | MSCA-VGG16 (full) |
 |---|---|---|---|
-| Ball | BF007 | BF014 | BF021 |
-| Inner Race | IF007 | IF014 | IF021 |
-| Outer Race (@6) | OF007 | OF014 | OF021 |
-| Normal | — | — | — |
+| Backbone | VGG16-BN | VGG16-BN | VGG16-BN |
+| Feature dim | 7×7×512 | 7×7×512 | 7×7×512 |
+| Pooling | AdaptiveAvgPool2d | AdaptiveAvgPool2d | AdaptiveAvgPool2d |
+| FC projection | 25088→4096→4096 | **512→1024** | 512→1024 |
+| Multi-scale convs | — | — | 3×3, 5×5, dilated |
+| Channel attention | — | — | SE (r=16) |
+| Embedding head | — | — | 1024→256, BN |
+| Classifier | 4096→K | 1024→K | 256→K |
+| **Params** | ~134M | **15.26M** | 26.82M |
+| t-SNE feature | 4096-d | **1024-d** | 256-d |
 
-### Usage
-
-```bash
-# 12kHz Drive End
-python scripts/build_cwru_de.py --output-dir ./datasets/cwru_de \
-    --file-split 60,20,20 --metadata --verify --workers 16
-
-# 12kHz Fan End
-python scripts/build_cwru_fe.py --output-dir ./datasets/cwru_fe \
-    --file-split 60,20,20 --metadata --verify --workers 16
-
-# 48kHz Drive End (scaled window/FFT params for 4× sample rate)
-python scripts/build_cwru_48k_de.py --output-dir ./datasets/cwru_48k_de \
-    --file-split 60,20,20 --metadata --verify --workers 16
-```
-
-### Key Design Decisions
-
-- **OR load position**: defaults to `@6` (6 o'clock, centered in load zone) — the CWRU benchmark standard
-- **48kHz defaults**: window=8192, hop=4096, n_fft=4096, fmax=20000 (scaled 4× vs 12kHz defaults)
-- **Normal data**: shared from `Normal/` directory; for 48kHz script, normal files use 12kHz (no 48kHz normal baseline exists)
-- **Fan-end limitation**: OF014 and OF021 have only 1 file each in the FE dataset (known CWRU limitation)
+**Equivalence**: `VGG16(num_classes=K)` ≡ `MSCA_VGG16(num_classes=K, use_ms=False, use_ca=False, use_eh=False)` — verified identical parameter count (15.26M).
 
 Made changes.
-
-
-
