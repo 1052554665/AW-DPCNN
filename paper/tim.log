@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.6.22)  22 JUN 2026 22:40
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.6.22)  23 JUN 2026 10:30
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -350,36 +350,31 @@ File: framework/framework.pdf Graphic file (type pdf)
 <use framework/framework.pdf>
 Package pdftex.def Info: framework/framework.pdf  used on input line 64.
 (pdftex.def)             Requested size: 516.0pt x 108.57124pt.
-
-Underfull \hbox (badness 6204) in paragraph at lines 80--81
-[]\OT1/ptm/m/n/10 (+20) Although the Mel spec-tro-gram ef-fec-tively cap-tures
- []
-
 <representation//Normal_00000_mel.png, id=14, 224.84pt x 224.84pt>
 File: representation//Normal_00000_mel.png Graphic file (type png)
 <use representation//Normal_00000_mel.png>
-Package pdftex.def Info: representation//Normal_00000_mel.png  used on input line 87.
+Package pdftex.def Info: representation//Normal_00000_mel.png  used on input line 89.
 (pdftex.def)             Requested size: 120.95892pt x 120.95892pt.
 <representation//Normal_00000_gadf.png, id=15, 224.84pt x 224.84pt>
 File: representation//Normal_00000_gadf.png Graphic file (type png)
 <use representation//Normal_00000_gadf.png>
-Package pdftex.def Info: representation//Normal_00000_gadf.png  used on input line 93.
+Package pdftex.def Info: representation//Normal_00000_gadf.png  used on input line 95.
 (pdftex.def)             Requested size: 120.95892pt x 120.95892pt.
-[2] [3 <./framework/framework.pdf> <./representation//Normal_00000_mel.png (PNG copy)> <./representation//Normal_00000_gadf.png (PNG copy)>]
+[2] [3 <./framework/framework.pdf> <./representation//Normal_00000_mel.png (PNG copy)> <./representation//Normal_00000_gadf.png (PNG copy)>] [4]
 
 pdfTeX warning: pdflatex (file ./AW-DPCNN/AW-DPCNN.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<AW-DPCNN/AW-DPCNN.pdf, id=52, 1290.74213pt x 489.74968pt>
+<AW-DPCNN/AW-DPCNN.pdf, id=58, 1290.74213pt x 489.74968pt>
 File: AW-DPCNN/AW-DPCNN.pdf Graphic file (type pdf)
 <use AW-DPCNN/AW-DPCNN.pdf>
-Package pdftex.def Info: AW-DPCNN/AW-DPCNN.pdf  used on input line 250.
+Package pdftex.def Info: AW-DPCNN/AW-DPCNN.pdf  used on input line 261.
 (pdftex.def)             Requested size: 252.0pt x 95.61662pt.
-[4] [5 <./AW-DPCNN/AW-DPCNN.pdf>]
+[5 <./AW-DPCNN/AW-DPCNN.pdf>]
 
 pdfTeX warning: pdflatex (file ./MSCA-VGG16/MSCA-VGG16.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
 <MSCA-VGG16/MSCA-VGG16.pdf, id=85, 1025.75218pt x 545.1567pt>
 File: MSCA-VGG16/MSCA-VGG16.pdf Graphic file (type pdf)
 <use MSCA-VGG16/MSCA-VGG16.pdf>
-Package pdftex.def Info: MSCA-VGG16/MSCA-VGG16.pdf  used on input line 366.
+Package pdftex.def Info: MSCA-VGG16/MSCA-VGG16.pdf  used on input line 377.
 (pdftex.def)             Requested size: 516.0pt x 274.24966pt.
 
 
@@ -387,7 +382,7 @@ pdfTeX warning: pdflatex (file ./equipment/equipment.pdf): PDF inclusion: found 
 <equipment/equipment.pdf, id=86, 524.92107pt x 198.7425pt>
 File: equipment/equipment.pdf Graphic file (type pdf)
 <use equipment/equipment.pdf>
-Package pdftex.def Info: equipment/equipment.pdf  used on input line 378.
+Package pdftex.def Info: equipment/equipment.pdf  used on input line 389.
 (pdftex.def)             Requested size: 516.0pt x 195.37889pt.
 
 
@@ -395,120 +390,116 @@ pdfTeX warning: pdflatex (file ./Fused images/Fused images.pdf): PDF inclusion: 
 <Fused images/Fused images.pdf, id=87, 1219.6767pt x 478.66827pt>
 File: Fused images/Fused images.pdf Graphic file (type pdf)
 <use Fused images/Fused images.pdf>
-Package pdftex.def Info: Fused images/Fused images.pdf  used on input line 432.
+Package pdftex.def Info: Fused images/Fused images.pdf  used on input line 443.
 (pdftex.def)             Requested size: 516.0pt x 202.51468pt.
-LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 440.
-(/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
+[6]
+Underfull \vbox (badness 1824) has occurred while \output is active []
+
+ [7 <./MSCA-VGG16/MSCA-VGG16.pdf> <./equipment/equipment.pdf>]
+LaTeX Font Info:    Trying to load font information for OT1+pcr on input line 451.
+ (/usr/share/texlive/texmf-dist/tex/latex/psnfss/ot1pcr.fd
 File: ot1pcr.fd 2001/06/04 font definitions for OT1/pcr.
 )
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `pcr' (encoding: OT1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
- [6] [7 <./MSCA-VGG16/MSCA-VGG16.pdf> <./equipment/equipment.pdf>]
 <confusion_matrix/confusion_matrix_baseline.png, id=138, 433.1382pt x 426.393pt>
 File: confusion_matrix/confusion_matrix_baseline.png Graphic file (type png)
 <use confusion_matrix/confusion_matrix_baseline.png>
-Package pdftex.def Info: confusion_matrix/confusion_matrix_baseline.png  used on input line 459.
+Package pdftex.def Info: confusion_matrix/confusion_matrix_baseline.png  used on input line 470.
 (pdftex.def)             Requested size: 247.6778pt x 243.82727pt.
 <confusion_matrix/confusion_matrix_alexnet.png, id=140, 433.1382pt x 426.393pt>
 File: confusion_matrix/confusion_matrix_alexnet.png Graphic file (type png)
 <use confusion_matrix/confusion_matrix_alexnet.png>
-Package pdftex.def Info: confusion_matrix/confusion_matrix_alexnet.png  used on input line 465.
+Package pdftex.def Info: confusion_matrix/confusion_matrix_alexnet.png  used on input line 476.
 (pdftex.def)             Requested size: 247.6778pt x 243.82727pt.
 <confusion_matrix/confusion_matrix_resnet18.png, id=141, 433.1382pt x 426.393pt>
 File: confusion_matrix/confusion_matrix_resnet18.png Graphic file (type png)
 <use confusion_matrix/confusion_matrix_resnet18.png>
-Package pdftex.def Info: confusion_matrix/confusion_matrix_resnet18.png  used on input line 471.
+Package pdftex.def Info: confusion_matrix/confusion_matrix_resnet18.png  used on input line 482.
 (pdftex.def)             Requested size: 247.6778pt x 243.82727pt.
 <confusion_matrix/confusion_matrix_convnext_tiny.png, id=142, 433.1382pt x 426.393pt>
 File: confusion_matrix/confusion_matrix_convnext_tiny.png Graphic file (type png)
 <use confusion_matrix/confusion_matrix_convnext_tiny.png>
-Package pdftex.def Info: confusion_matrix/confusion_matrix_convnext_tiny.png  used on input line 477.
+Package pdftex.def Info: confusion_matrix/confusion_matrix_convnext_tiny.png  used on input line 488.
 (pdftex.def)             Requested size: 247.6778pt x 243.82727pt.
 <confusion_matrix/confusion_matrix_vgg16.png, id=143, 433.1382pt x 426.393pt>
 File: confusion_matrix/confusion_matrix_vgg16.png Graphic file (type png)
 <use confusion_matrix/confusion_matrix_vgg16.png>
-Package pdftex.def Info: confusion_matrix/confusion_matrix_vgg16.png  used on input line 483.
+Package pdftex.def Info: confusion_matrix/confusion_matrix_vgg16.png  used on input line 494.
 (pdftex.def)             Requested size: 247.6778pt x 243.82727pt.
 <confusion_matrix/confusion_matrix__MSCA_VGG16.png, id=144, 433.01775pt x 426.393pt>
 File: confusion_matrix/confusion_matrix__MSCA_VGG16.png Graphic file (type png)
 <use confusion_matrix/confusion_matrix__MSCA_VGG16.png>
-Package pdftex.def Info: confusion_matrix/confusion_matrix__MSCA_VGG16.png  used on input line 489.
+Package pdftex.def Info: confusion_matrix/confusion_matrix__MSCA_VGG16.png  used on input line 500.
 (pdftex.def)             Requested size: 247.6778pt x 243.88583pt.
 
 
-LaTeX Warning: Float too large for page by 127.21204pt on input line 494.
+LaTeX Warning: Float too large for page by 127.21204pt on input line 505.
 
-<ROC/roc_curve.png, id=145, 494.3268pt x 422.0568pt>
+[8 <./Fused images/Fused images.pdf>]
+<ROC/roc_curve.png, id=192, 494.3268pt x 422.0568pt>
 File: ROC/roc_curve.png Graphic file (type png)
 <use ROC/roc_curve.png>
-Package pdftex.def Info: ROC/roc_curve.png  used on input line 500.
+Package pdftex.def Info: ROC/roc_curve.png  used on input line 511.
 (pdftex.def)             Requested size: 252.0pt x 215.16238pt.
-[8 <./Fused images/Fused images.pdf>] [9 <./confusion_matrix/confusion_matrix_baseline.png> <./confusion_matrix/confusion_matrix_alexnet.png> <./confusion_matrix/confusion_matrix_resnet18.png> <./confusion_matrix/confusion_matrix_convnext_tiny.png> <./confusion_matrix/confusion_matrix_vgg16.png> <./confusion_matrix/confusion_matrix__MSCA_VGG16.png>] [10 <./ROC/roc_curve.png>] [11]
+ [9] [10 <./confusion_matrix/confusion_matrix_baseline.png> <./confusion_matrix/confusion_matrix_alexnet.png> <./confusion_matrix/confusion_matrix_resnet18.png> <./confusion_matrix/confusion_matrix_convnext_tiny.png> <./confusion_matrix/confusion_matrix_vgg16.png> <./confusion_matrix/confusion_matrix__MSCA_VGG16.png>] [11 <./ROC/roc_curve.png>]
 <tsne/tsne__MSCA_VGG16_mel.png, id=219, 308.352pt x 260.172pt>
 File: tsne/tsne__MSCA_VGG16_mel.png Graphic file (type png)
 <use tsne/tsne__MSCA_VGG16_mel.png>
-Package pdftex.def Info: tsne/tsne__MSCA_VGG16_mel.png  used on input line 647.
+Package pdftex.def Info: tsne/tsne__MSCA_VGG16_mel.png  used on input line 658.
 (pdftex.def)             Requested size: 247.6778pt x 208.97948pt.
 <tsne/tsne__MSCA_VGG16_gadf.png, id=220, 308.352pt x 262.581pt>
 File: tsne/tsne__MSCA_VGG16_gadf.png Graphic file (type png)
 <use tsne/tsne__MSCA_VGG16_gadf.png>
-Package pdftex.def Info: tsne/tsne__MSCA_VGG16_gadf.png  used on input line 654.
+Package pdftex.def Info: tsne/tsne__MSCA_VGG16_gadf.png  used on input line 665.
 (pdftex.def)             Requested size: 247.6778pt x 210.91447pt.
 <tsne/tsne__MSCA_VGG16_concat.png, id=221, 308.352pt x 262.581pt>
 File: tsne/tsne__MSCA_VGG16_concat.png Graphic file (type png)
 <use tsne/tsne__MSCA_VGG16_concat.png>
-Package pdftex.def Info: tsne/tsne__MSCA_VGG16_concat.png  used on input line 661.
+Package pdftex.def Info: tsne/tsne__MSCA_VGG16_concat.png  used on input line 672.
 (pdftex.def)             Requested size: 247.6778pt x 210.91447pt.
 <tsne/tsne__MSCA_VGG16_awdpcnn.png, id=222, 308.352pt x 262.581pt>
 File: tsne/tsne__MSCA_VGG16_awdpcnn.png Graphic file (type png)
 <use tsne/tsne__MSCA_VGG16_awdpcnn.png>
-Package pdftex.def Info: tsne/tsne__MSCA_VGG16_awdpcnn.png  used on input line 668.
+Package pdftex.def Info: tsne/tsne__MSCA_VGG16_awdpcnn.png  used on input line 679.
 (pdftex.def)             Requested size: 247.6778pt x 210.91447pt.
 <tsne_cwru/tsne_cwru_mel.png, id=223, 308.352pt x 262.581pt>
 File: tsne_cwru/tsne_cwru_mel.png Graphic file (type png)
 <use tsne_cwru/tsne_cwru_mel.png>
-Package pdftex.def Info: tsne_cwru/tsne_cwru_mel.png  used on input line 683.
+Package pdftex.def Info: tsne_cwru/tsne_cwru_mel.png  used on input line 694.
 (pdftex.def)             Requested size: 247.6778pt x 210.91447pt.
 <tsne_cwru/tsne_cwru_gadf.png, id=224, 308.352pt x 262.581pt>
 File: tsne_cwru/tsne_cwru_gadf.png Graphic file (type png)
 <use tsne_cwru/tsne_cwru_gadf.png>
-Package pdftex.def Info: tsne_cwru/tsne_cwru_gadf.png  used on input line 690.
+Package pdftex.def Info: tsne_cwru/tsne_cwru_gadf.png  used on input line 701.
 (pdftex.def)             Requested size: 247.6778pt x 210.91447pt.
 <tsne_cwru/tsne_cwru_concat.png, id=225, 308.352pt x 262.581pt>
 File: tsne_cwru/tsne_cwru_concat.png Graphic file (type png)
 <use tsne_cwru/tsne_cwru_concat.png>
-Package pdftex.def Info: tsne_cwru/tsne_cwru_concat.png  used on input line 697.
+Package pdftex.def Info: tsne_cwru/tsne_cwru_concat.png  used on input line 708.
 (pdftex.def)             Requested size: 247.6778pt x 210.91447pt.
 <tsne_cwru/tsne_cwru_awdpcnn.png, id=226, 485.6544pt x 413.3844pt>
 File: tsne_cwru/tsne_cwru_awdpcnn.png Graphic file (type png)
 <use tsne_cwru/tsne_cwru_awdpcnn.png>
-Package pdftex.def Info: tsne_cwru/tsne_cwru_awdpcnn.png  used on input line 704.
+Package pdftex.def Info: tsne_cwru/tsne_cwru_awdpcnn.png  used on input line 715.
 (pdftex.def)             Requested size: 247.6778pt x 210.82324pt.
- [12]
-Underfull \vbox (badness 1975) has occurred while \output is active []
-
- [13 <./tsne/tsne__MSCA_VGG16_mel.png> <./tsne/tsne__MSCA_VGG16_gadf.png> <./tsne/tsne__MSCA_VGG16_concat.png> <./tsne/tsne__MSCA_VGG16_awdpcnn.png>]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-<raw_tsne/tsne_Group2_4_harmonic_raw_input.png, id=239, 492.1587pt x 419.8887pt>
-File: raw_tsne/tsne_Group2_4_harmonic_raw_input.png Graphic file (type png)
-<use raw_tsne/tsne_Group2_4_harmonic_raw_input.png>
-Package pdftex.def Info: raw_tsne/tsne_Group2_4_harmonic_raw_input.png  used on input line 778.
-(pdftex.def)             Requested size: 252.0pt x 214.99252pt.
-<raw_tsne/tsne_cwru_within_raw_input.png, id=240, 492.1587pt x 419.8887pt>
-File: raw_tsne/tsne_cwru_within_raw_input.png Graphic file (type png)
-<use raw_tsne/tsne_cwru_within_raw_input.png>
-Package pdftex.def Info: raw_tsne/tsne_cwru_within_raw_input.png  used on input line 787.
-(pdftex.def)             Requested size: 252.0pt x 214.99252pt.
-
+ [12] [13 <./tsne/tsne__MSCA_VGG16_mel.png> <./tsne/tsne__MSCA_VGG16_gadf.png> <./tsne/tsne__MSCA_VGG16_concat.png> <./tsne/tsne__MSCA_VGG16_awdpcnn.png>]
 Underfull \vbox (badness 1072) has occurred while \output is active []
 
- [14 <./tsne_cwru/tsne_cwru_mel.png> <./tsne_cwru/tsne_cwru_gadf.png> <./tsne_cwru/tsne_cwru_concat.png> <./tsne_cwru/tsne_cwru_awdpcnn.png>] [15 <./raw_tsne/tsne_Group2_4_harmonic_raw_input.png> <./raw_tsne/tsne_cwru_within_raw_input.png>] (./tim.bbl [16] [17]
-Underfull \vbox (badness 1308) has occurred while \output is active []
-
-) [18] (./tim.aux)
+ [14 <./tsne_cwru/tsne_cwru_mel.png> <./tsne_cwru/tsne_cwru_gadf.png> <./tsne_cwru/tsne_cwru_concat.png> <./tsne_cwru/tsne_cwru_awdpcnn.png>]
+<raw_tsne/tsne_Group2_4_harmonic_raw_input.png, id=247, 492.1587pt x 419.8887pt>
+File: raw_tsne/tsne_Group2_4_harmonic_raw_input.png Graphic file (type png)
+<use raw_tsne/tsne_Group2_4_harmonic_raw_input.png>
+Package pdftex.def Info: raw_tsne/tsne_Group2_4_harmonic_raw_input.png  used on input line 789.
+(pdftex.def)             Requested size: 252.0pt x 214.99252pt.
+<raw_tsne/tsne_cwru_within_raw_input.png, id=248, 492.1587pt x 419.8887pt>
+File: raw_tsne/tsne_cwru_within_raw_input.png Graphic file (type png)
+<use raw_tsne/tsne_cwru_within_raw_input.png>
+Package pdftex.def Info: raw_tsne/tsne_cwru_within_raw_input.png  used on input line 798.
+(pdftex.def)             Requested size: 252.0pt x 214.99252pt.
+ [15 <./raw_tsne/tsne_Group2_4_harmonic_raw_input.png> <./raw_tsne/tsne_cwru_within_raw_input.png>] [16] (./tim.bbl [17]) [18] (./tim.aux)
 
 LaTeX Warning: There were multiply-defined labels.
 
@@ -516,13 +507,13 @@ LaTeX Warning: There were multiply-defined labels.
 Here is how much of TeX's memory you used:
  8094 strings out of 480247
  139834 string characters out of 5896151
- 472636 words of memory out of 5000000
+ 469982 words of memory out of 5000000
  25425 multiletter control sequences out of 15000+600000
  533958 words of font info for 397 fonts, out of 8000000 for 9000
  18 hyphenation exceptions out of 8191
  67i,15n,77p,3966b,526s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on tim.pdf (18 pages, 10107558 bytes).
+Output written on tim.pdf (18 pages, 10109642 bytes).
 PDF statistics:
  396 PDF objects out of 1000 (max. 8388607)
  211 compressed objects within 3 object streams
