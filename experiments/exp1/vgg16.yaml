@@ -1,9 +1,11 @@
+# python scripts/train.py     --config configs/default.yaml     --exp-config experiments/exp1/vgg16.yaml
+
 experiment_name: exp1_vgg16
 device: cuda
 
 model:
   name: vgg16
-  num_classes: 9
+  num_classes: 10
   pretrained: false  # ImageNet features don't transfer to spectrograms
 
 train:

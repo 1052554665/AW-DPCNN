@@ -1,50 +1,52 @@
-Create a new model architecture by replacing the backbone with ResNet50 while keeping the multi-scale convolutional layers. Additionally, enable an embedding head for feature representation and incorporate SE-style channel attention to enhance the model's performance.
+For the CWRU dataset `raw-data/CWRU-dataset`, there are three types of fault data, i.e., 12kHz drive end bearing fault data, 12kHz fan end bearing fault data, and 48kHz drive end bearing fault data.
+the dataset includes three fault types: ball faults, inner race faults, and outer race faults, each with three defect sizes: 0.007, 0.014, and 0.021 inches. In total, the dataset consists of ten states: one normal state and nine fault states.
+
+Creating three scripts to make the dataset. Selecting 12kHz drive end bearing fault data, 12kHz fan end bearing fault data, and 48kHz drive end bearing fault data, separately. Referencing `build_cwru_dataset.py`. The fault types and sizes are as follows:
+
+each dataset includes ten types: BF007, IF007, and OF007; BF014, IF014, and OF014; BF021, IF021, and OF021; and Normal.
 
 
-### New Model: `MSCA_ResNet50`
+### Scripts Created
 
-**File**: MSCA_ResNet50.py  
-**Registry name**: `msca_resnet50` (or `msca_resnet`)
+| Script | Data Source | SR | Key Pattern | Files | Classes |
+|---|---|---|---|---|---|
+| build_cwru_de.py | 12kHz Drive End | 12 kHz | `DE_time` | 40 | 10/10 ✓ |
+| build_cwru_fe.py | 12kHz Fan End | 12 kHz | `FE_time` | 34 | 10/10 ⚠️ |
+| build_cwru_48k_de.py | 48kHz Drive End | 48 kHz | `DE_time` | 40 | 10/10 ✓ |
 
-| Component | Specification |
-|---|---|
-| **Backbone** | ResNet50 (ImageNet-1K V2 pretrained), stripped of FC/avgpool |
-| **Feature dims** | Stem → layer1 → layer2 → layer3 → layer4 → **2048 × 7 × 7** |
-| **MSCA Block** | Multi-scale: 3×3, 5×5, dilated 3×3 (d=2) + SE channel attention (r=16) |
-| **FC Projection** | 2048 → 1024, ReLU, Dropout(0.5) |
-| **Embedding Head** | 1024 → 256, BN, ReLU, Dropout(0.5) |
-| **Classifier** | 256 → `num_classes` |
-| **Total params** | 206.76M (full), 64.15M (MS off) |
+### 10-Class Mapping
 
-### Ablation flags (matching MSCA_VGG16 convention)
+| Fault Type | 0.007" | 0.014" | 0.021" |
+|---|---|---|---|
+| Ball | BF007 | BF014 | BF021 |
+| Inner Race | IF007 | IF014 | IF021 |
+| Outer Race (@6) | OF007 | OF014 | OF021 |
+| Normal | — | — | — |
 
-| Flag | Off effect | Params |
-|---|---|---|
-| `use_ms=False` | Single 3×3 conv replaces multi-scale | 64.15M |
-| `use_ca=False` | Removes SE channel attention | 206.24M |
-| `use_eh=False` | fc1 → classifier directly (1024 → K) | 206.51M |
+### Usage
 
-### Usage in experiment YAML
+```bash
+# 12kHz Drive End
+python scripts/build_cwru_de.py --output-dir ./datasets/cwru_de \
+    --file-split 60,20,20 --metadata --verify --workers 16
 
-```yaml
-model:
-  name: msca_resnet50
-  num_classes: 9
-  pretrained: true
-  use_ms: true
-  use_ca: true
-  use_eh: true
-  embed_dim: 256
-  dropout: 0.5
+# 12kHz Fan End
+python scripts/build_cwru_fe.py --output-dir ./datasets/cwru_fe \
+    --file-split 60,20,20 --metadata --verify --workers 16
+
+# 48kHz Drive End (scaled window/FFT params for 4× sample rate)
+python scripts/build_cwru_48k_de.py --output-dir ./datasets/cwru_48k_de \
+    --file-split 60,20,20 --metadata --verify --workers 16
 ```
 
-### Key design differences vs. MSCA_VGG16
+### Key Design Decisions
 
-| Aspect | MSCA_VGG16 | MSCA_ResNet50 |
-|---|---|---|
-| Backbone channels | 512 | **2048** |
-| Receptive field | Progressive 3×3 stack | Residual blocks + skip connections |
-| Pretrained weights | VGG16-BN ImageNet-1K V1 | ResNet50 ImageNet-1K V2 |
-| Parameter efficiency | Lightweight (~15M) | Heavier (~207M) due to 2048-d MSCA convs |
+- **OR load position**: defaults to `@6` (6 o'clock, centered in load zone) — the CWRU benchmark standard
+- **48kHz defaults**: window=8192, hop=4096, n_fft=4096, fmax=20000 (scaled 4× vs 12kHz defaults)
+- **Normal data**: shared from `Normal/` directory; for 48kHz script, normal files use 12kHz (no 48kHz normal baseline exists)
+- **Fan-end limitation**: OF014 and OF021 have only 1 file each in the FE dataset (known CWRU limitation)
 
 Made changes.
+
+
+

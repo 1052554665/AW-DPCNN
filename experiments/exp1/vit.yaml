@@ -1,8 +1,9 @@
+# python scripts/train.py     --config configs/default.yaml     --exp-config experiments/exp1/vit.yaml
 experiment_name: exp1_vit
 
 model:
   name: vit
-  num_classes: 5
+  num_classes: 10
   in_channels: 3
   img_size: 224
   patch_size: 16

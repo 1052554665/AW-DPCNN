@@ -1,14 +1,16 @@
+# python scripts/train.py     --config configs/default.yaml     --exp-config experiments/exp1/convnext_tiny.yaml
+
 experiment_name: exp1_convnext_tiny
 device: cuda
 
 model:
   name: convnext_tiny
-  num_classes: 9
+  num_classes: 10
   pretrained: false # ImageNet features don't help for spectrograms
 
 train:
   epochs: 30
-  lr: 1e-3
+  lr: 1e-4
   optimizer: adamw
   weight_decay: 1e-2
 

@@ -258,6 +258,15 @@ Set `model.name` in your experiment YAML to any of the following:
 
 All models (except `baseline` and `alexnet_se`) support ImageNet pretrained weights via `model.pretrained: true`.
 
+
+
+- MSCA_VGG16 | Params: 26.82M | FLOPs: 15946.68M
+- convnext_tiny | Params: 27.83M | FLOPs: 25707.50M
+- efficientnet_b0 | Params: 4.02M | FLOPs: 15337.62M
+- msca_resnet50 | Params: 206.76M | FLOPs: 12950.46M
+- mobilenetv3_small | Params: 1.53M | FLOPs: 1844.63M
+- vgg16 | Params: 134.31M | FLOPs: 15513.01M
+- vit | Params: 11.02M | FLOPs: 64.97M
 ---
 
 ## 6) Quick Start

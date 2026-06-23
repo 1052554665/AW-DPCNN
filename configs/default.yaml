@@ -9,6 +9,7 @@ dataset:
   # root_dir: ./datasets/Group2_4
 
   # root_dir: ./datasets/Group2_4_harmonic
+  root_dir: ./datasets/cwru_de
   train_split: train
   val_split: val
   test_split: test
