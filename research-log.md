@@ -1,4 +1,6 @@
-remove MSCA_ResNet50 and relative configuration file;
-rename the MSCA_VGG16 model to msca-vgg16 and update the configuration file accordingly;
-rename the convnext_tiny model to convnext-tiny and update the configuration file accordingly;
-rename the efficientnet_b0 model to efficientnet-b0 and update the configuration file accordingly;
+To prevent the higher accuracy in confusion matrix, the dataset was reconstructed as follows.
+
+- the windows length was set to 4096, and the hop length was set to 2048.
+
+
+python scripts/build_cwru_de.py --output-dir ./datasets/cwru_de --file-split 60,20,20 --split-seed 42 --metadata --verify --workers 16 --win-len 4096 --hop-len 2048

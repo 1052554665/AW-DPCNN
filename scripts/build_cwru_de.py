@@ -25,7 +25,7 @@ Data source
 Usage::
 
     # Full build with file‑level train/val/test split
-    python scripts/build_cwru_de.py --output-dir ./datasets/cwru_de --file-split 60,20,20 --split-seed 42 --metadata --verify --workers 16
+    python scripts/build_cwru_de.py --output-dir ./datasets/cwru_de --file-split 60,20,20 --split-seed 42 --metadata --verify --workers 16 --win-len 4096 --hop-len 2048
 
     # Dry‑run (preview split plan without generating images)
     python scripts/build_cwru_de.py --dry-run
