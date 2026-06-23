@@ -1,0 +1,5 @@
+*.aux
+tim.log
+*.gz
+*.bbl
+*.xdv

@@ -1,13 +1,17 @@
+# python scripts/train.py     --config configs/default.yaml     --exp-config experiments/exp1/MSCA_VGG16.yaml
 experiment_name: exp1_MSCA_VGG16
 device: cuda
 model:
   name: MSCA_VGG16
-  num_classes: 9
+  num_classes: 4
   pretrained: false  # ImageNet features don't transfer to spectrograms
+  use_ms: true
+  use_ca: true
+  use_eh: true
 
 train:
-  epochs: 30
-  lr: 1e-4
+  epochs: 10
+  lr: 1e-5
   optimizer: adamw
   weight_decay: 1e-3
 

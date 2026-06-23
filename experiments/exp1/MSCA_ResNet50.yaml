@@ -1,0 +1,33 @@
+# python scripts/train.py     --config configs/default.yaml     --exp-config experiments/exp1/MSCA_ResNet50.yaml
+
+experiment_name: exp1_MSCA_ResNet50
+device: cuda
+
+model:
+  name: msca_resnet50
+  num_classes: 9
+  pretrained: false            # ResNet50 ImageNet-1K V2 weights
+  use_ms: true                # multi-scale convs (3×3, 5×5, dilated 3×3)
+  use_ca: true                # SE-style channel attention (r=16)
+  use_eh: true                # compact embedding head (1024 → 256)
+  embed_dim: 256
+  dropout: 0.5
+
+train:
+  epochs: 30
+  lr: 1e-4
+  optimizer: adamw
+  weight_decay: 1e-3
+
+scheduler:
+  type: plateau
+  mode: max
+  factor: 0.5
+  patience: 5
+  min_lr: 0.000001
+
+visualization:
+  tsne: true
+
+output:
+  root_dir: ./experiments/experiment_result/exp1/MSCA_ResNet50

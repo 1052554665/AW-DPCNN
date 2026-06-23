@@ -3,6 +3,7 @@ from typing import Dict
 from src.models.convnext_tiny import ConvNeXtTiny
 from src.models.efficientnet import EfficientNetB0
 from src.models.mobilenetv3 import MobileNetV3Small
+from src.models.MSCA_ResNet50 import MSCA_ResNet50
 from src.models.MSCA_VGG16 import MSCA_VGG16
 from src.models.vgg16 import VGG16
 from src.models.vit import ViT
@@ -30,6 +31,17 @@ def build_model(config: Dict):
         return MSCA_VGG16(
             num_classes=num_classes,
             pretrained=pretrained,
+            use_ms=bool(model_cfg.get("use_ms", True)),
+            use_ca=bool(model_cfg.get("use_ca", True)),
+            use_eh=bool(model_cfg.get("use_eh", True)),
+        )
+
+    if name in {"msca_resnet50", "msca_resnet"}:
+        return MSCA_ResNet50(
+            num_classes=num_classes,
+            pretrained=pretrained,
+            embed_dim=int(model_cfg.get("embed_dim", 256)),
+            dropout=float(model_cfg.get("dropout", 0.5)),
             use_ms=bool(model_cfg.get("use_ms", True)),
             use_ca=bool(model_cfg.get("use_ca", True)),
             use_eh=bool(model_cfg.get("use_eh", True)),

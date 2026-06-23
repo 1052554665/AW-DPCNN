@@ -453,7 +453,7 @@ To improve generalization and prevent overfitting, standard data augmentation te
 
 Early stopping is employed to prevent overfitting, where training is terminated if the validation macro-averaged F1-score does not improve for $15$ consecutive epochs. The model checkpoint with the highest validation F1-score is retained for final evaluation on the held-out test set. To ensure reproducibility and statistical reliability, all key experiments are repeated over three independent trials with different random seeds ($42$, $123$, $456$), and the results are reported as mean $\pm$ standard deviation across the three trials. The training pipeline is implemented using PyTorch 2.11 with \texttt{torch.compile} acceleration enabled for improved computational efficiency on CUDA-compatible GPUs.
 
-\section{Experimental Setup and Performance Evaluation}
+\section{Dataset and Experiments}
 \label{section4}
 \subsection{Dataset Construction and Preprocessing}
 \label{Dataset Construction and Preprocessing}

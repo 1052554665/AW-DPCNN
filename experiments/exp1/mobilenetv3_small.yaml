@@ -1,9 +1,11 @@
+# python scripts/train.py     --config configs/default.yaml     --exp-config experiments/exp1/mobilenetv3_small.yaml
+
 experiment_name: exp1_mobilenetv3_small
 device: cuda
 
 model:
   name: mobilenetv3_small
-  num_classes: 5
+  num_classes: 9
   pretrained: false  # ImageNet features don't transfer to spectrograms
 
 train:
@@ -18,7 +20,7 @@ scheduler:
   factor: 0.5
   patience: 5
   min_lr: 0.000001
-
+  
 visualization:
   tsne: true
 
