@@ -10,7 +10,7 @@ from src.models import build_model
 from src.utils.metrics import count_parameters, compute_flops
 from src.utils.plot_confusion import plot_confusion
 from src.utils.plot_roc import plot_roc_curves
-from src.utils.train_eval import calculate_roc_auc, evaluate, save_logs, train_one_epoch
+from src.utils.train_eval import calculate_roc_auc, check_label_leakage, evaluate, save_logs, train_one_epoch
 from src.utils.tsne import extract_features, plot_tsne
 
 
@@ -239,6 +239,17 @@ def train_and_evaluate(config: Dict, run_dir: Path, device: torch.device, seed: 
     test_acc, test_prec, test_rec, test_f1, test_gmean, test_bal_acc, test_kappa = test_metrics
     test_auc = calculate_roc_auc(y_true, y_score, num_classes)
 
+    # ── Label-shuffling leakage check ──
+    leakage = check_label_leakage(y_true, y_pred, num_classes)
+    if leakage["is_suspicious"]:
+        print("\n" + "!" * 60)
+        print(leakage["warning"])
+        print("!" * 60 + "\n")
+    else:
+        print(f"[OK] Shuffled-label check passed "
+              f"(shuffled acc = {leakage['shuffled_acc']:.4f}, "
+              f"chance = {leakage['chance_level']:.4f})")
+
     results = {
         "test_loss": test_loss,
         "test_acc": test_acc,
@@ -249,6 +260,9 @@ def train_and_evaluate(config: Dict, run_dir: Path, device: torch.device, seed: 
         "test_bal_acc": test_bal_acc,
         "test_kappa": test_kappa,
         "test_auc": test_auc,
+        "shuffled_acc": leakage["shuffled_acc"],
+        "chance_level": leakage["chance_level"],
+        "leakage_suspicious": leakage["is_suspicious"],
         "best_epoch": best_epoch,
         "best_val_f1": best_val_f1,
         "params": n_params,

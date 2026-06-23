@@ -4,6 +4,7 @@ from pathlib import Path
 import torch
 import numpy as np
 import pandas as pd
+from sklearn.metrics import accuracy_score
 from src.utils.metrics import compute_metrics, compute_roc_auc
 
 
@@ -101,6 +102,64 @@ def calculate_roc_auc(y_true, y_score, num_classes: int):
         return 0.0
     y_score = np.asarray(y_score, dtype=float)
     return compute_roc_auc(y_true, y_score, num_classes, average="macro")
+
+
+def check_label_leakage(y_true, y_pred, num_classes: int, num_shuffles: int = 5,
+                        threshold: float = 0.10) -> dict:
+    """Label-shuffling sanity check for data leakage detection.
+
+    Shuffles the ground-truth labels and re-computes accuracy.  If the
+    model performs substantially better than random chance on shuffled
+    labels, the data pipeline almost certainly contains leakage.
+
+    Parameters
+    ----------
+    y_true : array-like   Ground-truth labels.
+    y_pred : array-like   Predicted labels.
+    num_classes : int     Number of classes.
+    num_shuffles : int    Number of shuffle trials (more → stabler estimate).
+    threshold : float     Accuracy margin above random chance that triggers
+                          a warning (default 0.10 = 10 percentage points).
+
+    Returns
+    -------
+    dict with keys:
+        shuffled_acc       – mean accuracy over shuffle trials.
+        chance_level       – expected accuracy under random guessing (1/K).
+        is_suspicious      – True if shuffled_acc exceeds chance_level
+                             by more than *threshold*.
+        warning            – human-readable message (empty string if OK).
+    """
+    y_true = np.asarray(y_true, dtype=int)
+    y_pred = np.asarray(y_pred, dtype=int)
+    chance_level = 1.0 / max(num_classes, 1)
+
+    shuffled_accs = []
+    rng = np.random.RandomState(42)
+    for _ in range(num_shuffles):
+        y_shuffled = rng.permutation(y_true)
+        shuffled_accs.append(accuracy_score(y_shuffled, y_pred))
+
+    shuffled_acc = float(np.mean(shuffled_accs))
+    margin = shuffled_acc - chance_level
+    is_suspicious = margin > threshold
+
+    if is_suspicious:
+        warning = (
+            f"[DATA LEAKAGE WARNING] Shuffled-label accuracy = {shuffled_acc:.4f} "
+            f"(chance level for {num_classes} classes = {chance_level:.4f}). "
+            f"Margin of {margin:.4f} exceeds threshold {threshold:.2f}. "
+            f"Audit your dataset splitting pipeline for leakage."
+        )
+    else:
+        warning = ""
+
+    return {
+        "shuffled_acc": shuffled_acc,
+        "chance_level": chance_level,
+        "is_suspicious": is_suspicious,
+        "warning": warning,
+    }
 
 
 def save_logs(logs, path="logs/training_log.csv"):

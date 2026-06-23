@@ -10,7 +10,7 @@ from src.utils.config import load_yaml
 from src.utils.metrics import count_parameters, compute_flops
 from src.utils.plot_confusion import plot_confusion
 from src.utils.plot_roc import plot_roc_curves
-from src.utils.train_eval import calculate_roc_auc, evaluate
+from src.utils.train_eval import calculate_roc_auc, check_label_leakage, evaluate
 from src.utils.tsne import extract_features, plot_tsne
 
 
@@ -58,6 +58,17 @@ def main():
     criterion = nn.CrossEntropyLoss()
     test_loss, metrics, y_true, y_pred, y_score = evaluate(model, loaders["test"], criterion, device)
     test_auc = calculate_roc_auc(y_true, y_score, num_classes)
+
+    # ── Label-shuffling leakage check ──
+    leakage = check_label_leakage(y_true, y_pred, num_classes)
+    if leakage["is_suspicious"]:
+        print("\n" + "!" * 60)
+        print(leakage["warning"])
+        print("!" * 60 + "\n")
+    else:
+        print(f"[OK] Shuffled-label check passed "
+              f"(shuffled acc = {leakage['shuffled_acc']:.4f}, "
+              f"chance = {leakage['chance_level']:.4f})")
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
