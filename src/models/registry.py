@@ -3,7 +3,6 @@ from typing import Dict
 from src.models.convnext_tiny import ConvNeXtTiny
 from src.models.efficientnet import EfficientNetB0
 from src.models.mobilenetv3 import MobileNetV3Small
-from src.models.MSCA_ResNet50 import MSCA_ResNet50
 from src.models.MSCA_VGG16 import MSCA_VGG16
 from src.models.vgg16 import VGG16
 from src.models.vit import ViT
@@ -18,7 +17,7 @@ def build_model(config: Dict):
     if name == "vgg16":
         return VGG16(num_classes=num_classes, pretrained=pretrained)
 
-    if name == "convnext_tiny":
+    if name in {"convnext_tiny", "convnext-tiny"}:
         return ConvNeXtTiny(num_classes=num_classes, pretrained=pretrained)
 
     if name in {"efficientnet_b0", "efficientnet-b0", "efficientnet"}:
@@ -27,21 +26,10 @@ def build_model(config: Dict):
     if name in {"mobilenetv3", "mobilenet_v3", "mobilenetv3_small"}:
         return MobileNetV3Small(num_classes=num_classes, pretrained=pretrained)
 
-    if name == "msca_vgg16":
+    if name in {"msca_vgg16", "msca-vgg16"}:
         return MSCA_VGG16(
             num_classes=num_classes,
             pretrained=pretrained,
-            use_ms=bool(model_cfg.get("use_ms", True)),
-            use_ca=bool(model_cfg.get("use_ca", True)),
-            use_eh=bool(model_cfg.get("use_eh", True)),
-        )
-
-    if name in {"msca_resnet50", "msca_resnet"}:
-        return MSCA_ResNet50(
-            num_classes=num_classes,
-            pretrained=pretrained,
-            embed_dim=int(model_cfg.get("embed_dim", 256)),
-            dropout=float(model_cfg.get("dropout", 0.5)),
             use_ms=bool(model_cfg.get("use_ms", True)),
             use_ca=bool(model_cfg.get("use_ca", True)),
             use_eh=bool(model_cfg.get("use_eh", True)),

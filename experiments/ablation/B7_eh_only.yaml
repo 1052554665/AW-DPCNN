@@ -5,7 +5,7 @@ dataset:
   root_dir: ./datasets/transformer-five
 
 model:
-  name: msca_vgg16
+  name: msca-vgg16
   num_classes: 5
   pretrained: true
   use_ms: false

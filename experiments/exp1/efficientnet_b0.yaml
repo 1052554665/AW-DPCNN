@@ -2,7 +2,7 @@
 experiment_name: exp1_efficientnet_b0
 device: cuda
 model:
-  name: efficientnet_b0
+  name: efficientnet-b0
   num_classes: 10
   pretrained: false  # ImageNet features don't transfer to spectrograms
 train:

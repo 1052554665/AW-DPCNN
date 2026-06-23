@@ -2,7 +2,7 @@
 experiment_name: exp1_MSCA_VGG16
 device: cuda
 model:
-  name: MSCA_VGG16
+  name: msca-vgg16
   num_classes: 10
   pretrained: false  # ImageNet features don't transfer to spectrograms
   use_ms: true
