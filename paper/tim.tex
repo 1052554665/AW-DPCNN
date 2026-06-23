@@ -89,6 +89,34 @@ Despite these advances, most existing deep learning approaches remain purely dat
 \section{Methodology}
 \label{section3}
 
+\subsection{Overview}
+
+The proposed framework comprises two sequential stages: multi-representation acoustic signal fusion and fused representation classification, as illustrated in Fig.~\ref{framework}. In the fusion stage, the raw acoustic signal is first transformed into two complementary representations—the Mel spectrogram and the Gramian Angular Difference Field (GADF) image—to capture time--frequency energy distributions and global temporal correlation structures, respectively. These heterogeneous representations are then adaptively integrated through the proposed AW-DPCNN mechanism, which employs contrast-guided adaptive weighting and dual-channel pulse-coupled dynamics to produce a unified fused representation. In the classification stage, the fused representation is fed into the MSCA-VGG16 network, which incorporates multi-scale convolution and channel attention to enhance feature discrimination, followed by a compact embedding head for robust fault classification.
+
+Formally, let $\boldsymbol{x} \in \mathbb{R}^{L}$ denote a raw acoustic signal segment of length $L$. The signal is first mapped to two heterogeneous representations as
+
+\begin{equation}
+\boldsymbol{S}_{\mathrm{Mel}} = \mathcal{T}_{\mathrm{Mel}}(\boldsymbol{x}), \quad
+\boldsymbol{S}_{\mathrm{GADF}} = \mathcal{T}_{\mathrm{GADF}}(\boldsymbol{x}),
+\label{eq:pipeline_rep}
+\end{equation}
+
+where $\mathcal{T}_{\mathrm{Mel}}(\cdot)$ and $\mathcal{T}_{\mathrm{GADF}}(\cdot)$ denote the Mel spectrogram and GADF transformation operators, respectively, both producing pseudo-color RGB images of size $224 \times 224$. The two representations are then fused via the AW-DPCNN operator $\mathcal{F}_{\mathrm{AW}}(\cdot, \cdot)$ as
+
+\begin{equation}
+\boldsymbol{S}_{\mathrm{fused}} = \mathcal{F}_{\mathrm{AW}}(\boldsymbol{S}_{\mathrm{Mel}}, \boldsymbol{S}_{\mathrm{GADF}}; \Theta_{\mathrm{AW}}),
+\label{eq:pipeline_fuse}
+\end{equation}
+
+where $\Theta_{\mathrm{AW}}$ denotes the set of AW-DPCNN hyperparameters. Finally, the fused representation is passed through the MSCA-VGG16 classifier $\mathcal{C}(\cdot)$ to produce the predicted fault class probabilities
+
+\begin{equation}
+\hat{\boldsymbol{y}} = \mathcal{C}(\boldsymbol{S}_{\mathrm{fused}}; \Theta_{\mathrm{CLS}}),
+\label{eq:pipeline_cls}
+\end{equation}
+
+where $\Theta_{\mathrm{CLS}}$ denotes the trainable parameters of the classification network and $\hat{\boldsymbol{y}} \in \mathbb{R}^{K}$ is the predicted probability vector over $K$ fault categories. The following subsections detail each component of this pipeline.
+
 \subsection{Acoustic Signal Representation}
 
 \subsubsection{Mel Spectrogram}
@@ -102,6 +130,8 @@ f_{\mathrm{mel}} = 2595 \log_{10}\left(1 + \frac{f}{700}\right),
 where $f$ denotes the original frequency in Hertz. Finally, logarithmic amplitude compression is applied to reduce the dynamic range and enhance the visibility of low-energy components. Consequently, the Mel spectrogram forms a compact two-dimensional representation $\boldsymbol{S}_{\mathrm{Mel}}(t, f_{\mathrm{mel}})$, where $t$ and $f_{\mathrm{mel}}$ denote the time frame index and the Mel-frequency bin, respectively. This representation effectively captures the spectral energy distribution and its temporal evolution, making it suitable for analyzing transformer acoustic emissions under stationary or slowly varying operating conditions. Fig.~\ref{representation}(a) illustrates an example of a raw transformer acoustic signal and its corresponding Mel spectrogram, where fault-induced spectral energy redistribution can be clearly observed.
 
 However, the Mel spectrogram exhibits several inherent limitations. First, the logarithmic compression, while beneficial for dynamic range reduction, also amplifies low-level background noise, making the representation sensitive to acoustic interference commonly encountered in substation environments. Second, the Mel-scale filter bank inherently applies a nonlinear frequency compression that reduces spectral resolution at higher frequencies, potentially obscuring fine-grained high-frequency fault signatures. More fundamentally, the Mel spectrogram primarily characterizes local time--frequency energy distributions and does not explicitly encode the global temporal correlation structure of the acoustic signal. As a result, fault patterns that manifest as long-range temporal dependencies rather than localized spectral anomalies may not be adequately captured by Mel spectrograms alone.
+
+In this study, the Mel spectrogram is computed with the following parameter settings: the STFT employs an FFT window size of $n_{\mathrm{fft}} = 2048$ and a hop length of $256$ samples; the Mel filter bank consists of $n_{\mathrm{mels}} = 128$ triangular filters spanning up to a maximum frequency of $f_{\mathrm{max}} = 8000$~Hz. These parameters are chosen to balance time--frequency resolution for the analysis of transformer acoustic signals sampled at $44.1$~kHz. After conversion to a decibel scale via logarithmic compression, the resulting grayscale representation is mapped to a pseudo-color image of size $224 \times 224$ using the Viridis colormap for compatibility with standard CNN input dimensions.
 
 \begin{figure}[!htbp]
 	\centering
@@ -164,13 +194,16 @@ The GAF representation offers several advantages that complement the Mel spectro
 
 In this study, the GADF variant is specifically adopted to complement the Mel spectrogram. Compared with GASF, which encodes angular summation, GADF focuses on angular differences and thereby exhibits higher sensitivity to abrupt temporal variations and asymmetric dynamic patterns \cite{11278186}. This property is particularly beneficial for transformer acoustic fault diagnosis, where abnormal operating conditions often produce irregular temporal fluctuations in the acoustic signals. As shown in Fig.~\ref{representation}(b), the GADF encodes structured temporal dependencies from acoustic signals under normal operating conditions. The resulting image exhibits regular and symmetric patterns, reflecting stable temporal correlations and consistent signal dynamics. Such characteristics provide discriminative cues for distinguishing normal conditions from fault-induced irregular patterns.
 
+For the experiments in this study, the GADF is computed with a sequence length of $n = 224$, matching the target image dimension. The angular difference variant (GADF) is selected rather than the summation variant (GASF) due to its superior sensitivity to abrupt temporal variations. The resulting GADF matrix is normalized to $[0, 1]$, converted to an 8-bit grayscale image, and subsequently mapped to a pseudo-color representation of size $224 \times 224$ using the Viridis colormap. Together, the Mel spectrogram and GADF constitute a complementary representation pair that jointly captures local spectral energy patterns and global temporal correlation structures, providing a comprehensive basis for the subsequent adaptive fusion stage.
+
 \subsection{AW-DPCNN for Multi-Representation Fusion}
 \label{sec:awdpcnn}
-As discussed above, the Mel spectrogram and GADF provide fundamentally different yet complementary representations of transformer acoustic signals. Specifically, the Mel spectrogram primarily characterizes local time--frequency energy distributions and perceptually relevant spectral patterns, whereas the GADF emphasizes global temporal dependencies and dynamic correlation structures. Owing to their distinct statistical properties and structural characteristics, directly combining these heterogeneous representations using conventional convolution or simple feature concatenation may fail to effectively capture their cross-modal relationships and complementary fault information.
 
-To address this issue, the proposed AW-DPCNN introduces a PCNN-inspired fusion mechanism to enhance heterogeneous representation integration. The pulse coupling characteristic of PCNN enables dynamic interaction among neighboring feature responses, allowing salient structures shared across Mel and GADF representations to be synchronously enhanced while suppressing irrelevant or inconsistent activations~\cite{Li_2018}. Such a mechanism is particularly suitable for acoustic representation fusion, where local spectral textures and global temporal correlation patterns coexist across different feature domains~\cite{kangEnhancementAlgorithmColor2021}. Moreover, the adaptive weighting strategy further regulates the contribution of each representation according to their fault-sensitive responses, thereby improving feature complementarity and discriminative capability.
+As discussed in Section~\ref{section2}, the Mel spectrogram and GADF provide fundamentally different yet complementary representations of transformer acoustic signals. Specifically, the Mel spectrogram primarily characterizes local time--frequency energy distributions and perceptually relevant spectral patterns, whereas the GADF emphasizes global temporal dependencies and dynamic correlation structures. Owing to their distinct statistical properties and structural characteristics, directly combining these heterogeneous representations using conventional pixel-wise averaging or simple feature concatenation may fail to effectively capture their cross-modal relationships and may even introduce destructive interference, as demonstrated in the ablation study (Section~\ref{section4}). To address this issue, the proposed AW-DPCNN introduces a PCNN-inspired fusion mechanism with three key innovations: (i) dual-channel external stimuli that independently process Mel and GADF representations through representation-specific convolutional kernels; (ii) a contrast-guided adaptive weighting scheme that dynamically adjusts the relative contribution of each representation based on local saliency; and (iii) iterative pulse-coupled dynamics that propagate and reinforce structurally consistent features across multiple iterations while suppressing spurious activations.
 
-Building upon these characteristics, the proposed AW-DPCNN integrates dual-channel processing, adaptive weighting, and multi-scale convolution to effectively model cross-representation dependencies and hierarchical feature interactions between Mel and GADF representations, ultimately enhancing transformer fault diagnosis performance.
+The pulse coupling characteristic of PCNN enables dynamic interaction among neighboring feature responses, allowing salient structures shared across Mel and GADF representations to be synchronously enhanced while suppressing irrelevant or inconsistent activations~\cite{Li_2018}. Such a mechanism is particularly suitable for acoustic representation fusion, where local spectral textures and global temporal correlation patterns coexist across different feature domains~\cite{kangEnhancementAlgorithmColor2021}. Moreover, the adaptive weighting strategy further regulates the contribution of each representation according to their fault-sensitive responses, thereby improving feature complementarity and discriminative capability.
+
+Building upon these characteristics, the proposed AW-DPCNN integrates dual-channel processing, adaptive weighting, and multi-scale convolution to effectively model cross-representation dependencies and hierarchical feature interactions between Mel and GADF representations, ultimately enhancing transformer fault diagnosis performance. The key hyperparameters of the AW-DPCNN are summarized in Table~\ref{tab:awdpcnn_params}, and the detailed formulation of each component is presented below.
 
 \subsubsection{Input Normalization}
 To eliminate scale differences between two representations, each input is first normalized to the interval $[0,1]$ as
@@ -287,7 +320,9 @@ The overall architecture of the proposed AW-DPCNN is illustrated in Fig.~\ref{AW
 
 \subsection{MSCA-VGG16 for Fused Representation Classification}
 \label{sec:msca_vgg16}
-The fused representations simultaneously encode local spectral energy variations captured by Mel spectrograms and global temporal dependency structures derived from GADF encoding. Such representations exhibit heterogeneous characteristics with distinct statistical distributions and spatial patterns, where Mel spectrograms emphasize localized time–frequency energy variations, while GADF images reveal long-range temporal correlation structures. However, conventional convolutional neural networks typically rely on fixed receptive fields and single-scale feature extraction, which limits their ability to simultaneously capture fine-grained local details and global structural dependencies within the fused feature space. As a result, these models may not fully exploit the complementary information contained in the heterogeneous representations. To address this limitation, a structurally aware discriminative network, termed MSCA-VGG16, is developed to better align the network perception with the intrinsic properties of the fused representations, thereby enhancing representation capability and improving fault classification performance.
+The fused representations generated by AW-DPCNN simultaneously encode local spectral energy variations captured by Mel spectrograms and global temporal dependency structures derived from GADF encoding. Such representations exhibit heterogeneous characteristics with distinct statistical distributions and spatial patterns, where Mel spectrograms emphasize localized time--frequency energy variations, while GADF images reveal long-range temporal correlation structures. However, conventional convolutional neural networks typically rely on fixed receptive fields and single-scale feature extraction, which limits their ability to simultaneously capture fine-grained local details and global structural dependencies within the fused feature space. As a result, these models may not fully exploit the complementary information contained in the heterogeneous representations.
+
+To address this limitation, a structurally aware discriminative network, termed MSCA-VGG16, is developed. The design philosophy centers on three principles: (i) multi-scale receptive field alignment to capture fault patterns spanning different temporal and spectral scales; (ii) dynamic channel recalibration to emphasize informative frequency-related responses while suppressing noise-dominated channels; and (iii) compact discriminative embedding to enhance intra-class compactness and inter-class separability while reducing parameter redundancy compared with the original VGG16 classifier. The VGG16 with batch normalization (VGG16-BN) is selected as the convolutional backbone due to its proven effectiveness in hierarchical feature extraction and its compatibility with ImageNet pretraining, which provides a robust initialization for fault diagnosis tasks with limited labeled data \cite{zhangFaultDiagnosisRecognition2024}.
 
 Let the fused representation be denoted as 
 \begin{equation}
@@ -303,7 +338,7 @@ where $\mathcal{B}(\cdot)$ denotes the VGG16 backbone, $\mathcal{M}(\cdot)$ deno
 This design prioritizes structural alignment with fused acoustic representations instead of merely increasing network depth. The main components are described below.
 
 \subsubsection{Multi-Scale Channel Attention Module}
-Given input $\boldsymbol{X}$, hierarchical convolutional features are obtained as
+Given the fused input $\boldsymbol{X} \in \mathbb{R}^{224 \times 224 \times 3}$, the VGG16-BN backbone progressively extracts hierarchical convolutional features through five convolutional blocks, each consisting of stacked $3\times3$ convolutional layers followed by batch normalization, ReLU activation, and $2\times2$ max pooling. The output of the final convolutional block is a feature map of shape $7 \times 7 \times 512$, i.e.,
 \begin{equation}
 	\boldsymbol{F} = \mathcal{B}(\boldsymbol{X}), \quad \boldsymbol{F} \in \mathbb{R}^{H \times W \times C}.
 	\label{eq:feature_map}
@@ -316,7 +351,7 @@ The fused representations contain fault-dependent patterns that span different t
 	\boldsymbol{F}_{ms} = \sum_{i=1}^{S} \psi_i(\boldsymbol{F}),
 	\label{eq:multi_scale_feature}
 \end{equation}
-where $S$ denotes the number of multi-scale branches, $\psi_i(\cdot)$ denotes convolutional operators with different receptive fields. In this study, three convolutional branches are adopted, including $3\times3$, $5\times5$, and dilated $3\times3$ convolutions, to capture local, mid-range, and long-range fault patterns. Each operator preserves the channel dimensionality of the input feature map. The outputs of these branches are fused via element-wise summation, enabling the network to capture complementary fault signatures across multiple spatial ranges.
+where $S$ denotes the number of multi-scale branches, $\psi_i(\cdot)$ denotes convolutional operators with different receptive fields. In this study, three convolutional branches are adopted: a $3\times3$ convolution with padding of $1$ to capture local fine-grained patterns, a $5\times5$ convolution with padding of $2$ for mid-range structural features, and a dilated $3\times3$ convolution with dilation rate of $2$ and padding of $2$ to capture long-range dependencies. Each branch preserves the channel dimensionality of $C = 512$. The outputs of these branches are fused via element-wise summation, enabling the network to capture complementary fault signatures across multiple spatial scales.
 
 The aggregated feature map is then normalized and activated as
 \begin{equation}
@@ -341,7 +376,7 @@ and channel weights are obtained via
 	\boldsymbol{s} = \sigma\big(\boldsymbol{W}_2 \delta(\boldsymbol{W}_1 \boldsymbol{z})\big),
 	\label{eq:attention_score}
 \end{equation}
-where $\boldsymbol{W}_1 \in \mathbb{R}^{\frac{C}{r}\times C}$, $\boldsymbol{W}_2 \in \mathbb{R}^{C\times \frac{C}{r}}$, $r$ is the reduction ratio, and $\sigma(\cdot)$ denotes the sigmoid function. 
+where $\boldsymbol{W}_1 \in \mathbb{R}^{\frac{C}{r}\times C}$, $\boldsymbol{W}_2 \in \mathbb{R}^{C\times \frac{C}{r}}$, $r = 16$ is the channel reduction ratio, and $\sigma(\cdot)$ denotes the sigmoid activation function. 
 
 The refined feature map becomes
 \begin{equation}
@@ -356,30 +391,27 @@ The proposed mechanism aligns receptive fields with heterogeneous fault patterns
 \subsubsection{Compact and Discriminative Embedding for Classification}
 In conventional VGG16 architectures, large fully connected layers are employed to map convolutional features directly to class labels \cite{9770845}. While effective for large-scale image datasets, such designs often lead to excessive redundancy and limited interpretability when applied to fault diagnosis tasks. To address this issue, a compact discriminative embedding head is introduced to replace the original over-parameterized classification layers. Specifically, high-dimensional convolutional features are first projected into a lower-dimensional embedding space through a feature reconstruction layer, followed by normalization and nonlinear activation. This embedding head serves as a feature refinement stage rather than a simple classifier.
 
-The refined feature map is further transformed into a compact feature vector through global average pooling followed by flattening
+The refined feature map is further transformed into a compact feature vector through global average pooling, which reduces the spatial dimensions to $1 \times 1 \times 512$, followed by flattening into a $512$-dimensional vector
 \begin{equation}
-	\boldsymbol{f}_0 = \text{Flatten}\big(\text{AvgPool}(\boldsymbol{F}_{att})\big).
+	\boldsymbol{f}_0 = \text{Flatten}\big(\text{AvgPool}(\boldsymbol{F}_{att})\big) \in \mathbb{R}^{512}.
 	\label{eq:flatten_feature}
 \end{equation}
 
-A fully connected projection generates high-level features as follows
+A fully connected projection layer with $1024$ units generates high-level features as follows
 \begin{equation}
 	\boldsymbol{f}_1 = \delta\big(\boldsymbol{W}_{fc1} \boldsymbol{f}_0\big),
 	\label{eq:fc1_feature}
 \end{equation}
-where $\boldsymbol{W}_{fc1}$ represents the weight matrix of the first fully
-connected projection layer and $\delta(\cdot)$ denotes the ReLU
-activation function.
+where $\boldsymbol{W}_{fc1} \in \mathbb{R}^{1024 \times 512}$ represents the weight matrix of the first fully connected projection layer. A dropout rate of $0.5$ is applied after this layer for regularization.
 
-Instead of directly applying a large classifier, a compact embedding layer reshapes the feature space, i.e.,
+Instead of directly applying a large classifier, a compact embedding layer projects the $1024$-dimensional features into a lower-dimensional discriminative space, i.e.,
 \begin{equation}
 	\boldsymbol{e} = \delta\big(\text{BN}(\boldsymbol{W}_e \boldsymbol{f}_1)\big), \quad \boldsymbol{e} \in \mathbb{R}^d
 	\label{eq:embedding}
 \end{equation}
-where $\boldsymbol{W}_e$ denotes the embedding projection matrix and
-$d$ represents the dimensionality of the compact embedding space.
+where $\boldsymbol{W}_e \in \mathbb{R}^{d \times 1024}$ denotes the embedding projection matrix and $d = 256$ represents the dimensionality of the compact embedding space. Batch normalization is applied prior to ReLU activation to stabilize training and improve feature distribution. A dropout rate of $0.5$ is also applied after the embedding layer.
 
-Let $\boldsymbol{y}$ and $\hat{\boldsymbol{y}}$ denote the ground-truth label
+Let $\boldsymbol{y}$ and $\hat{\boldsymbol{y}}$ denote the ground-truth one-hot label
 vector and the predicted probability vector, respectively. The final
 prediction is obtained as
 \begin{equation}
@@ -400,6 +432,26 @@ By projecting high-dimensional convolutional features into a compact latent spac
 	\caption{Overall architecture of the proposed MSCA-VGG16 network for transformer fault classification.}
 	\label{MSCA-VGG}
 \end{figure*}
+
+\subsection{Training Strategy}
+
+The MSCA-VGG16 classification network is trained using a supervised learning protocol with the following configuration. All experiments adopt the AdamW optimizer~\cite{loshchilov2017adamw} with an initial learning rate of $\eta = 1 \times 10^{-4}$ and a weight decay of $\lambda = 1 \times 10^{-3}$, which provides adaptive learning rate scaling with decoupled weight regularization for improved generalization. A ReduceLROnPlateau learning rate scheduler is employed, which reduces the learning rate by a factor of $0.5$ when the validation F1-score does not improve for $5$ consecutive epochs, with a minimum learning rate of $1 \times 10^{-6}$. The batch size is set to $32$ and the maximum number of training epochs is set to $30$.
+
+To mitigate the adverse effects of class imbalance inherent in practical transformer acoustic datasets, a class-weighted cross-entropy loss is adopted. Specifically, the weight $w_k$ for class $k$ is computed as
+\begin{equation}
+w_k = \frac{N_{\mathrm{total}}}{K \cdot N_k},
+\label{eq:class_weight}
+\end{equation}
+where $N_{\mathrm{total}}$ denotes the total number of training samples, $K$ is the number of fault categories, and $N_k$ is the number of training samples belonging to class $k$. The weighted cross-entropy loss is then formulated as
+\begin{equation}
+\mathcal{L}_{\mathrm{wCE}} = -\frac{1}{B} \sum_{i=1}^{B} w_{y_i} \sum_{k=1}^{K} \boldsymbol{y}_{i,k} \log \hat{\boldsymbol{y}}_{i,k},
+\label{eq:weighted_ce}
+\end{equation}
+where $B$ is the batch size, $y_i$ is the ground-truth label of the $i$-th sample, $\boldsymbol{y}_{i,k}$ is the $k$-th entry of the one-hot encoded label vector, and $\hat{\boldsymbol{y}}_{i,k}$ is the predicted probability for class $k$. This weighting strategy ensures that minority classes receive proportionally larger loss contributions, preventing the model from being biased toward majority classes.
+
+To improve generalization and prevent overfitting, standard data augmentation techniques are applied during training, including random horizontal flipping with a probability of $0.5$ and random rotation within $\pm 10^{\circ}$. Input images are normalized using the ImageNet statistics (mean $= [0.485, 0.456, 0.406]$, standard deviation $= [0.229, 0.224, 0.225]$), which aligns with the pretrained VGG16-BN backbone and stabilizes the early stages of training.
+
+Early stopping is employed to prevent overfitting, where training is terminated if the validation macro-averaged F1-score does not improve for $15$ consecutive epochs. The model checkpoint with the highest validation F1-score is retained for final evaluation on the held-out test set. To ensure reproducibility and statistical reliability, all key experiments are repeated over three independent trials with different random seeds ($42$, $123$, $456$), and the results are reported as mean $\pm$ standard deviation across the three trials. The training pipeline is implemented using PyTorch 2.11 with \texttt{torch.compile} acceleration enabled for improved computational efficiency on CUDA-compatible GPUs.
 
 \section{Experimental Setup and Performance Evaluation}
 \label{section4}
