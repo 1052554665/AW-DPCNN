@@ -42,23 +42,20 @@ Acoustic signal, Gramian angular difference field (GADF), Mel spectrograms, mult
 \end{IEEEkeywords}
 
 \section{Introduction}
-\IEEEPARstart{P}{ower} transformers are indispensable components in modern power systems, and their reliable operation is vital for ensuring grid safety, stability, and continuity \cite{10491111}, \cite{7480687}. Consequently, continuous condition monitoring and fault diagnosis of transformers have attracted sustained research interest. In recent years, voiceprint-based fault diagnosis has emerged as a promising technique owing to its inherent advantages, such as non-contact measurement, operational convenience, and low sensor deployment cost \cite{10492658},\cite{NIU2025127997}. Hong \emph{et al.} and Shan \emph{et al.} employed Mel spectrograms to extract representative acoustic information from transformer signals and demonstrated their effectiveness using field fault data \cite{SHAN2023112408}, \cite{10606641}. To enhance partial discharge recognition, Chen \emph{et al.} developed a non-contact acoustic measurement system incorporating noise suppression via wavelet transform \cite{4265659}. Li \emph{et al.} proposed a method incorporating Short-Time Fourier Transform (STFT) to construct impulse frequency response curves of transformer windings, thereby improving the accuracy of online winding condition evaluation \cite{7558591}. Moreover, the Gramian Angular Summation Field (GASF) technique was introduced in \cite{9760386} to encode transformer vibration signals into joint representations of time, frequency, and energy for converter transformer condition monitoring. Despite these advances, most existing approaches rely on a single acoustic representation, which limits their ability to comprehensively capture the complex and complementary fault-related information embedded in transformer signals, thereby constraining diagnostic performance. Although several studies have attempted to improve performance through multi-representation fusion, these fusion strategies typically employ fixed or heuristic combination schemes and lack the capability to adaptively adjust the contribution of different representations \cite{9408662}, \cite{9832890}. To enable more effective fusion of heterogeneous representations, biologically inspired neural models have recently attracted increasing attention. Pulse-coupled neural networks (PCNNs) are neural models originally developed to simulate the synchronous firing behavior observed in the mammalian visual cortex \cite{4305279,6338347}. Unlike conventional convolutional neural networks, PCNNs employ a pulse-based activation mechanism in which neurons interact through local coupling and dynamic thresholds \cite{8742596}. Owing to these characteristics, PCNNs exhibit strong capability in preserving structural information while suppressing background interference, and have been widely applied in image segmentation, edge detection, and feature enhancement tasks \cite{9444355}, \cite{10848019}, \cite{8746999}. However, conventional PCNNs are typically driven by a single external stimulus, which limits their ability to effectively exploit complementary information from multiple representations. To address this limitation, dual-channel PCNN (DPCNN) architectures have been introduced to enable multi-representation fusion by incorporating multiple external stimuli within the neuronal feeding mechanism \cite{4344292}, \cite{10341267}. Through this mechanism, heterogeneous feature maps can be jointly processed, thereby facilitating the integration of information from different representations. Nevertheless, the fusion process in such architectures generally relies on fixed or predefined coupling strategies, making it difficult to adaptively regulate the relative contributions of different channels. As a result, the model may not effectively emphasize discriminative representations while suppressing less relevant ones, thereby limiting the effectiveness of multi-representation fusion.
+\IEEEPARstart{P}{ower} transformers are indispensable components in modern power systems, and their reliable operation is vital for ensuring grid safety, stability, and continuity \cite{10491111}, \cite{7480687}. Consequently, continuous condition monitoring and fault diagnosis of transformers have attracted sustained research interest. In recent years, voiceprint-based fault diagnosis has emerged as a promising technique owing to its inherent advantages, such as non-contact measurement, operational convenience, and low sensor deployment cost \cite{10492658},\cite{NIU2025127997}. 
 
-With the rapid advancement of deep learning techniques, a variety of neural network architectures have been applied to transformer fault identification and rotating machinery fault diagnosis, demonstrating superior automatic feature extraction capability compared with traditional handcrafted methods \cite{18184994}, \cite{7033433}. Early studies commonly adopted baseline convolutional neural networks as benchmark architectures for acoustic and vibration fault classification, verifying the feasibility of end-to-end feature learning for fault diagnosis tasks \cite{ahsanEnhancedFaultDiagnosis2025}. Subsequently, classical deep convolutional backbones, including AlexNet \cite{guNovelFaultDiagnosis2022}, VGG16 \cite{zhangFaultDiagnosisRecognition2024}, and ResNet18 \cite{maBearingFaultDiagnosis2024}, were introduced into intelligent fault diagnosis frameworks and achieved notable improvements in hierarchical feature representation and classification accuracy across machinery health monitoring applications \cite{11014495}, \cite{5352306}, \cite{4717246}. More recently, advanced architectures such as ConvNeXt-Tiny, which incorporate modernized convolutional design principles, have further enhanced representation learning capability and demonstrated competitive performance in fault diagnosis and image-based classification tasks \cite{zhangWaveConvNeXtEfficientPrecise2024}. In addition, publicly available benchmark datasets, such as the CWRU bearing fault dataset, have been extensively employed to evaluate the effectiveness and generalization ability of deep learning-based diagnostic models, serving as a standard reference in fault diagnosis research \cite{alonso-gonzalezBearingFaultDiagnosis2023}, \cite{zhangMachineLearningBased2021}.
-
-Despite these advances, most existing approaches remain purely data-driven and primarily rely on a single acoustic or signal representation. Consequently, their diagnostic performance strongly depends on large-scale labeled datasets and is vulnerable to degradation under acoustic noise, operating condition variations, and signal inconsistencies commonly encountered in practical transformer monitoring scenarios. Moreover, conventional deep learning models often lack explicit mechanisms to incorporate physical constraints or exploit complementary heterogeneous feature representations, limiting their robustness and interpretability in complex transformer fault diagnosis tasks.
+Despite these advances, most existing approaches rely on a single acoustic representation, such as Mel spectrograms or STFT-based spectrograms, which limits their ability to comprehensively capture the complex and complementary fault-related information embedded in transformer signals. Although several studies have attempted to improve performance through multi-representation fusion, these fusion strategies typically employ fixed or heuristic combination schemes and lack the capability to adaptively adjust the contribution of different representations \cite{9408662}, \cite{9832890}. Furthermore, conventional deep learning models for fault diagnosis often lack explicit mechanisms to exploit complementary heterogeneous feature representations, limiting their robustness and interpretability in complex transformer fault diagnosis tasks.
 
 To overcome the above limitations, we proposed an adaptive weighted dual-channel pulse-coupled neural network (AW-DPCNN) to enhance representation capability and a multi-scale channel attention enhanced VGG16 (MSCA-VGG16) network to improve model robustness. The main contributions of this work can be summarized as follows:
 \begin{itemize}
 \item An AW-DPCNN fusion mechanism is proposed to adaptively integrate Mel and Gramian Angular Difference Field (GADF) representations, enabling more comprehensive modeling of transformer acoustic characteristics.
-
 
 \item To further exploit the complementary information of the fused representation and enhance multi-scale feature sensitivity as well as channel discrimination, an MSCA-VGG16 network is constructed.
 
 \item Extensive experimental results on field transformer data and the Case Western Reserve University (CWRU) bearing dataset verify that the proposed method achieves superior diagnostic accuracy and robustness compared with single-representation methods.
 \end{itemize}
 
-The overall framework is shown in Fig.~\ref{framework}. The remainder of this paper begins with the related acoustic representation in Section~\ref{section2}. Section~\ref{section3} and \ref{section4} present the principles and architectures of AW-DPCNN and MSCA-VGG16. In Section~\ref{section5}, experiments on field transformer data and the public CWRU dataset are conducted. At last, conclusions are drawn in Section~\ref{section6}.
+The overall framework is shown in Fig.~\ref{framework}. The remainder of this paper is organized as follows. Section~\ref{section2} reviews related work on acoustic signal representations, PCNN-based fusion methods, and deep learning for fault diagnosis. Section~\ref{section3} presents the proposed methodology, including the AW-DPCNN fusion mechanism and the MSCA-VGG16 classification network. Section~\ref{section4} describes the experimental setup and performance evaluation. Finally, conclusions are drawn in Section~\ref{section5}.
 \begin{figure*} 
 \centering
 \includegraphics[width=\linewidth]{framework/framework}
@@ -66,10 +63,35 @@ The overall framework is shown in Fig.~\ref{framework}. The remainder of this pa
 \label{framework}
 \end{figure*}
 
-\section{Acoustic Signal Representation}
+\section{Related Work}
 \label{section2}
 
-\subsection{Mel Spectrogram}
+\subsection{Acoustic Signal Representations for Fault Diagnosis}
+
+Transformer acoustic signals are inherently nonstationary and exhibit complex frequency-dependent characteristics resulting from mechanical vibrations, electromagnetic forces, and partial discharge phenomena \cite{2025110731}, \cite{215108965}. To extract discriminative fault-related information from such signals, various time--frequency representations have been explored. Hong \emph{et al.} and Shan \emph{et al.} employed Mel spectrograms to extract representative acoustic information from transformer signals and demonstrated their effectiveness using field fault data \cite{SHAN2023112408}, \cite{10606641}. Mel spectrograms apply a perceptually motivated nonlinear frequency scaling that aligns with human auditory characteristics, making them suitable for capturing spectral energy distributions relevant to fault diagnosis \cite{10091539}. 
+
+To enhance partial discharge recognition, Chen \emph{et al.} developed a non-contact acoustic measurement system incorporating noise suppression via wavelet transform \cite{4265659}. Li \emph{et al.} proposed a method incorporating Short-Time Fourier Transform (STFT) to construct impulse frequency response curves of transformer windings, thereby improving the accuracy of online winding condition evaluation \cite{7558591}. Moreover, the Gramian Angular Summation Field (GASF) technique was introduced in \cite{9760386} to encode transformer vibration signals into joint representations of time, frequency, and energy for converter transformer condition monitoring. The Gramian Angular Field (GAF) framework, including both GASF and Gramian Angular Difference Field (GADF) variants, transforms one-dimensional time-series signals into two-dimensional images by encoding pairwise temporal correlations through polar coordinate transformations \cite{11048665}, \cite{10114345}, \cite{10281942}. 
+
+Despite these advances, individual time--frequency or temporal encoding representations each capture only partial aspects of the acoustic signal. Mel spectrograms primarily reflect local spectral energy distributions but may not fully describe global temporal correlations, while GAF-based representations encode temporal dependencies but lack explicit frequency-domain information. This motivates the development of multi-representation fusion strategies that can jointly exploit complementary signal characteristics.
+
+\subsection{PCNN and Multi-Modal Fusion}
+
+Pulse-coupled neural networks (PCNNs) are neural models originally developed to simulate the synchronous firing behavior observed in the mammalian visual cortex \cite{4305279,6338347}. Unlike conventional convolutional neural networks, PCNNs employ a pulse-based activation mechanism in which neurons interact through local coupling and dynamic thresholds \cite{8742596}. Owing to these characteristics, PCNNs exhibit strong capability in preserving structural information while suppressing background interference, and have been widely applied in image segmentation, edge detection, and feature enhancement tasks \cite{9444355}, \cite{10848019}, \cite{8746999}. 
+
+However, conventional PCNNs are typically driven by a single external stimulus, which limits their ability to effectively exploit complementary information from multiple representations. To address this limitation, dual-channel PCNN (DPCNN) architectures have been introduced to enable multi-representation fusion by incorporating multiple external stimuli within the neuronal feeding mechanism \cite{4344292}, \cite{10341267}. Through this mechanism, heterogeneous feature maps can be jointly processed, thereby facilitating the integration of information from different representations. Nevertheless, the fusion process in such architectures generally relies on fixed or predefined coupling strategies, making it difficult to adaptively regulate the relative contributions of different channels. As a result, the model may not effectively emphasize discriminative representations while suppressing less relevant ones, thereby limiting the effectiveness of multi-representation fusion.
+
+\subsection{Deep Learning for Fault Diagnosis}
+
+With the rapid advancement of deep learning techniques, a variety of neural network architectures have been applied to transformer fault identification and rotating machinery fault diagnosis, demonstrating superior automatic feature extraction capability compared with traditional handcrafted methods \cite{18184994}, \cite{7033433}. Early studies commonly adopted baseline convolutional neural networks as benchmark architectures for acoustic and vibration fault classification, verifying the feasibility of end-to-end feature learning for fault diagnosis tasks \cite{ahsanEnhancedFaultDiagnosis2025}. Subsequently, classical deep convolutional backbones, including AlexNet \cite{guNovelFaultDiagnosis2022}, VGG16 \cite{zhangFaultDiagnosisRecognition2024}, and ResNet18 \cite{maBearingFaultDiagnosis2024}, were introduced into intelligent fault diagnosis frameworks and achieved notable improvements in hierarchical feature representation and classification accuracy across machinery health monitoring applications \cite{11014495}, \cite{5352306}, \cite{4717246}. More recently, advanced architectures such as ConvNeXt-Tiny, which incorporate modernized convolutional design principles, have further enhanced representation learning capability and demonstrated competitive performance in fault diagnosis and image-based classification tasks \cite{zhangWaveConvNeXtEfficientPrecise2024}. In addition, publicly available benchmark datasets, such as the CWRU bearing fault dataset, have been extensively employed to evaluate the effectiveness and generalization ability of deep learning-based diagnostic models, serving as a standard reference in fault diagnosis research \cite{alonso-gonzalezBearingFaultDiagnosis2023}, \cite{zhangMachineLearningBased2021}.
+
+Despite these advances, most existing deep learning approaches remain purely data-driven and primarily rely on a single representation. Consequently, their diagnostic performance strongly depends on large-scale labeled datasets and is vulnerable to degradation under acoustic noise, operating condition variations, and signal inconsistencies commonly encountered in practical transformer monitoring scenarios. Moreover, conventional deep learning models often lack explicit mechanisms to exploit complementary heterogeneous feature representations, limiting their robustness in complex fault diagnosis tasks.
+
+\section{Methodology}
+\label{section3}
+
+\subsection{Acoustic Signal Representation}
+
+\subsubsection{Mel Spectrogram}
 
 Acoustic signals generated by transformer faults are inherently nonstationary and exhibit frequency-dependent characteristics resulting from mechanical vibrations, electromagnetic forces, and partial discharge phenomena \cite{2025110731}, \cite{215108965}. Direct time-domain analysis is therefore insufficient to capture discriminative fault-related information. To address this issue, the Mel spectrogram is adopted as a perceptually motivated time--frequency representation that aligns with human auditory characteristics \cite{10091539}. The construction of a Mel spectrogram involves three sequential steps. First, the raw acoustic signal $x(t)$ is segmented into overlapping frames and transformed into the frequency domain via the Short-Time Fourier Transform (STFT), yielding a linear-frequency spectrogram. Second, the resulting power spectra are projected onto a Mel-scale filter bank, where the mapping from linear frequency $f$ to Mel frequency $f_{\mathrm{mel}}$ is defined as
 
@@ -101,7 +123,7 @@ However, the Mel spectrogram exhibits several inherent limitations. First, the l
 	
 \end{figure}
 
-\subsection{Gramian Angular Field}
+\subsubsection{Gramian Angular Field}
 
 To address the limitations of the Mel spectrogram in encoding global temporal structures, the Gramian Angular Field (GAF) is introduced as a complementary representation. The GAF is a method that transforms one-dimensional time-series signals into two-dimensional images while preserving and encoding rich temporal correlation information \cite{11048665}. It was originally proposed to facilitate time-series classification through computer vision techniques \cite{10114345}, \cite{10281942}. The construction of a GAF representation involves three steps:
 
@@ -142,15 +164,15 @@ The GAF representation offers several advantages that complement the Mel spectro
 
 In this study, the GADF variant is specifically adopted to complement the Mel spectrogram. Compared with GASF, which encodes angular summation, GADF focuses on angular differences and thereby exhibits higher sensitivity to abrupt temporal variations and asymmetric dynamic patterns \cite{11278186}. This property is particularly beneficial for transformer acoustic fault diagnosis, where abnormal operating conditions often produce irregular temporal fluctuations in the acoustic signals. As shown in Fig.~\ref{representation}(b), the GADF encodes structured temporal dependencies from acoustic signals under normal operating conditions. The resulting image exhibits regular and symmetric patterns, reflecting stable temporal correlations and consistent signal dynamics. Such characteristics provide discriminative cues for distinguishing normal conditions from fault-induced irregular patterns.
 
-\section{Adaptive Weighted Dual-Channel PCNN for Multi-Representation Fusion}
-\label{section3}
+\subsection{AW-DPCNN for Multi-Representation Fusion}
+\label{sec:awdpcnn}
 As discussed above, the Mel spectrogram and GADF provide fundamentally different yet complementary representations of transformer acoustic signals. Specifically, the Mel spectrogram primarily characterizes local time--frequency energy distributions and perceptually relevant spectral patterns, whereas the GADF emphasizes global temporal dependencies and dynamic correlation structures. Owing to their distinct statistical properties and structural characteristics, directly combining these heterogeneous representations using conventional convolution or simple feature concatenation may fail to effectively capture their cross-modal relationships and complementary fault information.
 
 To address this issue, the proposed AW-DPCNN introduces a PCNN-inspired fusion mechanism to enhance heterogeneous representation integration. The pulse coupling characteristic of PCNN enables dynamic interaction among neighboring feature responses, allowing salient structures shared across Mel and GADF representations to be synchronously enhanced while suppressing irrelevant or inconsistent activations~\cite{Li_2018}. Such a mechanism is particularly suitable for acoustic representation fusion, where local spectral textures and global temporal correlation patterns coexist across different feature domains~\cite{kangEnhancementAlgorithmColor2021}. Moreover, the adaptive weighting strategy further regulates the contribution of each representation according to their fault-sensitive responses, thereby improving feature complementarity and discriminative capability.
 
 Building upon these characteristics, the proposed AW-DPCNN integrates dual-channel processing, adaptive weighting, and multi-scale convolution to effectively model cross-representation dependencies and hierarchical feature interactions between Mel and GADF representations, ultimately enhancing transformer fault diagnosis performance.
 
-\subsection{Input normalization}
+\subsubsection{Input Normalization}
 To eliminate scale differences between two representations, each input is first normalized to the interval $[0,1]$ as
 \begin{equation}
 	\boldsymbol{\tilde{S}}_k(i,j) = \frac{\boldsymbol{S}_k(i,j) - \min\limits_{i,j} (\boldsymbol{S}_k(i,j))}{\max\limits_{i,j} (\boldsymbol{S}_k(i,j)) - \min\limits_{i,j} (\boldsymbol{S}_k(i,j)) + \epsilon}, k\in\{1,2\}
@@ -158,7 +180,7 @@ To eliminate scale differences between two representations, each input is first 
 \end{equation}
 where $\boldsymbol{S}_k(i,j)$ denotes the value of the $k$-th input representation at spatial location $(i,j)$, corresponding to the Mel spectrogram ($k=1$) or the GADF image ($k=2$). The variables $i$ and $j$ denote the pixel indices, and $\epsilon$ is a small positive constant preventing division by zero.
 
-\subsection{Contrast-Guided Adaptive Weighting}
+\subsubsection{Contrast-Guided Adaptive Weighting}
 For each representation, the local mean of the normalized representation is computed as
 \begin{equation}
 	\boldsymbol{\mu}_k(i,j) = \frac{1}{|\boldsymbol{\Omega}|}
@@ -189,7 +211,7 @@ Local contrast operators $C_1(i,j)$ and $C_2(i,j)$ are computed to quantify the 
 \end{equation}
 the above formulation ensures $\beta_1(i,j) + \beta_2(i,j) \approx 1$, enabling contrast-driven dynamic weighting.
 
-\subsection{Dual-Channel PCNN}
+\subsubsection{Dual-Channel PCNN}
 Let $\boldsymbol{L}^n(i,j)$, $\boldsymbol{T}^n(i,j)$, and $\boldsymbol{Y}^n(i,j)$ denote the linking term, dynamic threshold, and binary pulse output, respectively, where $n$ denotes the current iteration and $n \in [1, N]$, with $N$ being the total number of iterations. The neural states are initialized as
 \begin{equation}
 	\boldsymbol{L}^0(i,j) = \boldsymbol {0}, \quad 
@@ -241,7 +263,7 @@ The dynamic threshold evolves according to
 \end{equation}
 where $\alpha_T$ controls threshold decay and $V_T$ is the amplification coefficient.
 
-\subsection{Fused Representation}
+\subsubsection{Fused Representation}
 The accumulated neural response after $N$ iterations is
 \begin{equation}
 	\boldsymbol{U}_{\mathrm{sum}}(i,j)=\sum_{n=1}^{N} \boldsymbol{U}^{n}(i,j),
@@ -255,7 +277,7 @@ and the final fused representation is obtained via normalization as
 
 Through the proposed adaptive fusion mechanism, Mel and GADF representations are no longer combined with fixed weights. Instead, the neuron state is dynamically modulated in a demand-driven manner, i.e., regions dominated by spectral variations are mainly governed by Mel, while regions with stronger temporal correlations rely more on GADF. This adaptive strategy effectively suppresses fusion artifacts while enhancing the discriminative capability of acoustic representations.
 
-The overall architecture of the proposed AW-DPCNN is illustrated in Fig.~\ref{AW-DPCNN}. By integrating Mel spectral perception and GADF temporal encoding within a unified adaptive fusion framework, the proposed AW-DPCNN produces robust and discriminative acoustic representations for transformer fault diagnosis. The qualitative effectiveness of the proposed adaptive fusion mechanism is further analyzed through feature visualization in Section~\ref{section5}.
+The overall architecture of the proposed AW-DPCNN is illustrated in Fig.~\ref{AW-DPCNN}. By integrating Mel spectral perception and GADF temporal encoding within a unified adaptive fusion framework, the proposed AW-DPCNN produces robust and discriminative acoustic representations for transformer fault diagnosis. The qualitative effectiveness of the proposed adaptive fusion mechanism is further analyzed through feature visualization in Section~\ref{section4}.
 \begin{figure}
 	\centering
 	\includegraphics[width=\linewidth]{AW-DPCNN/AW-DPCNN}
@@ -263,8 +285,8 @@ The overall architecture of the proposed AW-DPCNN is illustrated in Fig.~\ref{AW
 	\label{AW-DPCNN}                       
 \end{figure}
 
-\section{MSCA-VGG16 for Fused representations Classification}
-\label{section4}
+\subsection{MSCA-VGG16 for Fused Representation Classification}
+\label{sec:msca_vgg16}
 The fused representations simultaneously encode local spectral energy variations captured by Mel spectrograms and global temporal dependency structures derived from GADF encoding. Such representations exhibit heterogeneous characteristics with distinct statistical distributions and spatial patterns, where Mel spectrograms emphasize localized time–frequency energy variations, while GADF images reveal long-range temporal correlation structures. However, conventional convolutional neural networks typically rely on fixed receptive fields and single-scale feature extraction, which limits their ability to simultaneously capture fine-grained local details and global structural dependencies within the fused feature space. As a result, these models may not fully exploit the complementary information contained in the heterogeneous representations. To address this limitation, a structurally aware discriminative network, termed MSCA-VGG16, is developed to better align the network perception with the intrinsic properties of the fused representations, thereby enhancing representation capability and improving fault classification performance.
 
 Let the fused representation be denoted as 
@@ -280,7 +302,7 @@ where $\mathcal{B}(\cdot)$ denotes the VGG16 backbone, $\mathcal{M}(\cdot)$ deno
 
 This design prioritizes structural alignment with fused acoustic representations instead of merely increasing network depth. The main components are described below.
 
-\subsection{Multi-Scale Channel Attention Module}
+\subsubsection{Multi-Scale Channel Attention Module}
 Given input $\boldsymbol{X}$, hierarchical convolutional features are obtained as
 \begin{equation}
 	\boldsymbol{F} = \mathcal{B}(\boldsymbol{X}), \quad \boldsymbol{F} \in \mathbb{R}^{H \times W \times C}.
@@ -331,7 +353,7 @@ channel attention weights.
 
 The proposed mechanism aligns receptive fields with heterogeneous fault patterns and dynamically emphasizes discriminative spectral–temporal components introduced by the fused time–frequency representation.
 
-\subsection{Compact and Discriminative Embedding for Classification}
+\subsubsection{Compact and Discriminative Embedding for Classification}
 In conventional VGG16 architectures, large fully connected layers are employed to map convolutional features directly to class labels \cite{9770845}. While effective for large-scale image datasets, such designs often lead to excessive redundancy and limited interpretability when applied to fault diagnosis tasks. To address this issue, a compact discriminative embedding head is introduced to replace the original over-parameterized classification layers. Specifically, high-dimensional convolutional features are first projected into a lower-dimensional embedding space through a feature reconstruction layer, followed by normalization and nonlinear activation. This embedding head serves as a feature refinement stage rather than a simple classifier.
 
 The refined feature map is further transformed into a compact feature vector through global average pooling followed by flattening
@@ -380,16 +402,16 @@ By projecting high-dimensional convolutional features into a compact latent spac
 \end{figure*}
 
 \section{Experimental Setup and Performance Evaluation}
-\label{section5}
+\label{section4}
 \subsection{Dataset Construction and Preprocessing}
 \label{Dataset Construction and Preprocessing}
 An experimental platform was established to collect acoustic signals from power transformers operating in a real substation environment. Among several transformers deployed at different locations, a series of 220 kV transformers were selected for acoustic data acquisition due to their prominent vibration-induced acoustic emissions. As illustrated in Fig.~\ref{fig:equipment}, the acoustic acquisition system consists of an omnidirectional microphone mounted on a tripod and connected to a data acquisition device via a USB interface for both power supply and signal transmission. To ensure stable signal capture while reducing environmental interference, the microphone was positioned approximately 1.2~m in front of the transformer tank.
-\begin{figure*}
+\begin{figure}
 	\centering
 	\includegraphics[width=\linewidth]{equipment/equipment}
 	\caption{Experimental platform of acoustic signal acquisition.}
 	\label{fig:equipment}
-\end{figure*}
+\end{figure}
 
 All acoustic data were recorded across multiple independent acquisition sessions under different operating conditions. The continuous audio signals were first resampled to a uniform sampling rate of 44.1kHz to ensure consistency. Each recording was then segmented into fixed-length clips of 1s with 60\% overlap. To prevent data leakage caused by temporal correlation between overlapping segments, dataset partitioning was conducted at the recording-session level rather than at the segment level. Specifically, all segments derived from the same recording session were assigned exclusively to either the training, validation, or test subset. The dataset is divided into training, validation, and test subsets with a ratio of 60\%, 20\%, and 20\%, respectively, using a fixed random seed to ensure reproducibility and strict independence between the subsets.
 
@@ -448,7 +470,7 @@ Fig.~\ref{Fig: Fused images} illustrates the representations of different transf
 After processing by the proposed AW-DPCNN, the fused feature maps exhibit enhanced structural clarity and improved discrimination among different fault types. Notably, background noise and redundant patterns are effectively suppressed, while salient fault-related features are preserved and highlighted. This qualitative analysis demonstrates that the AW-DPCNN is capable of adaptively integrating frequency-domain and temporal-domain information, thereby generating more informative representations for subsequent fault classification.
 
 \subsection{Implementation Details and Evaluation Metrics}
-The raw acoustic signals are converted into Mel spectrograms and GADF images, which are subsequently fused using the proposed AW-DPCNN to generate pseudo-color RGB images of size $224 \times 224$. These fused representations serve as the input to the MSCA-VGG16 network. All experiments follow a unified training protocol. During each ablation study, only one factor is modified while all other settings remain unchanged. In practice, variations in fault durations cause different categories to exhibit inherent sample imbalance. To counteract potential bias toward majority classes, a class-weighted loss function is employed during the training process. To ensure the statistical reliability of the reported results and to account for performance variance due to random initialization, all key experiments are repeated over three independent trials with different random seeds (42, 123, 456) using the script \texttt{run\_repeated\_trials.py}. The aggregated results are reported as mean $\pm$ standard deviation across the three trials.
+The raw acoustic signals are converted into Mel spectrograms and GADF images, which are subsequently fused using the proposed AW-DPCNN to generate pseudo-color RGB images of size $224 \times 224$. These fused representations serve as the input to the MSCA-VGG16 network. All experiments follow a unified training protocol. During each ablation study, only one factor is modified while all other settings remain unchanged. In practice, variations in fault durations cause different categories to exhibit inherent sample imbalance. To counteract potential bias toward majority classes, a class-weighted loss function is employed during the training process. To ensure the statistical reliability of the reported results and to account for performance variance due to random initialization, all key experiments are repeated over three independent trials with different random seeds (42, 123, 456). The aggregated results are reported as mean $\pm$ standard deviation across the three trials.
 
 The experiments in this study were conducted on a system equipped with an Intel i9-14900K CPU and an NVIDIA RTX 5090 GPU. The software environment was based on PyTorch 2.11 and CUDA 12.8. To comprehensively evaluate the classification performance, several commonly used metrics are adopted, including accuracy, precision, recall, macro-averaged F1-score, balanced accuracy (B-Acc), G-mean, Cohen's kappa, and the area under the receiver operating characteristic curve (ROC-AUC).
 
@@ -461,7 +483,7 @@ where $\mathrm{TP}_c$, $\mathrm{FN}_c$, $\mathrm{FP}_c$, and $\mathrm{TN}_c$ den
 \begin{equation}
 \mathrm{AUC}_{\mathrm{macro}} = \frac{1}{C} \sum_{c=1}^{C} \mathrm{AUC}_c.
 \end{equation}
-The macro-averaging strategy ensures that each class contributes equally to the final AUC, regardless of class imbalance, thereby providing a balanced assessment of the model's discriminative capability across all fault categories. The ROC curves and AUC values are computed using the \texttt{scikit-learn} library with the \texttt{roc\_auc\_score} function under the \texttt{multi\_class="ovr"} and \texttt{average="macro"} settings.
+The macro-averaging strategy ensures that each class contributes equally to the final AUC, regardless of class imbalance, thereby providing a balanced assessment of the model's discriminative capability across all fault categories.
 
 	\begin{figure*}
 		\centering
@@ -613,9 +635,7 @@ As shown in Fig.~\ref{fig:confusion_matrix}(f), the proposed MSCA-VGG16 model ac
 \subsection{Ablation Study}
 \label{sec:ablation}
 
-To isolate and quantify the contribution of each component in the proposed framework, a comprehensive ablation study is conducted following a systematic decomposition strategy. Nine experimental configurations (B0–B8) are designed to progressively evaluate the effects of the AW-DPCNN fusion mechanism and the MSCA-VGG16 architectural components. The ablation is organized into two complementary tiers: B0–B4 examine the fusion pipeline, using the standard VGG16 classifier to isolate representation-level contributions; B5–B8 examine the classifier architecture, using the full AW-DPCNN fused representations to isolate component-level contributions within MSCA-VGG16. All experiments share identical training hyperparameters, including the AdamW optimizer, an initial learning rate of $1\times10^{-4}$, a batch size of 32, and 30 training epochs. Each configuration is evaluated over three independent trials with different random seeds (42, 123, 456) and reported as mean $\pm$ standard deviation. The dataset preparation and experiment execution are implemented via the scripts \texttt{build\_ablation\_datasets.py} and \texttt{run\_ablation\_experiments.py}, respectively.
-
-Table~\ref{tab:ablation_unified} reports the test-set performance for all nine configurations. The results reveal a clear and consistent performance progression.
+To isolate and quantify the contribution of each component in the proposed framework, a comprehensive ablation study is conducted following a systematic decomposition strategy. Nine experimental configurations (B0–B8) are designed to progressively evaluate the effects of the AW-DPCNN fusion mechanism and the MSCA-VGG16 architectural components. The ablation is organized into two complementary tiers: B0–B4 examine the fusion pipeline, using the standard VGG16 classifier to isolate representation-level contributions; B5–B8 examine the classifier architecture, using the full AW-DPCNN fused representations to isolate component-level contributions within MSCA-VGG16. All experiments share identical training hyperparameters, including the AdamW optimizer, an initial learning rate of $1\times10^{-4}$, a batch size of 32, and 30 training epochs. Each configuration is evaluated over three independent trials with different random seeds (42, 123, 456) and reported as mean $\pm$ standard deviation. Table~\ref{tab:ablation_unified} reports the test-set performance for all nine configurations. The results reveal a clear and consistent performance progression.
 
 \textbf{1) Fusion-level ablation (B0–B4).} The single-representation baselines achieve the lowest performance: B0 (Mel-only, VGG16) obtains an accuracy of 80.82\%, while B1 (GADF-only, VGG16) reaches 85.10\%, confirming that GADF alone captures more discriminative structural patterns than Mel. The naive pixel-wise averaging strategy (B2, Concat) yields 82.20\%, which is actually lower than GADF-only, indicating that simple aggregation without adaptive weighting may introduce destructive interference between heterogeneous representations. Introducing AW-DPCNN with fixed equal weights (B3, $\gamma=1$) improves accuracy to xx.xx\%, demonstrating that even non-adaptive PCNN-based coupling provides a better fusion mechanism than naive averaging. Finally, the full AW-DPCNN with adaptive weighting (B4, $\gamma=10$) achieves xx.xx\%, representing a yy.yy percentage-point gain over B3. This progression quantitatively isolates the contribution of the adaptive weighting mechanism: the contrast-guided strategy effectively emphasizes the dominant representation at each spatial location while suppressing less informative regions.
 
@@ -726,7 +746,7 @@ The CWRU t-SNE results in Fig.~\ref{Fig:tsne_CWRU} further support these finding
 \subsection{Hyperparameter Sensitivity Analysis}
 \label{sec:hyperparam}
 
-The AW-DPCNN fusion module involves several key hyperparameters whose settings may influence the quality of the fused representation and, consequently, the downstream classification performance. To assess the sensitivity of the proposed method to these parameters and to justify the values adopted throughout this study, a systematic hyperparameter sensitivity analysis is conducted using the script \texttt{hyperparameter\_sensitivity.py}. Three critical parameters are examined: the contrast amplification factor $\gamma$, which controls the degree of emphasis placed on the dominant representation in the adaptive weighting scheme; the number of PCNN iterations $N$, which governs the depth of pulse-coupled interaction; and the decay coefficients $\alpha_L$ and $\alpha_T$, which regulate the temporal dynamics of the linking field and the firing threshold, respectively. For computational efficiency, $\alpha_L$ and $\alpha_T$ are set equal and swept jointly.
+The AW-DPCNN fusion module involves several key hyperparameters whose settings may influence the quality of the fused representation and, consequently, the downstream classification performance. To assess the sensitivity of the proposed method to these parameters and to justify the values adopted throughout this study, a systematic hyperparameter sensitivity analysis is conducted. Three critical parameters are examined: the contrast amplification factor $\gamma$, which controls the degree of emphasis placed on the dominant representation in the adaptive weighting scheme; the number of PCNN iterations $N$, which governs the depth of pulse-coupled interaction; and the decay coefficients $\alpha_L$ and $\alpha_T$, which regulate the temporal dynamics of the linking field and the firing threshold, respectively. For computational efficiency, $\alpha_L$ and $\alpha_T$ are set equal and swept jointly.
 
 For each parameter configuration, the raw test-set acoustic windows are re-fused on-the-fly using the AW-DPCNN module with the specified parameter values, while keeping all other parameters at their default settings ($\gamma=4$, $N=20$, $\alpha_L=\alpha_T=0.001$). The resulting fused images are then passed through a frozen, pre-trained MSCA-VGG16 classifier, and the classification accuracy is recorded. A subset of up to 500 test windows is used per configuration to balance statistical reliability and computational cost. Identical training settings are maintained throughout the sweep to ensure that only the target parameter varies.
 
@@ -926,7 +946,7 @@ As summarized in Table~\ref{tab:cwru_ablation}, all experiments are conducted ov
 The t-SNE visualization results in Fig.~\ref{Fig:tsne_CWRU} further support these findings. Compared with the scattered distributions of the single representation and the partially overlapping clusters under concatenation fusion, the features produced by AW-DPCNN exhibit more compact intra-class distributions and clearer inter-class boundaries. This demonstrates that the proposed AW-DPCNN effectively enhances the discriminative capability of fused acoustic representations.
 
 \section{Conclusion}
-\label{section6}
+\label{section5}
 To overcome the limitations of single-representation and low accuracy in transformer fault diagnosis, this study integrates Mel spectrograms with GADF images. This combination captures complementary time–frequency and angular-domain representations from acoustic signals, forming a more comprehensive basis for fault identification. An AW-DPCNN is introduced to effectively fuse the heterogeneous representations by modeling cross-domain correlations while suppressing redundant and noise-sensitive components. On this basis, an MSCA-VGG16 network is designed as the classification backbone to further strengthen discriminative representation learning across multiple receptive fields and frequency scales. By jointly leveraging multi-representation fusion and attention-guided deep feature extraction, the proposed framework improves diagnostic robustness under complex operating conditions and acoustic disturbances. To further validate the effectiveness and generalization capability of the proposed method, experiments are also conducted on the CWRU bearing dataset. The results demonstrate consistent improvements in classification performance across different backbones, highlighting the compatibility and robustness of the proposed approach and confirming its effectiveness in addressing the low diagnostic accuracy commonly observed in existing fault diagnosis models.
 
 In future work, we aim to further optimize the proposed framework to improve recognition accuracy under more diverse and complex operating conditions, with the ultimate goal of enhancing the reliability and applicability of intelligent transformer faults diagnosis systems.
