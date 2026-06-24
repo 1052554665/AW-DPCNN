@@ -1053,6 +1053,35 @@ In future work, we aim to further optimize the proposed framework to improve rec
 	\label{fig:tsne_backbones}
 \end{figure*}
 
+\begin{figure}[!htbp] 
+\centering
+\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/noise_robustness/noise_robustness.png}
+\caption{}
+\label{}
+\end{figure}
+
+To evaluate model robustness, we inject zero-mean additive Gaussian noise at SNR levels ranging from 0 to 30 dB. This range spans realistic field conditions (10–20 dB) to idealized lab scenarios ($\ge30dB$), allowing assessment of graceful degradation under increasing noise. Noise is added independently to each test sample post-augmentation to avoid distribution shift; SNR is computed per-signal as $\text{SNR}_{\text{dB}} = 10\log_{10}(P_s/P_n)$ where $P_s$ and $P_n$ are signal and noise power respectively.
+
+\begin{table*}[!htbp]
+\centering
+\caption{Noise Robustness Comparison --- Accuracy (\%) at Different SNR Levels.}
+\label{tab:noise_robustness}
+\renewcommand{\arraystretch}{1.1}
+\small
+\begin{tabular}{lccccccc}
+\toprule
+\textbf{Model} & Clean & 5.0~dB & 10.0~dB & 15.0~dB & 20.0~dB & 25.0~dB & 30.0~dB \\
+\midrule
+\textbf{MSCA-VGG16} & 95.1 & 92.9 & 93.9 & 94.7 & 94.8 & 95.1 & 95.2 \\
+VGG16 & 94.7 & 83.5 & 93.7 & 94.5 & 94.6 & 94.8 & 94.7 \\
+ViT & 88.0 & 73.8 & 85.8 & 87.7 & 88.4 & 88.0 & 88.4 \\
+EfficientNet-B0 & 91.0 & 14.1 & 75.3 & 88.4 & 91.0 & 90.8 & 91.3 \\
+MobileNetV3-Small & 84.7 & 56.9 & 72.6 & 83.6 & 84.2 & 84.0 & 84.0 \\
+ConvNeXt-Tiny & 76.4 & 78.5 & 78.0 & 77.0 & 76.4 & 76.7 & 76.4 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}
