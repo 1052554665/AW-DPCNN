@@ -13,7 +13,7 @@
 \captionsetup{font=small,labelfont=bf}
 
 % add common graphics paths to simplify includes
-\graphicspath{{framework/}{representation/}{AW-DPCNN/}{MSCA-VGG16/}{Fused images/}{equipment/}{confusion_matrix/}{tsne/}{tsne_cwru/}{raw_tsne/}}
+\graphicspath{{framework/}{representation/}{AW-DPCNN/}{MSCA-VGG16/}{Fused images/}{equipment/}{confusion_matrix/}{tsne/}{tsne_cwru/}{raw_tsne/}{tsne_models/}{figures/}}
 
 \hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
 
@@ -714,75 +714,91 @@ To isolate and quantify the contribution of each component in the proposed frame
 
 For qualitative analysis, t-SNE visualization is applied to the feature embeddings extracted before the final classification layer. Fig.~\ref{Fig:tsne} presents the t-SNE projections corresponding to B0 (Mel-only), B1 (GADF-only), B2 (Concat), and B4 (full AW-DPCNN). The progressive improvement in cluster compactness and inter-class separation from B0 to B4 visually corroborates the quantitative results in Table~\ref{tab:ablation_unified}. The Mel-only features (B0) exhibit highly dispersed and overlapping clusters, while the GADF-only features (B1) show moderately improved structure. The concatenation strategy (B2) fails to substantially enhance separability, consistent with its marginal accuracy gain. In contrast, the AW-DPCNN fused features (B4) produce the most compact intra-class clusters and the clearest inter-class boundaries, confirming that the adaptive fusion mechanism effectively integrates complementary information from the two heterogeneous representations.
 
-\begin{figure*}[!htbp]
-	\centering
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{tsne/tsne__MSCA_VGG16_mel}
-		\caption{Mel-only (B0)}
-		\label{subfig:tsne_msca_vgg16_mel}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{tsne/tsne__MSCA_VGG16_gadf}
-		\caption{GADF-only (B1)}
-		\label{subfig:tsne_msca_vgg16_gadf}
-	\end{subfigure}\\[3mm]
+% \begin{figure*}[!htbp]
+% 	\centering
+% 	\begin{subfigure}{0.48\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/convnext_tiny/exp1_convnext_tiny/trial_seed42/figures/tsne.png}
+% 		\caption{convnext-tiny}
+% 		\label{subfig:tsne_msca_vgg16_mel}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.48\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/exp1_efficientnet_b0/trial_seed42/figures/tsne.png}
+% 		\caption{efficientnet-B0}
+% 		\label{subfig:tsne_msca_vgg16_gadf}
+% 	\end{subfigure}\\[3mm]
 
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{tsne/tsne__MSCA_VGG16_concat}
-		\caption{Concat (B2)}
-		\label{subfig:tsne_msca_vgg16_concat}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{tsne/tsne__MSCA_VGG16_awdpcnn}
-		\caption{AW-DPCNN (B4)}
-		\label{subfig:tsne_msca_vgg16_awdpcnn}
-	\end{subfigure}
-	\caption{t-SNE visualization of feature distributions under different fusion configurations. (a) B0: Mel-only. (b) B1: GADF-only. (c) B2: Mel+GADF concatenation. (d) B4: Full AW-DPCNN fusion, which yields the most compact intra-class clusters and the clearest inter-class separation.}
-	\label{Fig:tsne}
-	\vspace{-5pt}
-\end{figure*}
+% 	\begin{subfigure}{0.48\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/mobilenetv3_small/exp1_mobilenetv3_small/trial_seed42/figures/tsne.png}
+% 		\caption{mobilenetv3-small}
+% 		\label{subfig:tsne_msca_vgg16_concat}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.48\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/MSCA_VGG16/exp1_MSCA_VGG16/trial_seed42/figures/tsne.png}
+% 		\caption{MSCA-VGG16}
+% 		\label{subfig:tsne_msca_vgg16_awdpcnn}
+% 	\end{subfigure}
+% 		\hfill
+% 	\begin{subfigure}{0.48\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/exp1_vgg16/trial_seed42/figures/tsne.png}
+% 		\caption{vgg16}
+% 		\label{subfig:tsne_msca_vgg16_awdpcnn}
+% 	\end{subfigure}
+% 		\hfill
+% 	\begin{subfigure}{0.48\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vit/exp1_vit/trial_seed42/figures/tsne.png}
+% 		\caption{vit}
+% 		\label{subfig:tsne_msca_vgg16_awdpcnn}
+% 	\end{subfigure}
+% 	\caption{t-SNE visualization of feature distributions under different fusion configurations. (a) B0: Mel-only. (b) B1: GADF-only. (c) B2: Mel+GADF concatenation. (d) B4: Full AW-DPCNN fusion, which yields the most compact intra-class clusters and the clearest inter-class separation.}
+% 	\label{Fig:tsne}
+% 	\vspace{-5pt}
+% \end{figure*}
 
-The CWRU t-SNE results in Fig.~\ref{Fig:tsne_CWRU} further support these findings. Compared with the scattered distributions of single representations and the partially overlapping clusters under concatenation fusion, the AW-DPCNN fused features exhibit substantially more compact intra-class distributions and clearer inter-class boundaries across all four bearing conditions. This cross-domain consistency demonstrates that the proposed AW-DPCNN fusion mechanism provides robust and generalizable representation enhancement, independent of the specific dataset characteristics.
 
-\begin{figure*}[!htbp]
-	\centering
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_mel}
-		\caption{Mel}
-		\label{subfig:tsne_cwru_mel}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_gadf}
-		\caption{GADF}
-		\label{subfig:tsne_cwru_gadf}
-	\end{subfigure}\\[3mm]
 
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_concat}
-		\caption{Concat}
-		\label{subfig:tsne_cwru_concat}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.48\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_awdpcnn}
-		\caption{AW-DPCNN (Ours)}
-		\label{subfig:tsne_cwru_awdpcnn}
-	\end{subfigure}
-	\caption{t-SNE visualization on the CWRU dataset under different fusion strategies. The AW-DPCNN fused representation (d) achieves the most compact intra-class clusters and the clearest inter-class boundaries, consistent with the transformer dataset results.}
-	\label{Fig:tsne_CWRU}
-	\vspace{-3mm}
-\end{figure*}
+% The CWRU t-SNE results in Fig.~\ref{Fig:tsne_CWRU} further support these findings. Compared with the scattered distributions of single representations and the partially overlapping clusters under concatenation fusion, the AW-DPCNN fused features exhibit substantially more compact intra-class distributions and clearer inter-class boundaries across all four bearing conditions. This cross-domain consistency demonstrates that the proposed AW-DPCNN fusion mechanism provides robust and generalizable representation enhancement, independent of the specific dataset characteristics.
+
+% \begin{figure*}[!htbp]
+% 	\centering
+% 	\begin{subfigure}{0.48\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_mel}
+% 		\caption{Mel}
+% 		\label{subfig:tsne_cwru_mel}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.48\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_gadf}
+% 		\caption{GADF}
+% 		\label{subfig:tsne_cwru_gadf}
+% 	\end{subfigure}\\[3mm]
+
+% 	\begin{subfigure}{0.48\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_concat}
+% 		\caption{Concat}
+% 		\label{subfig:tsne_cwru_concat}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.48\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{tsne_cwru/tsne_cwru_awdpcnn}
+% 		\caption{AW-DPCNN (Ours)}
+% 		\label{subfig:tsne_cwru_awdpcnn}
+% 	\end{subfigure}
+% 	\caption{t-SNE visualization on the CWRU dataset under different fusion strategies. The AW-DPCNN fused representation (d) achieves the most compact intra-class clusters and the clearest inter-class boundaries, consistent with the transformer dataset results.}
+% 	\label{Fig:tsne_CWRU}
+% 	\vspace{-3mm}
+% \end{figure*}
 
 
 
@@ -837,7 +853,6 @@ Overall, the sensitivity analysis confirms that the default hyperparameter confi
 \end{table}
 
 
-
 \subsection{Raw Input Feature Visualization}
 \label{sec:raw_tsne}
 
@@ -845,23 +860,23 @@ To further validate the effectiveness of the proposed AW-DPCNN fusion in enhanci
 
 The raw input t-SNE loads images from the test split with minimal preprocessing (only resizing to $224\times224$ and conversion to tensor, without any normalization). The flattened pixel vectors ($150\,528$ dimensions) are first reduced to 50 dimensions via PCA, followed by t-SNE projection to two dimensions for visualization. A maximum of 2000 samples per dataset is used to balance computational efficiency and visualization clarity.
 
-Fig.~\ref{fig:raw_tsne_transformer} presents the t-SNE embeddings of raw input pixels for the transformer acoustic dataset. Compared with the t-SNE visualizations of Mel, GADF, concatenated, and AW-DPCNN fused representations shown in Fig.~\ref{Fig:tsne}, the raw input features exhibit severely overlapping clusters with no clear class boundaries. Individual classes are widely dispersed and intermingled, indicating that the original pixel space does not provide a linearly separable feature representation. This observation confirms that the classification performance reported in this study is not a trivial consequence of the input representation, but rather a result of effective feature learning through the proposed AW-DPCNN fusion and MSCA-VGG16 classification pipeline.
+% Fig.~\ref{fig:raw_tsne_transformer} presents the t-SNE embeddings of raw input pixels for the transformer acoustic dataset. Compared with the t-SNE visualizations of Mel, GADF, concatenated, and AW-DPCNN fused representations shown in Fig.~\ref{Fig:tsne}, the raw input features exhibit severely overlapping clusters with no clear class boundaries. Individual classes are widely dispersed and intermingled, indicating that the original pixel space does not provide a linearly separable feature representation. This observation confirms that the classification performance reported in this study is not a trivial consequence of the input representation, but rather a result of effective feature learning through the proposed AW-DPCNN fusion and MSCA-VGG16 classification pipeline.
 
-\begin{figure}[!htbp]
-	\centering
-	\includegraphics[width=\linewidth]{raw_tsne/tsne_Group2_4_harmonic_raw_input}
-	\caption{t-SNE visualization of raw input pixels (PCA 50 $\rightarrow$ t-SNE) for the transformer acoustic dataset. Classes are severely overlapped, demonstrating that raw pixel features are not inherently separable.}
-	\label{fig:raw_tsne_transformer}
-\end{figure}
+% \begin{figure}[!htbp]
+% 	\centering
+% 	\includegraphics[width=\linewidth]{raw_tsne/tsne_Group2_4_harmonic_raw_input}
+% 	\caption{t-SNE visualization of raw input pixels (PCA 50 $\rightarrow$ t-SNE) for the transformer acoustic dataset. Classes are severely overlapped, demonstrating that raw pixel features are not inherently separable.}
+% 	\label{fig:raw_tsne_transformer}
+% \end{figure}
 
-Fig.~\ref{fig:raw_tsne_cwru} shows the corresponding raw input t-SNE for the CWRU bearing dataset. Similar to the transformer dataset, the raw pixel features of CWRU vibration signals also exhibit substantial inter-class overlap, with no clearly defined decision boundaries. This stands in stark contrast to the AW-DPCNN fused t-SNE shown in Fig.~\ref{Fig:tsne_CWRU}, where the four bearing conditions form compact, well-isolated clusters. The visual comparison between raw input and fused representation t-SNE maps provides compelling qualitative evidence that the AW-DPCNN fusion mechanism effectively enhances class separability by suppressing noise components while amplifying discriminative structural patterns shared across heterogeneous representations.
+% Fig.~\ref{fig:raw_tsne_cwru} shows the corresponding raw input t-SNE for the CWRU bearing dataset. Similar to the transformer dataset, the raw pixel features of CWRU vibration signals also exhibit substantial inter-class overlap, with no clearly defined decision boundaries. This stands in stark contrast to the AW-DPCNN fused t-SNE shown in Fig.~\ref{Fig:tsne_CWRU}, where the four bearing conditions form compact, well-isolated clusters. The visual comparison between raw input and fused representation t-SNE maps provides compelling qualitative evidence that the AW-DPCNN fusion mechanism effectively enhances class separability by suppressing noise components while amplifying discriminative structural patterns shared across heterogeneous representations.
 
-\begin{figure}[!htbp]
-	\centering
-	\includegraphics[width=\linewidth]{raw_tsne/tsne_cwru_within_raw_input}
-	\caption{t-SNE visualization of raw input pixels for the CWRU bearing dataset. The four classes (B, IR, N, OR) exhibit substantial overlap in the raw pixel space.}
-	\label{fig:raw_tsne_cwru}
-\end{figure}
+% \begin{figure}[!htbp]
+% 	\centering
+% 	\includegraphics[width=\linewidth]{raw_tsne/tsne_cwru_within_raw_input}
+% 	\caption{t-SNE visualization of raw input pixels for the CWRU bearing dataset. The four classes (B, IR, N, OR) exhibit substantial overlap in the raw pixel space.}
+% 	\label{fig:raw_tsne_cwru}
+% \end{figure}
 
 Collectively, these visualizations demonstrate that the proposed AW-DPCNN fusion framework transforms initially non-separable raw representations into highly discriminative feature spaces, thereby enabling the MSCA-VGG16 classifier to achieve superior diagnostic accuracy. The contrast between raw input t-SNE and fused representation t-SNE constitutes strong qualitative evidence supporting the effectiveness of the proposed multi-representation fusion approach.
 
@@ -993,6 +1008,51 @@ The t-SNE visualization results in Fig.~\ref{Fig:tsne_CWRU} further support thes
 To overcome the limitations of single-representation and low accuracy in transformer fault diagnosis, this study integrates Mel spectrograms with GADF images. This combination captures complementary time–frequency and angular-domain representations from acoustic signals, forming a more comprehensive basis for fault identification. An AW-DPCNN is introduced to effectively fuse the heterogeneous representations by modeling cross-domain correlations while suppressing redundant and noise-sensitive components. On this basis, an MSCA-VGG16 network is designed as the classification backbone to further strengthen discriminative representation learning across multiple receptive fields and frequency scales. By jointly leveraging multi-representation fusion and attention-guided deep feature extraction, the proposed framework improves diagnostic robustness under complex operating conditions and acoustic disturbances. To further validate the effectiveness and generalization capability of the proposed method, experiments are also conducted on the CWRU bearing dataset. The results demonstrate consistent improvements in classification performance across different backbones, highlighting the compatibility and robustness of the proposed approach and confirming its effectiveness in addressing the low diagnostic accuracy commonly observed in existing fault diagnosis models.
 
 In future work, we aim to further optimize the proposed framework to improve recognition accuracy under more diverse and complex operating conditions, with the ultimate goal of enhancing the reliability and applicability of intelligent transformer faults diagnosis systems.
+
+
+\begin{figure*}[!htbp]
+	\centering
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{tsne_cwru_de_raw_input}
+		\caption{Raw Input}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{tsne_vit}
+		\caption{ViT}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{tsne_convnext_tiny}
+		\caption{ConvNeXt-Tiny}
+	\end{subfigure}
+
+	\vspace{3mm}
+
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{tsne_efficientnet_b0}
+		\caption{EfficientNet-B0}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{tsne_mobilenetv3_small}
+		\caption{MobileNetV3-Small}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{tsne_MSCA_VGG16}
+		\caption{MSCA-VGG16 (Ours)}
+	\end{subfigure}
+	\caption{t-SNE feature visualization of different backbone networks on the transformer acoustic test set. The proposed MSCA-VGG16 produces the most compact and well-separated clusters, indicating superior discriminative representation learning.}
+	\label{fig:tsne_backbones}
+\end{figure*}
+
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

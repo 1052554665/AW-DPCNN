@@ -75,7 +75,7 @@ def plot_tsne(
         ax.scatter(
             emb[idx, 0],
             emb[idx, 1],
-            s=8,              # IEEE 推荐小点
+            s=30,              # IEEE 推荐小点
             alpha=0.8,
             label=name,
             edgecolors="none"

@@ -17,9 +17,9 @@ Usage::
         --checkpoint PATH/TO/best.pt
 
     # Batch: evaluate all models in an experiment directory
-    python scripts/noise_robustness.py \\
-        --config configs/default.yaml \\
-        --exp-dir experiments/exp1 \\
+    python scripts/noise_robustness.py \
+        --config configs/default.yaml \
+        --exp-dir experiments/exp1 \
         --auto-checkpoint  # picks best.pt from the latest run of each config
 
     # Custom SNR range
