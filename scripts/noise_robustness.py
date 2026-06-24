@@ -20,7 +20,7 @@ Usage::
     python scripts/noise_robustness.py \
         --config configs/default.yaml \
         --exp-dir experiments/exp1 \
-        --auto-checkpoint  # picks best.pt from the latest run of each config
+        --auto-checkpoint  --snr 5 10 15 20 25 30 # picks best.pt from the latest run of each config
 
     # Custom SNR range
     python scripts/noise_robustness.py \\
@@ -138,7 +138,10 @@ def evaluate_model_noise(
     Returns dict with keys: snr, accuracy, f1, auc, loss
     """
     model = build_model(config).to(device)
-    model.load_state_dict(torch.load(checkpoint_path, map_location=device))
+    state = torch.load(checkpoint_path, map_location=device)
+    if any(k.startswith("_orig_mod.") for k in state.keys()):
+        state = {k.replace("_orig_mod.", ""): v for k, v in state.items()}
+    model.load_state_dict(state)
     model.eval()
 
     criterion = nn.CrossEntropyLoss()
@@ -289,12 +292,17 @@ def resolve_device(config_device: str, cli_device: str) -> torch.device:
 
 
 def find_checkpoint(run_root: Path) -> Optional[Path]:
-    """Find best.pt in the most recent timestamped sub‑directory.
+    """Find best.pt anywhere under *run_root* (searches up to 3 levels deep).
 
-    Search order:
-      1. checkpoints/best.pt directly under *run_root*
-      2. <timestamp>/checkpoints/best.pt in most‑recent sub‑directory
-    Returns None if *run_root* does not exist or no checkpoint is found.
+    Handles nested structures like::
+
+        run_root/
+          exp1_MSCA_VGG16/
+            trial_seed42/
+              checkpoints/
+                best.pt
+
+    Returns None if no checkpoint is found.
     """
     if not run_root.exists():
         return None
@@ -304,19 +312,12 @@ def find_checkpoint(run_root: Path) -> Optional[Path]:
     if direct.exists():
         return direct
 
-    # Timestamped sub‑directories
-    try:
-        subdirs = sorted(
-            [d for d in run_root.iterdir() if d.is_dir()],
-            reverse=True,
-        )
-    except (FileNotFoundError, PermissionError):
-        return None
-
-    for d in subdirs:
-        ckpt = d / "checkpoints" / "best.pt"
-        if ckpt.exists():
+    # Recursive search (max 4 levels to avoid deep filesystem walks)
+    for depth in range(1, 5):
+        pattern = "/".join(["*"] * depth)
+        for ckpt in sorted(run_root.glob(f"{pattern}/checkpoints/best.pt"), reverse=True):
             return ckpt
+
     return None
 
 
