@@ -1,15 +1,34 @@
-create a LaTeX table from the noise robustness CSV data for inclusion in the paper.
+create a script, which functions are as follows:
+- analyse all the experiments result located in the `logs` and `results` directories
+- transform the results into table format or chart format (generate latex code), which fits the IEEE journal format
 
-### Key Results
 
-| Model | Clean | 5 dB | 10 dB | 15 dB+ |
-|---|---|---|---|---|
-| **MSCA-VGG16** | 95.1 | **92.9** | 93.9 | ~95 |
-| VGG16 | 94.7 | 83.5 | 93.7 | ~95 |
-| EfficientNet-B0 | 91.0 | **14.1** | 75.3 | ~91 |
-| MobileNetV3 | 84.7 | 56.9 | 72.6 | ~84 |
+a comprehensive script that:
 
-- **MSCA-VGG16 drops only ~2% at 5 dB** — best noise resilience
-- **VGG16 drops ~11% at 5 dB** — the MSCA enhancements provide ~9 pp noise robustness gain over the baseline
-- **EfficientNet-B0 collapses at 5 dB** (14.1%) — extremely noise-sensitive
-- **ConvNeXt-Tiny** is noise-indifferent but consistently poor (76-78%)
+- Reads all experiment results from `experiments/experiment_result/`
+- Analyzes both `logs/train_log.csv` (training curves) and `results/test_metrics.json` (final metrics)
+- Generates LaTeX tables and/or charts in IEEE format
+
+### tab_exp1_comparison.tex — Backbone Performance
+
+| Network | Acc | F1 | G-Mean | AUC | $\kappa$ | Params (M) |
+|---|---|---|---|---|---|---|
+| **MSCA-VGG16 (Ours)** | **95.1** | **92.9** | **90.3** | 99.9 | 94.3 | 26.8 |
+| VGG16 | 94.7 | 91.9 | 89.0 | **99.9** | 93.8 | 15.3 |
+| ViT | 88.0 | 84.1 | 82.3 | 99.2 | 85.9 | 11.0 |
+| EfficientNet-B0 | 91.0 | 86.8 | 83.1 | 98.9 | 89.4 | 4.0 |
+| MobileNetV3-Small | 84.7 | 79.3 | 75.0 | 98.2 | 82.0 | 1.5 |
+| ConvNeXt-Tiny | 76.4 | 66.0 | 45.1 | 97.1 | 72.3 | 27.8 |
+
+### tab_exp1_training.tex — Training Summary
+
+Includes best epoch, val F1, params, FLOPs, and shuffled-label check.
+
+### Usage
+
+```bash
+python scripts/results_to_latex.py                    # seed 42
+python scripts/results_to_latex.py trial_seed123      # other trial
+```
+
+New experiment groups (e.g., `ablation/`) are automatically picked up when their results exist.

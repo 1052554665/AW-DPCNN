@@ -457,13 +457,13 @@ Early stopping is employed to prevent overfitting, where training is terminated 
 \label{section4}
 \subsection{Dataset Construction and Preprocessing}
 \label{Dataset Construction and Preprocessing}
-An experimental platform was established to collect acoustic signals from power transformers operating in a real substation environment. Among several transformers deployed at different locations, a series of 220 kV transformers were selected for acoustic data acquisition due to their prominent vibration-induced acoustic emissions. As illustrated in Fig.~\ref{fig:equipment}, the acoustic acquisition system consists of an omnidirectional microphone mounted on a tripod and connected to a data acquisition device via a USB interface for both power supply and signal transmission. To ensure stable signal capture while reducing environmental interference, the microphone was positioned approximately 1.2~m in front of the transformer tank.
-\begin{figure}[!htbp]
-	\centering
-	\includegraphics[width=\linewidth]{equipment/equipment}
-	\caption{Experimental platform of acoustic signal acquisition.}
-	\label{fig:equipment}
-\end{figure}
+% An experimental platform was established to collect acoustic signals from power transformers operating in a real substation environment. Among several transformers deployed at different locations, a series of 220 kV transformers were selected for acoustic data acquisition due to their prominent vibration-induced acoustic emissions. As illustrated in Fig.~\ref{fig:equipment}, the acoustic acquisition system consists of an omnidirectional microphone mounted on a tripod and connected to a data acquisition device via a USB interface for both power supply and signal transmission. To ensure stable signal capture while reducing environmental interference, the microphone was positioned approximately 1.2~m in front of the transformer tank.
+% \begin{figure}[!htbp]
+% 	\centering
+% 	\includegraphics[width=\linewidth]{equipment/equipment}
+% 	\caption{Experimental platform of acoustic signal acquisition.}
+% 	\label{fig:equipment}
+% \end{figure}
 
 All acoustic data were recorded across multiple independent acquisition sessions under different operating conditions. The continuous audio signals were first resampled to a uniform sampling rate of 44.1kHz to ensure consistency. Each recording was then segmented into fixed-length clips of 1s with 60\% overlap. To prevent data leakage caused by temporal correlation between overlapping segments, dataset partitioning was conducted at the recording-session level rather than at the segment level. Specifically, all segments derived from the same recording session were assigned exclusively to either the training, validation, or test subset. The dataset is divided into training, validation, and test subsets with a ratio of 60\%, 20\%, and 20\%, respectively, using a fixed random seed to ensure reproducibility and strict independence between the subsets.
 
@@ -537,53 +537,46 @@ where $\mathrm{TP}_c$, $\mathrm{FN}_c$, $\mathrm{FP}_c$, and $\mathrm{TN}_c$ den
 \end{equation}
 The macro-averaging strategy ensures that each class contributes equally to the final AUC, regardless of class imbalance, thereby providing a balanced assessment of the model's discriminative capability across all fault categories.
 
-	\begin{figure*}[!htbp]
-		\centering
-		\begin{subfigure}{0.42\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/convnext_tiny/exp1_convnext_tiny/trial_seed42/figures/confusion_matrix.png}
-			\caption{convnext Tiny}
-		\end{subfigure}
-		\hfill
-		\begin{subfigure}{0.42\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/exp1_efficientnet_b0/trial_seed42/figures/confusion_matrix.png}
-			\caption{efficientnet B0}
-		\end{subfigure}\\[2mm]
+	% \begin{figure*}[!htbp]
+	% 	\centering
+	% 	\begin{subfigure}{0.42\textwidth}
+	% 		\centering
+	% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/convnext_tiny/exp1_convnext_tiny/trial_seed42/figures/confusion_matrix.png}
+	% 		\caption{convnext Tiny}
+	% 	\end{subfigure}
+	% 	\hfill
+	% 	\begin{subfigure}{0.42\textwidth}
+	% 		\centering
+	% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/exp1_efficientnet_b0/trial_seed42/figures/confusion_matrix.png}
+	% 		\caption{efficientnet B0}
+	% 	\end{subfigure}\\[2mm]
 
-		\begin{subfigure}{0.42\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vit/exp1_vit/trial_seed42/figures/confusion_matrix.png}
-			\caption{Vit}
-		\end{subfigure}
-		\hfill
-		\begin{subfigure}{0.42\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/mobilenetv3_small/exp1_mobilenetv3_small/trial_seed42/figures/confusion_matrix.png}
-			\caption{MobileNetV3-Small}
-		\end{subfigure}\\[2mm]
+	% 	\begin{subfigure}{0.42\textwidth}
+	% 		\centering
+	% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vit/exp1_vit/trial_seed42/figures/confusion_matrix.png}
+	% 		\caption{Vit}
+	% 	\end{subfigure}
+	% 	\hfill
+	% 	\begin{subfigure}{0.42\textwidth}
+	% 		\centering
+	% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/mobilenetv3_small/exp1_mobilenetv3_small/trial_seed42/figures/confusion_matrix.png}
+	% 		\caption{MobileNetV3-Small}
+	% 	\end{subfigure}\\[2mm]
 
-		\begin{subfigure}{0.42\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/exp1_vgg16/trial_seed42/figures/confusion_matrix.png}
-			\caption{VGG16}
-		\end{subfigure}
-		\hfill
-		\begin{subfigure}{0.42\textwidth}
-			\centering
-			\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/MSCA_VGG16/exp1_MSCA_VGG16/trial_seed42/figures/confusion_matrix.png}
-			\caption{MSCA-VGG16 (Ours)}
-		\end{subfigure}
-		\caption{Confusion matrices of different network backbones trained using the AW-DPCNN fusion representations. The proposed MSCA-VGG16 achieves the most accurate classification performance with significantly reduced inter-class confusion.}
-		\label{fig:confusion_matrix}
-	\end{figure*}
-
-\begin{figure}[!htbp] 
-\centering
-\includegraphics[width=\linewidth]{ROC/roc_curve.png}
-\caption{ROC curves of the proposed MSCA-VGG16 model under the AW-DPCNN fused representations.}
-\label{fig:roc}
-\end{figure}
+	% 	\begin{subfigure}{0.42\textwidth}
+	% 		\centering
+	% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/exp1_vgg16/trial_seed42/figures/confusion_matrix.png}
+	% 		\caption{VGG16}
+	% 	\end{subfigure}
+	% 	\hfill
+	% 	\begin{subfigure}{0.42\textwidth}
+	% 		\centering
+	% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/MSCA_VGG16/exp1_MSCA_VGG16/trial_seed42/figures/confusion_matrix.png}
+	% 		\caption{MSCA-VGG16 (Ours)}
+	% 	\end{subfigure}
+	% 	\caption{Confusion matrices of different network backbones trained using the AW-DPCNN fusion representations. The proposed MSCA-VGG16 achieves the most accurate classification performance with significantly reduced inter-class confusion.}
+	% 	\label{fig:confusion_matrix}
+	% \end{figure*}
 
 \subsection{Backbone Comparison}
 The key hyperparameters of the AW-DPCNN fusion module are summarized in Table~\ref{tab:awdpcnn_params}, where $\mathbf I$ denotes the identity matrix. Unless otherwise specified, these parameters remain fixed throughout all experiments to ensure fair comparison. 
@@ -634,34 +627,34 @@ The key hyperparameters of the AW-DPCNN fusion module are summarized in Table~\r
 To evaluate the effectiveness of the proposed classification network, a comparative experiment was conducted using several representative deep learning backbones, including Baseline CNN, AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16. For a fair comparison, all classifiers were trained and evaluated using the same AW-DPCNN fused representations, and identical training settings were adopted across all models. To ensure statistical reliability, each backbone is evaluated over three independent trials with different random seeds, and the results are reported as mean $\pm$ standard deviation in Table~\ref{tab:network_comparison}.
 
 The baseline model achieves relatively limited results, with an accuracy of $73.31 \pm x.xx\%$ and an F1-score of $69.59 \pm x.xx\%$. By adopting deeper architectures such as AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16, the classification performance improves to different extents, indicating that more powerful feature extraction networks can better capture discriminative acoustic characteristics. Among all compared methods, the proposed MSCA-VGG16 achieves the best performance across all evaluation metrics, attaining an accuracy of $87.45 \pm x.xx\%$, an F1-score of $86.97 \pm x.xx\%$, and a G-mean of $85.69 \pm x.xx\%$. The consistent performance across repeated trials, as evidenced by the small standard deviations, confirms the stability and reproducibility of the proposed approach. These results demonstrate the effectiveness of the proposed MSCA-VGG16 framework for transformer acoustic fault diagnosis.
-\begin{table*}
-	\centering
-	\caption{Performance Comparison with Different Backbone Networks (Mean $\pm$ Std over 3 Independent Trials)}
-	\label{tab:network_comparison}
-	\renewcommand{\arraystretch}{1.15}
-	\small
-	\begin{tabular}{lcccccc}
-		\toprule
-		\textbf{Network} 
-		& \textbf{Acc (\%)} 
-		& \textbf{Recall (\%)} 
-		& \textbf{F1 (\%)} 
-		& \textbf{G-mean (\%)} 
-		& \textbf{B-Acc (\%)} 
-		& \textbf{Kappa (\%)} \\
-		\midrule
-		Baseline & $73.31_{\pm x.xx}$ & $74.23_{\pm x.xx}$ & $69.59_{\pm x.xx}$ & $42.47_{\pm x.xx}$ & $74.23_{\pm x.xx}$ & $70.41_{\pm x.xx}$ \\
-		AlexNet & $79.97_{\pm x.xx}$ & $81.94_{\pm x.xx}$ & $77.31_{\pm x.xx}$ & $52.96_{\pm x.xx}$ & $81.94_{\pm x.xx}$ & $77.79_{\pm x.xx}$ \\
-		ResNet18 & $79.18_{\pm x.xx}$ & $81.00_{\pm x.xx}$ & $76.69_{\pm x.xx}$ & $52.37_{\pm x.xx}$ & $81.00_{\pm x.xx}$ & $76.91_{\pm x.xx}$ \\
-		ConvNeXt-Tiny & $79.82_{\pm x.xx}$ & $81.27_{\pm x.xx}$ & $78.28_{\pm x.xx}$ & $70.81_{\pm x.xx}$ & $81.27_{\pm x.xx}$ & $77.61_{\pm x.xx}$ \\
-		VGG16 & $78.15_{\pm x.xx}$ & $79.68_{\pm x.xx}$ & $75.82_{\pm x.xx}$ & $57.37_{\pm x.xx}$ & $79.68_{\pm x.xx}$ & $75.76_{\pm x.xx}$ \\
-		\textbf{MSCA-VGG16 (Ours)} 
-		& $\mathbf{87.45_{\pm x.xx}}$ & $\mathbf{87.50_{\pm x.xx}}$ 
-		& $\mathbf{86.97_{\pm x.xx}}$ & $\mathbf{85.69_{\pm x.xx}}$ 
-		& $\mathbf{87.50_{\pm x.xx}}$ & $\mathbf{86.03_{\pm x.xx}}$ \\
-		\bottomrule
-	\end{tabular}
-\end{table*}
+% \begin{table*}
+% 	\centering
+% 	\caption{Performance Comparison with Different Backbone Networks (Mean $\pm$ Std over 3 Independent Trials)}
+% 	\label{tab:network_comparison}
+% 	\renewcommand{\arraystretch}{1.15}
+% 	\small
+% 	\begin{tabular}{lcccccc}
+% 		\toprule
+% 		\textbf{Network} 
+% 		& \textbf{Acc (\%)} 
+% 		& \textbf{Recall (\%)} 
+% 		& \textbf{F1 (\%)} 
+% 		& \textbf{G-mean (\%)} 
+% 		& \textbf{B-Acc (\%)} 
+% 		& \textbf{Kappa (\%)} \\
+% 		\midrule
+% 		Baseline & $73.31_{\pm x.xx}$ & $74.23_{\pm x.xx}$ & $69.59_{\pm x.xx}$ & $42.47_{\pm x.xx}$ & $74.23_{\pm x.xx}$ & $70.41_{\pm x.xx}$ \\
+% 		AlexNet & $79.97_{\pm x.xx}$ & $81.94_{\pm x.xx}$ & $77.31_{\pm x.xx}$ & $52.96_{\pm x.xx}$ & $81.94_{\pm x.xx}$ & $77.79_{\pm x.xx}$ \\
+% 		ResNet18 & $79.18_{\pm x.xx}$ & $81.00_{\pm x.xx}$ & $76.69_{\pm x.xx}$ & $52.37_{\pm x.xx}$ & $81.00_{\pm x.xx}$ & $76.91_{\pm x.xx}$ \\
+% 		ConvNeXt-Tiny & $79.82_{\pm x.xx}$ & $81.27_{\pm x.xx}$ & $78.28_{\pm x.xx}$ & $70.81_{\pm x.xx}$ & $81.27_{\pm x.xx}$ & $77.61_{\pm x.xx}$ \\
+% 		VGG16 & $78.15_{\pm x.xx}$ & $79.68_{\pm x.xx}$ & $75.82_{\pm x.xx}$ & $57.37_{\pm x.xx}$ & $79.68_{\pm x.xx}$ & $75.76_{\pm x.xx}$ \\
+% 		\textbf{MSCA-VGG16 (Ours)} 
+% 		& $\mathbf{87.45_{\pm x.xx}}$ & $\mathbf{87.50_{\pm x.xx}}$ 
+% 		& $\mathbf{86.97_{\pm x.xx}}$ & $\mathbf{85.69_{\pm x.xx}}$ 
+% 		& $\mathbf{87.50_{\pm x.xx}}$ & $\mathbf{86.03_{\pm x.xx}}$ \\
+% 		\bottomrule
+% 	\end{tabular}
+% \end{table*}
 
 
 To evaluate the classification performance of the proposed MSCA-VGG16 model, confusion matrices were employed to visualize the recognition accuracy across ten fault categories, as shown in Fig.~\ref{fig:confusion_matrix}. A hierarchical comparison was conducted among the baseline model, several representative deep learning architectures, and the proposed MSCA-enhanced framework. 
@@ -959,46 +952,46 @@ To further evaluate the generalization capability of the proposed method, experi
 
 As summarized in Table~\ref{tab:cwru_ablation}, all experiments are conducted over three independent trials and reported as mean $\pm$ standard deviation. The single-representation approaches (A1 and A2) achieve relatively limited performance, with accuracies of $89.72 \pm x.xx\%$ and $91.34 \pm x.xx\%$, respectively, indicating that Mel or GADF representations alone cannot fully characterize the fault information. When the two representations are directly fused through feature concatenation (A3), the accuracy increases to $96.41 \pm x.xx\%$, demonstrating that the Mel spectrogram and GADF representations provide complementary information. By introducing the proposed AW-DPCNN fusion strategy (A4), the accuracy further improves to $97.86 \pm x.xx\%$, showing that adaptive weighted fusion can better exploit cross-modal representation correlations than simple concatenation. Finally, combining AW-DPCNN with the MSCA-VGG16 classifier (A5) achieves the best performance with an accuracy of $99.67 \pm x.xx\%$. The small standard deviations across trials confirm the stability and reproducibility of the proposed framework on the CWRU benchmark.
 
-\begin{table*}
-\caption{
-	Validation on the Public CWRU Dataset (Mean $\pm$ Std over 3 Independent Trials).
-	Rep.: Representation;
-	Prec.: Precision;
-	Rec.: Recall;
-	Gm.: G-mean.
-}
-	\label{tab:cwru_ablation}
-	\centering
-	\renewcommand{\arraystretch}{1.2}
+% \begin{table*}
+% \caption{
+% 	Validation on the Public CWRU Dataset (Mean $\pm$ Std over 3 Independent Trials).
+% 	Rep.: Representation;
+% 	Prec.: Precision;
+% 	Rec.: Recall;
+% 	Gm.: G-mean.
+% }
+% 	\label{tab:cwru_ablation}
+% 	\centering
+% 	\renewcommand{\arraystretch}{1.2}
 	
-	\resizebox{\linewidth}{!}{
-		\begin{tabular}{lcccccccc}
-			\toprule
-			\textbf{Exp.} &
-			\textbf{Rep.} &
-			\textbf{Fusion} &
-			\textbf{Network} &
-			\textbf{Acc} &
-			\textbf{Prec.} &
-			\textbf{Rec.} &
-			\textbf{F1} &
-			\textbf{Gm.} \\
-			\midrule
+% 	\resizebox{\linewidth}{!}{
+% 		\begin{tabular}{lcccccccc}
+% 			\toprule
+% 			\textbf{Exp.} &
+% 			\textbf{Rep.} &
+% 			\textbf{Fusion} &
+% 			\textbf{Network} &
+% 			\textbf{Acc} &
+% 			\textbf{Prec.} &
+% 			\textbf{Rec.} &
+% 			\textbf{F1} &
+% 			\textbf{Gm.} \\
+% 			\midrule
 			
-			A1 & Mel & None & Backbone & $89.72_{\pm x.xx}$ & $88.94_{\pm x.xx}$ & $83.76_{\pm x.xx}$ & $85.42_{\pm x.xx}$ & $80.31_{\pm x.xx}$ \\
+% 			A1 & Mel & None & Backbone & $89.72_{\pm x.xx}$ & $88.94_{\pm x.xx}$ & $83.76_{\pm x.xx}$ & $85.42_{\pm x.xx}$ & $80.31_{\pm x.xx}$ \\
 			
-			A2 & GADF & None & Backbone & $91.34_{\pm x.xx}$ & $90.38_{\pm x.xx}$ & $85.90_{\pm x.xx}$ & $84.95_{\pm x.xx}$ & $82.05_{\pm x.xx}$ \\
+% 			A2 & GADF & None & Backbone & $91.34_{\pm x.xx}$ & $90.38_{\pm x.xx}$ & $85.90_{\pm x.xx}$ & $84.95_{\pm x.xx}$ & $82.05_{\pm x.xx}$ \\
 			
-			A3 & Mel+GADF & Concat & Backbone & $96.41_{\pm x.xx}$ & $94.60_{\pm x.xx}$ & $94.53_{\pm x.xx}$ & $94.42_{\pm x.xx}$ & $94.53_{\pm x.xx}$ \\
+% 			A3 & Mel+GADF & Concat & Backbone & $96.41_{\pm x.xx}$ & $94.60_{\pm x.xx}$ & $94.53_{\pm x.xx}$ & $94.42_{\pm x.xx}$ & $94.53_{\pm x.xx}$ \\
 			
-			A4 & Mel+GADF & \textbf{AW-DPCNN} & Backbone & $97.86_{\pm x.xx}$ & $96.42_{\pm x.xx}$ & $96.85_{\pm x.xx}$ & $96.88_{\pm x.xx}$ & $96.91_{\pm x.xx}$ \\
+% 			A4 & Mel+GADF & \textbf{AW-DPCNN} & Backbone & $97.86_{\pm x.xx}$ & $96.42_{\pm x.xx}$ & $96.85_{\pm x.xx}$ & $96.88_{\pm x.xx}$ & $96.91_{\pm x.xx}$ \\
 			
-			A5 & Mel+GADF & AW-DPCNN & \textbf{MSCA-VGG16} & $\mathbf{99.67_{\pm x.xx}}$ & $\mathbf{99.48_{\pm x.xx}}$ & $\mathbf{99.47_{\pm x.xx}}$ & $\mathbf{99.47_{\pm x.xx}}$ & $\mathbf{99.46_{\pm x.xx}}$ \\
+% 			A5 & Mel+GADF & AW-DPCNN & \textbf{MSCA-VGG16} & $\mathbf{99.67_{\pm x.xx}}$ & $\mathbf{99.48_{\pm x.xx}}$ & $\mathbf{99.47_{\pm x.xx}}$ & $\mathbf{99.47_{\pm x.xx}}$ & $\mathbf{99.46_{\pm x.xx}}$ \\
 			
-			\bottomrule
-		\end{tabular}
-	}
-\end{table*}
+% 			\bottomrule
+% 		\end{tabular}
+% 	}
+% \end{table*}
 
 
 The t-SNE visualization results in Fig.~\ref{Fig:tsne_CWRU} further support these findings. Compared with the scattered distributions of the single representation and the partially overlapping clusters under concatenation fusion, the features produced by AW-DPCNN exhibit more compact intra-class distributions and clearer inter-class boundaries. This demonstrates that the proposed AW-DPCNN effectively enhances the discriminative capability of fused acoustic representations.
@@ -1081,6 +1074,135 @@ ConvNeXt-Tiny & 76.4 & 78.5 & 78.0 & 77.0 & 76.4 & 76.7 & 76.4 \\
 \bottomrule
 \end{tabular}
 \end{table*}
+
+
+\begin{table*}[!htbp]
+\centering
+\caption{Performance Comparison on the EXP1 Dataset (Seed 42)}
+\label{tab:exp1_comparison}
+\renewcommand{\arraystretch}{1.15}
+\small
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Network} & \textbf{Acc} & \textbf{F1} & \textbf{G-Mean} & \textbf{AUC} & \textbf{$\kappa$} & \textbf{Params (M)} \\
+\midrule
+\textbf{MSCA-VGG16 (Ours)} & \textbf{95.1} & \textbf{92.9} & \textbf{90.3} & 99.9 & \textbf{94.3} & 26.8 \\
+VGG16 & 94.7 & 91.9 & 89.0 & \textbf{99.9} & 93.8 & 15.3 \\
+EfficientNet-B0 & 91.0 & 86.7 & 83.1 & 98.9 & 89.5 & 4.0 \\
+ViT & 88.0 & 84.1 & 82.3 & 99.2 & 85.9 & 11.0 \\
+MobileNetV3-Small & 84.7 & 79.3 & 75.0 & 98.2 & 82.0 & 1.5 \\
+ConvNeXt-Tiny & 76.4 & 66.0 & 45.1 & 97.1 & 72.3 & 27.8 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table*}[!htbp]
+\centering
+\caption{Training Summary and Leakage Check}
+\label{tab:exp1_training}
+\renewcommand{\arraystretch}{1.15}
+\small
+\begin{tabular}{lccccc}
+\toprule
+\textbf{Network} & \textbf{Best Epoch} & \textbf{Val F1} & \textbf{Params (M)} & \textbf{FLOPs (M)} & \textbf{Shuffled Acc} \\
+\midrule
+\textbf{MSCA-VGG16 (Ours)} & 24 & 99.8 & 26.8 & 15947 & 15.7 \\
+VGG16 & 30 & 99.8 & 15.3 & 15394 & 15.6 \\
+EfficientNet-B0 & 14 & 92.0 & 4.0 & 15338 & 15.7 \\
+ViT & 29 & 78.8 & 11.0 & 65 & 15.5 \\
+MobileNetV3-Small & 30 & 84.3 & 1.5 & 1845 & 15.8 \\
+ConvNeXt-Tiny & 18 & 95.3 & 27.8 & 25708 & 15.5 \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{figure*}[!htbp]
+	\centering
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/convnext_tiny/exp1_convnext_tiny/trial_seed42/figures/confusion_matrix.png}
+		\caption{ConvNeXt-Tiny}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vit/exp1_vit/trial_seed42/figures/confusion_matrix.png}
+		\caption{ViT}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/exp1_vgg16/trial_seed42/figures/confusion_matrix.png}
+		\caption{VGG16}
+	\end{subfigure}
+
+	\vspace{3mm}
+
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/exp1_efficientnet_b0/trial_seed42/figures/confusion_matrix.png}
+		\caption{EfficientNet-B0}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/mobilenetv3_small/exp1_mobilenetv3_small/trial_seed42/figures/confusion_matrix.png}
+		\caption{MobileNetV3-Small}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/MSCA_VGG16/exp1_MSCA_VGG16/trial_seed42/figures/confusion_matrix.png}
+		\caption{MSCA-VGG16 (Ours)}
+	\end{subfigure}
+	\caption{t-SNE feature visualization of different backbone networks on the transformer acoustic test set. The proposed MSCA-VGG16 produces the most compact and well-separated clusters, indicating superior discriminative representation learning.}
+	\label{fig:tsne_backbones}
+\end{figure*}
+
+
+\begin{figure*}[!htbp]
+	\centering
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/convnext_tiny/exp1_convnext_tiny/trial_seed42/figures/roc_curve.png}
+		\caption{ConvNeXt-Tiny}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vit/exp1_vit/trial_seed42/figures/roc_curve.png}
+		\caption{ViT}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/exp1_vgg16/trial_seed42/figures/roc_curve.png}
+		\caption{VGG16}
+	\end{subfigure}
+
+	\vspace{3mm}
+
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/exp1_efficientnet_b0/trial_seed42/figures/roc_curve.png}
+		\caption{EfficientNet-B0}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/mobilenetv3_small/exp1_mobilenetv3_small/trial_seed42/figures/roc_curve.png}
+		\caption{MobileNetV3-Small}
+	\end{subfigure}
+	\hfill
+	\begin{subfigure}{0.32\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/MSCA_VGG16/exp1_MSCA_VGG16/trial_seed42/figures/roc_curve.png}
+		\caption{MSCA-VGG16 (Ours)}
+	\end{subfigure}
+	\caption{t-SNE feature visualization of different backbone networks on the transformer acoustic test set. The proposed MSCA-VGG16 produces the most compact and well-separated clusters, indicating superior discriminative representation learning.}
+	\label{fig:tsne_backbones}
+\end{figure*}
+
 
 
 \bibliographystyle{IEEEtran}

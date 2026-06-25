@@ -1,10 +1,10 @@
-This is XeTeX, Version 3.141592653-2.6-0.999993 (TeX Live 2022/dev/Debian) (preloaded format=xelatex 2026.4.17)  4 JUN 2026 22:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.6.22)  24 JUN 2026 21:48
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**/home/yangchen/git_clone/AW-DPCNN/Paper/coverletter/coverletter
-(/home/yangchen/git_clone/AW-DPCNN/Paper/coverletter/coverletter.tex
+**/home/yangchen/git_clone/AW-DPCNN/paper/coverletter/coverletter
+(/home/yangchen/git_clone/AW-DPCNN/paper/coverletter/coverletter.tex
 LaTeX2e <2021-11-15> patch level 1
 L3 programming layer <2022-01-21> (/usr/share/texlive/texmf-dist/tex/latex/base/letter.cls
 Document Class: letter 2021/03/05 v1.3c Standard LaTeX document class
@@ -13,15 +13,11 @@ File: size12.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
 )
 \longindentation=\dimen138
 \indentedwidth=\dimen139
-\labelcount=\count181
+\labelcount=\count185
 ) (/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2021/02/14 v1.3d Input encoding file
 \inpenc@prehook=\toks16
 \inpenc@posthook=\toks17
-
-
-Package inputenc Warning: inputenc package ignored with utf8 based engines.
-
 ) (/usr/share/texlive/texmf-dist/tex/latex/setspace/setspace.sty
 Package: setspace 2011/12/19 v6.7a set line spacing
 ) (/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
@@ -34,9 +30,9 @@ Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
  (/usr/share/texlive/texmf-dist/tex/generic/iftex/iftex.sty
 Package: iftex 2020/03/06 v1.0d TeX engine tests
 ))
-\Gm@cnth=\count182
-\Gm@cntv=\count183
-\c@Gm@tempcnt=\count184
+\Gm@cnth=\count186
+\Gm@cntv=\count187
+\c@Gm@tempcnt=\count188
 \Gm@bindingoffset=\dimen140
 \Gm@wd@mp=\dimen141
 \Gm@odd@mp=\dimen142
@@ -56,7 +52,7 @@ Package: ltxcmds 2020-05-10 v1.25 LaTeX kernel commands for general use (HO)
 Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
 )) (/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty
 Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
-\etb@tempcnta=\count185
+\etb@tempcnta=\count189
 )) (/usr/share/texlive/texmf-dist/tex/latex/ragged2e/ragged2e.sty
 Package: ragged2e 2021/12/15 v3.1 ragged2e Package
 \CenteringLeftskip=\skip47
@@ -73,17 +69,10 @@ Package: ragged2e 2021/12/15 v3.1 ragged2e Package
 \RaggedLeftParindent=\skip58
 \RaggedRightParindent=\skip59
 \JustifyingParindent=\skip60
-) (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-xetex.def
-File: l3backend-xetex.def 2022-01-12 L3 backend support: XeTeX
- (|extractbb --version)
-\c__kernel_sys_dvipdfmx_version_int=\count186
-\l__color_backend_stack_int=\count187
-\g__color_backend_stack_int=\count188
-\g__graphics_track_int=\count189
+) (/usr/share/texlive/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+File: l3backend-pdftex.def 2022-01-12 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count190
 \l__pdf_internal_box=\box50
-\g__pdf_backend_object_int=\count190
-\g__pdf_backend_annotation_int=\count191
-\g__pdf_backend_link_int=\count192
 ) (./coverletter.aux)
 \openout1 = `coverletter.aux'.
 
@@ -96,12 +85,6 @@ LaTeX Font Info:    ... okay on input line 18.
 LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 18.
 LaTeX Font Info:    ... okay on input line 18.
 LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 18.
-LaTeX Font Info:    Trying to load font information for TS1+cmr on input line 18.
- (/usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd
-File: ts1cmr.fd 2019/12/16 v2.5j Standard LaTeX font definitions
-)
-LaTeX Font Info:    ... okay on input line 18.
-LaTeX Font Info:    Checking defaults for TU/lmr/m/n on input line 18.
 LaTeX Font Info:    ... okay on input line 18.
 LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 18.
 LaTeX Font Info:    ... okay on input line 18.
@@ -109,9 +92,9 @@ LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 18.
 LaTeX Font Info:    ... okay on input line 18.
 
 *geometry* driver: auto-detecting
-*geometry* detected driver: xetex
+*geometry* detected driver: pdftex
 *geometry* verbose mode - [ preamble ] result:
-* driver: xetex
+* driver: pdftex
 * paper: a4paper
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
@@ -149,20 +132,26 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 22.
 
-Overfull \hbox (3.39854pt too wide) in paragraph at lines 24--25
-[]\TU/lmr/m/n/12 We would like to submit our manuscript entitled \TU/lmr/m/it/12 “AW-DPCNN Based Multi-Representation
+Overfull \hbox (4.09872pt too wide) in paragraph at lines 24--25
+[]\OT1/cmr/m/n/12 We would like to sub-mit our manuscript en-ti-tled \OT1/cmr/m/it/12 ``AW-DPCNN Based Multi-Representation
  []
 
 [1
 
-] [2] (./coverletter.aux) ) 
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] (./coverletter.aux) ) 
 Here is how much of TeX's memory you used:
- 1890 strings out of 476191
- 33609 string characters out of 5812072
- 347209 words of memory out of 5000000
- 22648 multiletter control sequences out of 15000+600000
- 472019 words of font info for 40 fonts, out of 8000000 for 9000
- 1348 hyphenation exceptions out of 8191
- 55i,6n,62p,718b,160s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 1834 strings out of 480247
+ 31700 string characters out of 5896151
+ 327289 words of memory out of 5000000
+ 19803 multiletter control sequences out of 15000+600000
+ 472649 words of font info for 39 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 55i,6n,62p,720b,156s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
+Output written on coverletter.pdf (2 pages, 47556 bytes).
+PDF statistics:
+ 26 PDF objects out of 1000 (max. 8388607)
+ 15 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
-Output written on coverletter.pdf (2 pages).
