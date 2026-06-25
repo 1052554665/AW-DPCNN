@@ -1,0 +1,19 @@
+{
+  "test_loss": 0.11298490793477668,
+  "test_acc": 0.9530046224961479,
+  "test_precision": 0.9650000000000001,
+  "test_recall": 0.9483050847457626,
+  "test_f1": 0.9443025210084034,
+  "test_gmean": 0.9298218887532869,
+  "test_bal_acc": 0.9483050847457626,
+  "test_kappa": 0.9473393670455029,
+  "test_auc": 0.999924590634875,
+  "shuffled_acc": 0.1049306625577812,
+  "chance_level": 0.1,
+  "leakage_suspicious": false,
+  "best_epoch": 29,
+  "best_val_f1": 0.9922060321031185,
+  "params": 15258698,
+  "flops": 15393931786,
+  "model_name": "vgg16"
+}

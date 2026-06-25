@@ -1,34 +1,40 @@
->rewrite the script `hyperparameter_sensitivity.py`, the dataset is `datasets/cwru_de`.
+>Review and revise script `build_ablation_datasets.py` and `run_ablation_experiments`, redesign the ablation study. Both AW-DPCNN and MSCA-VGG16 should be included in the ablation study. The ablation study should include the following components:
+- AW-DPCNN components
+- MSCA-VGG16 components
+The data is located in the `raw-data/CWRU-dataset/12k_Drive-End-Bearing-Dataset` directory. The ablation study should be designed to evaluate the impact of different components on the performance of the models. The results should be saved in a structured format for further analysis.
 
+### Ablation Matrix (9 experiments, all on CWRU 12k DE)
+
+| Exp | Dataset | Model | AW-DPCNN | MS | CA | EH |
+|---|---|---|---|---|---|---|
+| **B0** | mel_only | VGG16 | ✗ | ✗ | ✗ | ✗ |
+| **B1** | gadf_only | VGG16 | ✗ | ✗ | ✗ | ✗ |
+| **B2** | concat | VGG16 | ✗ (naive avg) | ✗ | ✗ | ✗ |
+| **B3** | awdpcnn_gamma1 | VGG16 | γ=1 | ✗ | ✗ | ✗ |
+| **B4** | awdpcnn_full | VGG16 | γ=10 ✓ | ✗ | ✗ | ✗ |
+| **B5** | awdpcnn_full | MSCA-VGG16 | γ=10 ✓ | ✓ | ✗ | ✗ |
+| **B6** | awdpcnn_full | MSCA-VGG16 | γ=10 ✓ | ✗ | ✓ | ✗ |
+| **B7** | awdpcnn_full | MSCA-VGG16 | γ=10 ✓ | ✗ | ✗ | ✓ |
+| **B8** | awdpcnn_full | MSCA-VGG16 | γ=10 ✓ | ✓ | ✓ | ✓ |
+
+### Key changes
+
+- **Data source**: 12k_Drive_End_Bearing_Fault_Data (40 `.mat` files, 10 classes)
+- **Unified split**: All 5 datasets share the same file-level split (seed=42, 60/20/20)
+- **Windows pre-segmented once**: Shared across all variants for efficiency
+- **B4 dataset doubles as B5–B8 input**: No redundant builds
+
+### Usage
 
 ```bash
-# Full sweep
-python scripts/hyperparameter_sensitivity.py \
-    --exp-config experiments/exp1/MSCA_VGG16.yaml \
-    --auto-checkpoint
+# Step 1 — Build datasets (~10 min)
+python scripts/build_ablation_datasets.py --workers 16
 
-# Single parameter
-python scripts/hyperparameter_sensitivity.py \
-    --exp-config experiments/exp1/MSCA_VGG16.yaml \
-    --auto-checkpoint --sweep gamma
+# Step 2 — Run all 9 experiments (~45 min)
+python scripts/run_ablation_experiments.py --epochs 30
+
+# Single experiments
+python scripts/run_ablation_experiments.py --exp-ids B0,B4,B8
 ```
 
-### What was fixed
-
-| Issue | Fix |
-|---|---|
-| `model.name: baseline` unsupported | `num_classes` read from config, not hardcoded |
-| `_orig_mod.` prefix in checkpoint | Stripped before `load_state_dict()` |
-| Checkpoint not found (1-level search) | Recursive glob up to 4 levels |
-| `.wav` data source unavailable | Reads CWRU `.mat` files via class mapping |
-| Wrong mel params for CWRU 12k | Uses correct `n_fft=1024, fmax=6000` |
-| No test-split isolation | Derives test source files from test PNGs |
-
-### ⚠️ 0% accuracy investigation
-
-The test run showed 0% across all γ values. This likely means the re-fused images don't match the training distribution. Check:
-1. Was cwru_de built with the **same** build_cwru_dataset.py that the script imports from?
-2. Does the MSCA_VGG16 checkpoint produce non-zero accuracy on the pre-built test PNGs directly? (Quick sanity check: run `evaluate.py` on that checkpoint)
-3. Are the `generate_mel_image` / `generate_gadf_image` defaults in build_cwru_dataset.py the same as what was used to build cwru_de?
-
-git commit -m "fix: hyperparameter_sensitivity.py for cwru_de dataset"
+Made changes.

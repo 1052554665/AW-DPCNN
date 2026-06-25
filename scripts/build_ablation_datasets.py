@@ -1,20 +1,29 @@
 #!/usr/bin/env python3
 """
-Build ablation datasets for component decomposition experiments (B0–B3).
+Ablation Dataset Builder — CWRU 12k DE
+=======================================
+Builds five dataset variants for the unified ablation study (B0–B8).
 
-B0 — Mel‑only  (pseudo‑colour Mel spectrogram, no fusion)
-B1 — GADF‑only (pseudo‑colour GADF image, no fusion)
-B2 — Concat    (pixel‑wise average of Mel + GADF pseudo‑colour images)
-B3 — AW‑DPCNN γ=1  (fixed‑weight PCNN fusion, no adaptive weighting)
+All datasets share the **same file‑level train/val/test split** for fair
+comparison.  Source: 12 kHz drive‑end CWRU bearing data (.mat files).
 
-B4+ use the existing full AW‑DPCNN dataset (datasets/transformer-five).
+Datasets built
+--------------
+  B0 — mel_only         Mel spectrogram only (pseudo‑colour, no fusion)
+  B1 — gadf_only        GADF image only (pseudo‑colour, no fusion)
+  B2 — concat           Mel + GADF pixel‑wise average (naive fusion)
+  B3 — awdpcnn_gamma1   AW‑DPCNN with γ=1 (equal‑weight PCNN fusion)
+  B4 — awdpcnn_full     Full AW‑DPCNN with γ=10 (adaptive fusion, shared
+                         by B5–B8 classifier‑level experiments)
 
-All datasets share the same file‑level split for fair comparison.
+Output structure::
 
-Revise the source directory and parameters if needed::
-
-    SRC_DIR = "raw-data/transformer-five"
-    WIN_LEN, HOP_LEN = 8192, 4096
+    datasets/ablation/
+        mel_only/         train/{BF007,...,Normal}/  val/  test/  metadata.csv
+        gadf_only/        ...
+        concat/           ...
+        awdpcnn_gamma1/   ...
+        awdpcnn_full/     ...
 
 Usage::
 
@@ -22,227 +31,259 @@ Usage::
 """
 
 import argparse
+import csv
 import os
+import random
 import sys
-import warnings
+from collections import OrderedDict
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
+from typing import Dict, List
 
 import cv2
 import numpy as np
-from scipy.io import wavfile
+from scipy.io import loadmat
 from tqdm import tqdm
 
-warnings.filterwarnings("ignore", message=".*TripleDES.*")
-
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_CWRU_dataset import (  # noqa: E402
-    _file_level_split,
+_SCRIPT_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(_SCRIPT_DIR))
+from build_cwru_dataset import (  # noqa: E402
     _gray_to_pseudo,
     aw_dpcnn_fusion_color,
-)
-from representation_comparison import (  # noqa: E402
-    generate_gadf,
-    generate_mel,
+    generate_gadf_image,
+    generate_mel_image,
 )
 
-OUTPUT_ROOT = "datasets/ablation"
-SRC_DIR = "raw-data/transformer-five"
+# ═══════════════════════════════════════════════════════════════════════
+#  Configuration
+# ═══════════════════════════════════════════════════════════════════════
 
-# Common image parameters
-IMG_SIZE = 224
-CMAP = cv2.COLORMAP_VIRIDIS
-WIN_LEN, HOP_LEN = 8192, 4096
+SRC_DIR    = "raw-data/CWRU-dataset/12k_Drive_End_Bearing_Fault_Data"
+NORMAL_DIR = "raw-data/CWRU-dataset/Normal"
+OUT_ROOT   = "datasets/ablation"
+SENSOR_KEY = "DE_time"
+SR         = 12000
+FMAX       = 6000
+N_FFT      = 1024
+HOP_LEN    = 256
+N_MELS     = 128
+WIN_LEN    = 2048
+HOP_WIN    = 1024
+IMG_SIZE   = 224
+N_ITER     = 20
 
-
-def _collect_files():
-    files_by_class = {}
-    for class_dir in sorted(Path(SRC_DIR).iterdir()):
-        if not class_dir.is_dir() or class_dir.name.startswith("."):
-            continue
-        wavs = sorted(class_dir.glob("*.wav"))
-        if wavs:
-            files_by_class[class_dir.name] = [str(p) for p in wavs]
-    return files_by_class
-
-
-def _load_signals(files_by_class):
-    path_to_signal = {}
-    for paths in files_by_class.values():
-        for p in paths:
-            sr, data = wavfile.read(p)
-            if data.ndim > 1:
-                data = data.mean(axis=1)
-            path_to_signal[p] = (sr, data.astype(np.float32))
-    return path_to_signal
+CLASS_MAP = OrderedDict([
+    (("B",  "007"), "BF007"), (("B",  "014"), "BF014"), (("B",  "021"), "BF021"),
+    (("IR", "007"), "IF007"), (("IR", "014"), "IF014"), (("IR", "021"), "IF021"),
+    (("OR", "007"), "OF007"), (("OR", "014"), "OF014"), (("OR", "021"), "OF021"),
+])
+NORMAL_CLASS = "Normal"
 
 
-def _build_single_rep(rep_fn, name, split_map, path_to_signal,
-                      sequence_length=None):
-    """Build a single‑representation dataset (B0, B1)."""
-    output_dir = os.path.join(OUTPUT_ROOT, name)
-    tasks = []
+# ═══════════════════════════════════════════════════════════════════════
+#  Helpers
+# ═══════════════════════════════════════════════════════════════════════
 
-    for split_name in ["train", "val", "test"]:
-        for cls, file_paths in sorted(split_map[split_name].items()):
-            out_cls_dir = os.path.join(output_dir, split_name, cls)
-            for fpath in file_paths:
-                sr_val, signal = path_to_signal[fpath]
-                stem = Path(fpath).stem
-                for start in range(0, len(signal) - WIN_LEN + 1, HOP_LEN):
-                    window = signal[start:start + WIN_LEN]
-                    tasks.append((rep_fn, window, sr_val, out_cls_dir,
-                                  f"{stem}_{len(tasks):05d}.png", sequence_length))
-    return tasks, output_dir
+def _load_mat_signal(path: str, key: str) -> np.ndarray:
+    mat = loadmat(path)
+    for k in mat.keys():
+        if key in k:
+            s = mat[k].squeeze().astype(np.float32)
+            return s.ravel() if s.ndim != 1 else s
+    raise ValueError(f"No '{key}' in {path}")
 
 
-def _build_concat(split_map, path_to_signal, sequence_length=None):
-    """Build Mel+GADF pixel‑average dataset (B2)."""
-    output_dir = os.path.join(OUTPUT_ROOT, "concat")
-    tasks = []
-
-    for split_name in ["train", "val", "test"]:
-        for cls, file_paths in sorted(split_map[split_name].items()):
-            out_cls_dir = os.path.join(output_dir, split_name, cls)
-            for fpath in file_paths:
-                sr_val, signal = path_to_signal[fpath]
-                stem = Path(fpath).stem
-                for start in range(0, len(signal) - WIN_LEN + 1, HOP_LEN):
-                    window = signal[start:start + WIN_LEN]
-                    tasks.append((window, sr_val, out_cls_dir,
-                                  f"{stem}_{len(tasks):05d}.png", sequence_length))
-    return tasks, output_dir
-
-
-def _build_awdpcnn_gamma1(split_map, path_to_signal, sequence_length=None):
-    """Build AW‑DPCNN with γ=1 (B3)."""
-    output_dir = os.path.join(OUTPUT_ROOT, "awdpcnn_gamma1")
-    tasks = []
-
-    for split_name in ["train", "val", "test"]:
-        for cls, file_paths in sorted(split_map[split_name].items()):
-            out_cls_dir = os.path.join(output_dir, split_name, cls)
-            for fpath in file_paths:
-                sr_val, signal = path_to_signal[fpath]
-                stem = Path(fpath).stem
-                for start in range(0, len(signal) - WIN_LEN + 1, HOP_LEN):
-                    window = signal[start:start + WIN_LEN]
-                    tasks.append((window, sr_val, out_cls_dir,
-                                  f"{stem}_{len(tasks):05d}.png", sequence_length))
-    return tasks, output_dir
-
-
-def _process_single_rep(args):
-    rep_fn, window, sr_val, out_cls_dir, fname, sequence_length = args
-    try:
-        # generate_mel takes (signal, sr, ...), generate_gadf takes (signal, ...)
-        if rep_fn is generate_mel:
-            img = rep_fn(window, sr_val, img_size=IMG_SIZE, cmap=CMAP)
+def _collect_mat_files() -> Dict[str, List[str]]:
+    files: Dict[str, List[str]] = OrderedDict()
+    src = Path(SRC_DIR)
+    for (ftype, sev), cls in CLASS_MAP.items():
+        if ftype == "OR":
+            sub = src / ftype / sev / "@6"
+            if not sub.exists():
+                sub = src / ftype / sev
         else:
-            img = rep_fn(window, img_size=IMG_SIZE,
-                         sequence_length=sequence_length)
-        out_path = os.path.join(out_cls_dir, fname)
-        os.makedirs(os.path.dirname(out_path), exist_ok=True)
-        cv2.imwrite(out_path, img)
-        return 1
-    except Exception as e:
-        print(f"[ERROR] {fname}: {e}")
-        return 0
+            sub = src / ftype / sev
+        mats = sorted(sub.glob("*.mat")) if sub.exists() else []
+        if mats:
+            files[cls] = [str(p) for p in mats]
+    normal = Path(NORMAL_DIR)
+    if normal.exists():
+        mats = sorted(normal.glob("*.mat"))
+        if mats:
+            files[NORMAL_CLASS] = [str(p) for p in mats]
+    return files
 
 
-def _process_concat(args):
-    window, sr_val, out_cls_dir, fname, sequence_length = args
+def _file_level_split(
+    files_by_class: Dict[str, List[str]],
+    ratios: tuple = (0.6, 0.2, 0.2),
+    seed: int = 42,
+) -> tuple:
+    rng = random.Random(seed)
+    train_m, val_m, test_m = {}, {}, {}
+    for cls, paths in files_by_class.items():
+        paths = sorted(paths)
+        rng.shuffle(paths)
+        n = len(paths)
+        n_tr = max(1, round(n * ratios[0]))
+        n_vl = max(1, round(n * ratios[1]))
+        if n_tr + n_vl >= n:
+            n_tr = max(1, n - 2)
+            n_vl = max(1, n - n_tr - 1)
+        train_m[cls] = paths[:n_tr]
+        val_m[cls]   = paths[n_tr:n_tr + n_vl]
+        test_m[cls]  = paths[n_tr + n_vl:]
+    return train_m, val_m, test_m
+
+
+# ═══════════════════════════════════════════════════════════════════════
+#  Per‑variant image builders
+# ═══════════════════════════════════════════════════════════════════════
+
+def _make_mel(window: np.ndarray) -> np.ndarray:
+    return generate_mel_image(window, SR, n_fft=N_FFT, hop_length=HOP_LEN,
+                               n_mels=N_MELS, fmax=FMAX, img_size=IMG_SIZE,
+                               cmap=cv2.COLORMAP_VIRIDIS)
+
+def _make_gadf(window: np.ndarray) -> np.ndarray:
+    return generate_gadf_image(window, img_size=IMG_SIZE,
+                                cmap=cv2.COLORMAP_VIRIDIS)
+
+def _make_concat(window: np.ndarray) -> np.ndarray:
+    mel = _make_mel(window).astype(np.float32)
+    gadf = _make_gadf(window).astype(np.float32)
+    return ((mel + gadf) / 2).astype(np.uint8)
+
+def _make_awdpcnn(window: np.ndarray, gamma: float) -> np.ndarray:
+    mel = _make_mel(window)
+    gadf = _make_gadf(window)
+    return aw_dpcnn_fusion_color(mel, gadf, n_iter=N_ITER, gamma=gamma)
+
+VARIANTS = {
+    "mel_only":       ("B0  Mel-only",            _make_mel,        {}),
+    "gadf_only":      ("B1  GADF-only",           _make_gadf,       {}),
+    "concat":         ("B2  Concat (avg)",         _make_concat,     {}),
+    "awdpcnn_gamma1": ("B3  AW-DPCNN γ=1",         _make_awdpcnn,   {"gamma": 1.0}),
+    "awdpcnn_full":   ("B4  AW-DPCNN γ=10 (full)", _make_awdpcnn,   {"gamma": 10.0}),
+}
+
+
+# ═══════════════════════════════════════════════════════════════════════
+#  Worker (module‑level for multiprocessing)
+# ═══════════════════════════════════════════════════════════════════════
+
+def _process_one(args_tuple):
+    """Generate one image.  args: (builder_fn, window, out_path, kwargs)."""
+    fn, win, out, kwargs = args_tuple
     try:
-        mel = generate_mel(window, sr_val, img_size=IMG_SIZE, cmap=CMAP)
-        gadf = generate_gadf(window, img_size=IMG_SIZE,
-                             sequence_length=sequence_length)
-        avg = ((mel.astype(np.float32) + gadf.astype(np.float32)) / 2).astype(np.uint8)
-        out_path = os.path.join(out_cls_dir, fname)
-        os.makedirs(os.path.dirname(out_path), exist_ok=True)
-        cv2.imwrite(out_path, avg)
+        img = fn(win, **kwargs)
+        os.makedirs(os.path.dirname(out), exist_ok=True)
+        cv2.imwrite(out, img)
         return 1
-    except Exception as e:
-        print(f"[ERROR] {fname}: {e}")
+    except Exception as exc:
+        print(f"[ERROR] {out}: {exc}")
         return 0
 
 
-def _process_awdpcnn_gamma1(args):
-    window, sr_val, out_cls_dir, fname, sequence_length = args
-    try:
-        mel = generate_mel(window, sr_val, img_size=IMG_SIZE, cmap=CMAP)
-        gadf = generate_gadf(window, img_size=IMG_SIZE,
-                             sequence_length=sequence_length)
-        fused = aw_dpcnn_fusion_color(mel, gadf, n_iter=20, gamma=1.0)
-        out_path = os.path.join(out_cls_dir, fname)
-        os.makedirs(os.path.dirname(out_path), exist_ok=True)
-        cv2.imwrite(out_path, fused)
-        return 1
-    except Exception as e:
-        print(f"[ERROR] {fname}: {e}")
-        return 0
-
+# ═══════════════════════════════════════════════════════════════════════
+#  Main
+# ═══════════════════════════════════════════════════════════════════════
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="Ablation dataset builder — CWRU 12k DE")
     parser.add_argument("--workers", type=int, default=os.cpu_count() or 4)
-    parser.add_argument("--sequence-length", type=int, default=None,
-                        help="Max time‑steps for GAF (resample if longer). "
-                             "None = use img_size * 4.")
+    parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
 
-    files_by_class = _collect_files()
-    path_to_signal = _load_signals(files_by_class)
-    ratios = (0.6, 0.2, 0.2)
-    train_map, val_map, test_map = _file_level_split(files_by_class, ratios, 42)
-    split_map = {"train": train_map, "val": val_map, "test": test_map}
+    # ── Collect & split ──
+    files_by_class = _collect_mat_files()
+    if not files_by_class:
+        print("[ERROR] No .mat files found.")
+        sys.exit(1)
+    total = sum(len(v) for v in files_by_class.values())
+    print(f"Source: {total} .mat files, {len(files_by_class)} classes")
+    for cls, paths in files_by_class.items():
+        print(f"  {cls:8s}: {len(paths)} files")
 
-    print(f"Source: {sum(len(v) for v in files_by_class.values())} files")
-    print(f"Split: train={sum(len(v) for v in train_map.values())}  "
-          f"val={sum(len(v) for v in val_map.values())}  "
-          f"test={sum(len(v) for v in test_map.values())}")
+    train_m, val_m, test_m = _file_level_split(files_by_class)
+    split_map = {"train": train_m, "val": val_m, "test": test_m}
+    for sn, sm in split_map.items():
+        print(f"  {sn}: {sum(len(v) for v in sm.values())} files")
 
-    # ── B0: Mel‑only ──
-    print("\n[B0] Mel-only...")
-    tasks, _ = _build_single_rep(generate_mel, "mel_only", split_map, path_to_signal,
-                                 sequence_length=args.sequence_length)
-    print(f"  Tasks: {len(tasks)}")
-    with ProcessPoolExecutor(max_workers=args.workers) as ex:
-        results = list(tqdm(ex.map(_process_single_rep, tasks, chunksize=8),
-                            total=len(tasks), desc="  B0 mel_only"))
-    print(f"  Done: {sum(results)}/{len(tasks)}")
+    # ── Load signals ──
+    print("\nLoading .mat signals...")
+    path_to_signal: Dict[str, np.ndarray] = {}
+    for cls, paths in files_by_class.items():
+        for p in tqdm(paths, desc=f"  {cls}", ncols=80):
+            try:
+                path_to_signal[p] = _load_mat_signal(p, SENSOR_KEY)
+            except Exception as exc:
+                print(f"\n[WARN] {p}: {exc}")
 
-    # ── B1: GADF‑only ──
-    print("\n[B1] GADF-only...")
-    tasks, _ = _build_single_rep(generate_gadf, "gadf_only", split_map, path_to_signal,
-                                 sequence_length=args.sequence_length)
-    print(f"  Tasks: {len(tasks)}")
-    with ProcessPoolExecutor(max_workers=args.workers) as ex:
-        results = list(tqdm(ex.map(_process_single_rep, tasks, chunksize=8),
-                            total=len(tasks), desc="  B1 gadf_only"))
-    print(f"  Done: {sum(results)}/{len(tasks)}")
+    # ── Pre‑segment all windows once ──
+    print("\nSegmenting windows...")
+    all_windows: Dict[str, tuple] = {}
+    for cls, paths in files_by_class.items():
+        for p in paths:
+            sig = path_to_signal.get(p)
+            if sig is None:
+                continue
+            stem = Path(p).stem
+            wins = []
+            for start in range(0, len(sig) - WIN_LEN + 1, HOP_WIN):
+                wins.append(sig[start:start + WIN_LEN])
+            all_windows[p] = (wins, stem)
 
-    # ── B2: Concat ──
-    print("\n[B2] Concat (Mel+GADF average)...")
-    tasks, _ = _build_concat(split_map, path_to_signal,
-                             sequence_length=args.sequence_length)
-    print(f"  Tasks: {len(tasks)}")
-    with ProcessPoolExecutor(max_workers=args.workers) as ex:
-        results = list(tqdm(ex.map(_process_concat, tasks, chunksize=8),
-                            total=len(tasks), desc="  B2 concat"))
-    print(f"  Done: {sum(results)}/{len(tasks)}")
+    # ── Build each variant ──
+    for variant_name, (label, builder_fn, builder_kwargs) in VARIANTS.items():
+        print(f"\n{'='*60}\n  {label}\n{'='*60}")
+        out_dir = Path(OUT_ROOT) / variant_name
+        tasks = []
+        metadata_rows = []
 
-    # ── B3: AW‑DPCNN γ=1 ──
-    print("\n[B3] AW-DPCNN γ=1...")
-    tasks, _ = _build_awdpcnn_gamma1(split_map, path_to_signal,
-                                     sequence_length=args.sequence_length)
-    print(f"  Tasks: {len(tasks)}")
-    with ProcessPoolExecutor(max_workers=args.workers) as ex:
-        results = list(tqdm(ex.map(_process_awdpcnn_gamma1, tasks, chunksize=8),
-                            total=len(tasks), desc="  B3 awdpcnn_g1"))
-    print(f"  Done: {sum(results)}/{len(tasks)}")
+        for split_name in ["train", "val", "test"]:
+            split_cls = split_map[split_name]
+            for cls, file_paths in sorted(split_cls.items()):
+                out_cls_dir = out_dir / split_name / cls
+                for fpath in file_paths:
+                    entry = all_windows.get(fpath)
+                    if entry is None:
+                        continue
+                    windows, stem = entry
+                    for idx, win in enumerate(windows):
+                        fname = f"{stem}_{idx:05d}.png"
+                        out_path = out_cls_dir / fname
+                        if not args.overwrite and out_path.exists():
+                            continue
+                        tasks.append((builder_fn, win, str(out_path), builder_kwargs))
+                        metadata_rows.append({
+                            "filename": fname, "class_label": cls,
+                            "source_file": stem, "split": split_name,
+                            "window_idx": idx,
+                            "window_start_sample": idx * HOP_WIN,
+                        })
 
-    print(f"\nDone. Output: {OUTPUT_ROOT}/")
-    print("  mel_only/  gadf_only/  concat/  awdpcnn_gamma1/")
+        print(f"  Tasks: {len(tasks)}")
+        if not tasks:
+            continue
+
+        csv_path = out_dir / "metadata.csv"
+        out_dir.mkdir(parents=True, exist_ok=True)
+        with open(csv_path, "w", newline="") as f:
+            w = csv.DictWriter(f, fieldnames=["filename", "class_label",
+                                              "source_file", "split",
+                                              "window_idx", "window_start_sample"])
+            w.writeheader()
+            w.writerows(metadata_rows)
+
+        with ProcessPoolExecutor(max_workers=args.workers) as ex:
+            results = list(tqdm(
+                ex.map(_process_one, tasks, chunksize=8),
+                total=len(tasks), desc=f"  {variant_name}", ncols=80,
+            ))
+        print(f"  Done: {sum(results)}/{len(tasks)}")
+
+    print(f"\n✓ All datasets built in {OUT_ROOT}/")
 
 
 if __name__ == "__main__":

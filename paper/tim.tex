@@ -19,7 +19,7 @@
 
 \begin{document}
 
-\title{AW-DPCNN Based Multi-Representation Acoustic Signal Fusion for Transformer Fault Diagnosis}
+\title{AW-DPCNN Based Multi-Representation and MSCA-VGG16 Signal Fusion for Fault Diagnosis}
 
 % \author{Chen Yang, \IEEEmembership{Graduate Student Member, IEEE}, Zonglong Bai, Zhiyuan Xie, Chenggang Liu, Junyan Zhang and Yihe Guo% <- use \IEEEmembership{Member, IEEE} for IEEE members
 \author{Chen Yang, Zonglong Bai, Zhiyuan Xie, Chenggang Liu, Junyan Zhang and Yihe Guo% <- use \IEEEmembership{Member, IEEE} for IEEE members
@@ -29,7 +29,7 @@
 }
 
 \markboth{IEEE Transactions on Instrumentation and Measurement}%
-{Author~\MakeLowercase{\textit{et al.}}: AW-DPCNN Based Multi-Representation Acoustic Signal Fusion}
+{Author~\MakeLowercase{\textit{et al.}}: AW-DPCNN and MSCA-VGG16 Based Multi-Representation Acoustic Signal Fusion}
 
 \maketitle
 
@@ -138,13 +138,13 @@ In this study, the Mel spectrogram is computed with the following parameter sett
 	\graphicspath{{representation/}}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=\linewidth]{Normal_00000_mel}
+		\includegraphics[width=\linewidth]{98_Normal_1_00000 copy}
 		\caption{Mel spectrogram}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=\linewidth]{Normal_00000_gadf}
+		\includegraphics[width=\linewidth]{98_Normal_1_00000}
 		\caption{GADF}
 	\end{subfigure}
 	
@@ -921,29 +921,29 @@ These findings confirm that the performance advantage of the proposed method is 
 	\end{tabular}
 \end{table*}
 
-\begin{table}
-	\centering
-	\caption{Average Accuracy by Time--Frequency and Temporal Encoding Method}
-	\label{tab:rep_compare_avg}
-	\renewcommand{\arraystretch}{1.15}
-	\small
-	\begin{tabular}{lcc}
-		\toprule
-		\textbf{Method} & \textbf{Avg. Acc (\%)} & \textbf{Best Partner} \\
-		\midrule
-		\multicolumn{3}{c}{\textit{Time--Frequency (averaged over 4 temporal methods)}} \\
-		Mel      & xx.xx & GADF \\
-		STFT     & xx.xx & GADF \\
-		CWT      & xx.xx & GADF \\
-		\midrule
-		\multicolumn{3}{c}{\textit{Temporal Encoding (averaged over 3 TF methods)}} \\
-		GADF     & xx.xx & Mel \\
-		GASF     & xx.xx & Mel \\
-		MTF      & xx.xx & Mel \\
-		RP       & xx.xx & Mel \\
-		\bottomrule
-	\end{tabular}
-\end{table}
+% \begin{table}
+% 	\centering
+% 	\caption{Average Accuracy by Time--Frequency and Temporal Encoding Method}
+% 	\label{tab:rep_compare_avg}
+% 	\renewcommand{\arraystretch}{1.15}
+% 	\small
+% 	\begin{tabular}{lcc}
+% 		\toprule
+% 		\textbf{Method} & \textbf{Avg. Acc (\%)} & \textbf{Best Partner} \\
+% 		\midrule
+% 		\multicolumn{3}{c}{\textit{Time--Frequency (averaged over 4 temporal methods)}} \\
+% 		Mel      & xx.xx & GADF \\
+% 		STFT     & xx.xx & GADF \\
+% 		CWT      & xx.xx & GADF \\
+% 		\midrule
+% 		\multicolumn{3}{c}{\textit{Temporal Encoding (averaged over 3 TF methods)}} \\
+% 		GADF     & xx.xx & Mel \\
+% 		GASF     & xx.xx & Mel \\
+% 		MTF      & xx.xx & Mel \\
+% 		RP       & xx.xx & Mel \\
+% 		\bottomrule
+% 	\end{tabular}
+% \end{table}
 
 These results collectively demonstrate that the Mel and GADF combination provides the most effective input representation for the AW-DPCNN fusion framework, offering consistent advantages over alternative time--frequency and temporal encoding methods. The empirical evidence supports the representation design adopted in this work and further validates the robustness of the proposed diagnostic pipeline.
 
@@ -1116,48 +1116,48 @@ ConvNeXt-Tiny & 18 & 95.3 & 27.8 & 25708 & 15.5 \\
 \end{tabular}
 \end{table*}
 
-\begin{figure*}[!htbp]
-	\centering
-	\begin{subfigure}{0.32\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/convnext_tiny/exp1_convnext_tiny/trial_seed42/figures/confusion_matrix.png}
-		\caption{ConvNeXt-Tiny}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.32\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vit/exp1_vit/trial_seed42/figures/confusion_matrix.png}
-		\caption{ViT}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.32\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/exp1_vgg16/trial_seed42/figures/confusion_matrix.png}
-		\caption{VGG16}
-	\end{subfigure}
+% \begin{figure*}[!htbp]
+% 	\centering
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/convnext_tiny/exp1_convnext_tiny/trial_seed42/figures/confusion_matrix.png}
+% 		\caption{ConvNeXt-Tiny}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vit/exp1_vit/trial_seed42/figures/confusion_matrix.png}
+% 		\caption{ViT}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/exp1_vgg16/trial_seed42/figures/confusion_matrix.png}
+% 		\caption{VGG16}
+% 	\end{subfigure}
 
-	\vspace{3mm}
+% 	\vspace{3mm}
 
-	\begin{subfigure}{0.32\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/exp1_efficientnet_b0/trial_seed42/figures/confusion_matrix.png}
-		\caption{EfficientNet-B0}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.32\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/mobilenetv3_small/exp1_mobilenetv3_small/trial_seed42/figures/confusion_matrix.png}
-		\caption{MobileNetV3-Small}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.32\textwidth}
-		\centering
-		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/MSCA_VGG16/exp1_MSCA_VGG16/trial_seed42/figures/confusion_matrix.png}
-		\caption{MSCA-VGG16 (Ours)}
-	\end{subfigure}
-	\caption{t-SNE feature visualization of different backbone networks on the transformer acoustic test set. The proposed MSCA-VGG16 produces the most compact and well-separated clusters, indicating superior discriminative representation learning.}
-	\label{fig:tsne_backbones}
-\end{figure*}
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/exp1_efficientnet_b0/trial_seed42/figures/confusion_matrix.png}
+% 		\caption{EfficientNet-B0}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/mobilenetv3_small/exp1_mobilenetv3_small/trial_seed42/figures/confusion_matrix.png}
+% 		\caption{MobileNetV3-Small}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/MSCA_VGG16/exp1_MSCA_VGG16/trial_seed42/figures/confusion_matrix.png}
+% 		\caption{MSCA-VGG16 (Ours)}
+% 	\end{subfigure}
+% 	\caption{t-SNE feature visualization of different backbone networks on the transformer acoustic test set. The proposed MSCA-VGG16 produces the most compact and well-separated clusters, indicating superior discriminative representation learning.}
+% 	\label{fig:tsne_backbones}
+% \end{figure*}
 
 
 \begin{figure*}[!htbp]
