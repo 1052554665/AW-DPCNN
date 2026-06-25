@@ -17,15 +17,15 @@ Usage::
         --exp-config experiments/exp1/vgg16.yaml
 
     # 5 independent runs with custom seeds
-    python scripts/run_repeated_trials.py \\
-        --config configs/default.yaml \\
-        --exp-config experiments/exp1/MSCA_VGG16.yaml \\
+    python scripts/run_repeated_trials.py \
+        --config configs/default.yaml \
+        --exp-config experiments/exp1/MSCA_VGG16.yaml \
         --num-runs 5
 
     # Batch: run repeated trials for all configs in an exp directory
-    python scripts/run_repeated_trials.py \\
-        --config configs/default.yaml \\
-        --exp-dir experiments/exp1 \\
+    python scripts/run_repeated_trials.py \
+        --config configs/default.yaml \
+        --exp-dir experiments/exp1 \
         --num-runs 3
 
     # Dry-run: print commands without executing
