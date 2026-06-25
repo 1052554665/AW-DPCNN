@@ -59,7 +59,7 @@ warnings.filterwarnings("ignore", message=".*TripleDES.*")
 
 # ── Import core AW‑DPCNN pipeline ──
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_CWRU_dataset import (  # noqa: E402
+from build_cwru_dataset import (  # noqa: E402
     _file_level_split,
     _gray_to_pseudo,
     aw_dpcnn_fusion_color,
@@ -275,7 +275,7 @@ def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         description="Representation comparison dataset builder",
     )
-    p.add_argument("--input-dir", default="raw-data/transformer-five",
+    p.add_argument("--input-dir", default="raw-data/cwru_de",
                    help="Source .wav directory (class sub‑folders)")
     p.add_argument("--output-root", default="datasets/rep_compare",
                    help="Root output directory")
