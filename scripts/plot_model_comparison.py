@@ -20,9 +20,14 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+# ── IEEE-compatible font configuration ────────────────────────────────
+plt.rcParams["font.family"] = "serif"
+plt.rcParams["font.serif"] = ["Times New Roman", "DejaVu Serif"]
+plt.rcParams["mathtext.fontset"] = "stix"
+
 # ── Configuration ──────────────────────────────────────────────────────
 RESULT_ROOT = Path("experiments/experiment_result/exp1")
-TRIAL = "trial_seed42"
+TRIAL = "trial_seed456"
 METRICS_FILE = "results/test_metrics.json"
 
 MODEL_LABELS = {
@@ -75,7 +80,7 @@ def plot(rows: list):
     n = len(rows)
     labels  = [r["label"] for r in rows]
     params  = [r["params"] for r in rows]
-    chance  = rows[0]["chance"]
+    chance  = rows[0].get("chance", rows[0].get("chance_level", 10.0))
 
     metrics = [
         ("Acc",    [r["acc"]   for r in rows]),
@@ -87,7 +92,7 @@ def plot(rows: list):
     w = 0.18
     offsets = np.linspace(-w * (m - 1) / 2, w * (m - 1) / 2, m)
 
-    fig, ax = plt.subplots(figsize=(11, 5.5))
+    fig, ax = plt.subplots(figsize=(7.0, 3.8))
 
     for i, (name, vals) in enumerate(metrics):
         bars = ax.bar(
@@ -99,24 +104,24 @@ def plot(rows: list):
             ax.text(
                 bar.get_x() + bar.get_width() / 2, bar.get_height() + 1,
                 f"{val:.1f}", ha="center", va="bottom",
-                fontsize=6.5, fontweight="bold", rotation=90,
+                fontsize=7.5, fontweight="bold", rotation=90,
             )
 
     ax.axhline(y=chance, color="black", linestyle="--", linewidth=1.0, zorder=2)
-    ax.text(-0.55, chance + 0.6, f"Chance ({chance:.0f}%)", fontsize=7, va="bottom")
+    ax.text(-0.55, chance + 0.6, f"Chance ({chance:.0f}%)", fontsize=8, va="bottom")
 
     for i, p in enumerate(params):
-        ax.text(i, -4, f"{p:.1f}M", ha="center", fontsize=7,
+        ax.text(i, -4, f"{p:.1f}M", ha="center", fontsize=8,
                 color="dimgray", fontweight="bold")
 
     ax.set_xticks(np.arange(n))
-    ax.set_xticklabels(labels, fontsize=8)
-    ax.set_ylabel("Score (%)", fontsize=11)
+    ax.set_xticklabels(labels, fontsize=9)
+    ax.set_ylabel("Score (%)", fontsize=10)
     ax.set_ylim(-8, 110)
-    ax.set_title("Model Comparison — Transformer Acoustic Dataset\n"
-                 "(10-class, AW-DPCNN fused, seed 42)",
-                 fontsize=12, fontweight="bold")
-    ax.legend(loc="lower right", fontsize=9, framealpha=0.95,
+    # ax.set_title("Model Comparison — Transformer Acoustic Dataset\n"
+    #              "(10-class, AW-DPCNN fused, seed 42)",
+    #              fontsize=12, fontweight="bold")
+    ax.legend(loc="lower right", fontsize=9.5, framealpha=0.95,
               edgecolor="gray", ncol=4)
     ax.grid(axis="y", alpha=0.2, color="gray", zorder=0)
 
