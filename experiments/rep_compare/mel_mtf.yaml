@@ -1,0 +1,33 @@
+experiment_name: rep_compare_mel_mtf
+device: cuda
+
+dataset:
+  root_dir: ./datasets/rep_compare_12k_de_split/mel_mtf
+  num_classes: 10
+  num_workers: 32
+
+model:
+  name: vgg16
+  num_classes: 10
+  pretrained: false
+
+train:
+  epochs: 30
+  lr: 1e-4
+  optimizer: adamw
+  weight_decay: 1e-3
+
+scheduler:
+  type: plateau
+  mode: max
+  factor: 0.5
+  patience: 5
+  min_lr: 0.000001
+
+visualization:
+  tsne: true
+  confusion_matrix: true
+  roc_curve: true
+
+output:
+  root_dir: ./experiments/experiment_result/rep_compare/mel_mtf
