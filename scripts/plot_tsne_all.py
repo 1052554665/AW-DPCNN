@@ -14,13 +14,13 @@ Modes
 Usage::
 
     # Model t-SNE only
-    python scripts/plot_tsne_all.py --mode models --max-samples 1500
+    python scripts/plot_tsne_all.py --mode models --trial trial_seed123
 
     # Raw input t-SNE only
     python scripts/plot_tsne_all.py --mode raw --data-dir ./datasets/cwru_de/test --max-samples 1500
 
     # Both
-    python scripts/plot_tsne_all.py --mode all --data-dir ./datasets/cwru_de/test
+    python scripts/plot_tsne_all.py --mode all --data-dir ./datasets/cwru_de/test --trial trial_seed123
 
 Notes
 -----
@@ -49,7 +49,7 @@ from src.utils.tsne import extract_features, plot_tsne
 # ── Shared constants ───────────────────────────────────────────────────
 RESULT_ROOT = Path("experiments/experiment_result/exp1")
 OUTPUT_DIR  = Path("paper/tsne_models")
-TRIAL       = "trial_seed42"
+DEFAULT_TRIAL = "trial_seed42"
 
 # t-SNE parameters — must match src/utils/tsne.py
 TSNE_PARAMS = dict(perplexity=30, learning_rate=200, max_iter=1000, init="pca")
@@ -61,7 +61,7 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 #  Model t-SNE
 # ═══════════════════════════════════════════════════════════════════════
 
-def find_model_runs() -> list:
+def find_model_runs(trial: str = DEFAULT_TRIAL) -> list:
     runs = []
     for exp_dir in sorted(RESULT_ROOT.glob("*")):
         if not exp_dir.is_dir():
@@ -69,7 +69,7 @@ def find_model_runs() -> list:
         inner = sorted(exp_dir.glob("exp1_*"))
         if not inner:
             continue
-        base = inner[0] / TRIAL
+        base = inner[0] / trial
         cfg = base / "resolved_config.yaml"
         ckpt = base / "checkpoints/best.pt"
         if cfg.exists() and ckpt.exists():
@@ -77,8 +77,8 @@ def find_model_runs() -> list:
     return runs
 
 
-def generate_model_tsne(device: torch.device, max_samples: int):
-    runs = find_model_runs()
+def generate_model_tsne(device: torch.device, max_samples: int, trial: str = DEFAULT_TRIAL):
+    runs = find_model_runs(trial)
     if not runs:
         print("[ERROR] No trained models found.")
         return
@@ -180,12 +180,14 @@ def main():
                    help="ImageFolder dir for raw-input t-SNE (--mode raw/all)")
     p.add_argument("--max-samples", type=int, default=1500)
     p.add_argument("--device", default="cuda")
+    p.add_argument("--trial", default=DEFAULT_TRIAL,
+                   help=f"Trial seed dir name (default: {DEFAULT_TRIAL})")
     args = p.parse_args()
 
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")
 
     if args.mode in ("models", "all"):
-        generate_model_tsne(device, args.max_samples)
+        generate_model_tsne(device, args.max_samples, trial=args.trial)
 
     if args.mode in ("raw", "all"):
         generate_raw_tsne(args.data_dir, args.max_samples)
