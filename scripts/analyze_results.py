@@ -465,53 +465,61 @@ def generate_hyperparam_table() -> str:
     lines.append("% ── Hyperparameter Sensitivity Table ──")
     lines.append("\\begin{table}")
     lines.append("    \\centering")
-    lines.append("    \\caption{Hyperparameter Sensitivity Analysis. Accuracy is evaluated "
-                 "on re-fused test windows using a frozen MSCA-VGG16 classifier. "
+    # Check if recall data exists in any parameter group
+    has_recall = any("recall" in data.get(k, {}) and len(data[k].get("recall", [])) > 0
+                     for k in data)
+
+    lines.append("    \\caption{Hyperparameter Sensitivity Analysis. "
+                 + ("Accuracy and Recall are" if has_recall else "Accuracy is")
+                 + " evaluated on re-fused test windows using a frozen MSCA-VGG16 classifier. "
                  "Default values are highlighted in bold.}")
     lines.append("    \\label{tab:hyperparam_sensitivity}")
     lines.append("    \\renewcommand{\\arraystretch}{1.15}")
     lines.append("    \\small")
-    lines.append("    \\begin{tabular}{cc|c}")
+    if has_recall:
+        lines.append("    \\begin{tabular}{cc|cc}")
+    else:
+        lines.append("    \\begin{tabular}{cc|c}")
     lines.append("        \\toprule")
-    lines.append("        \\textbf{Parameter} & \\textbf{Value} & \\textbf{Acc (\\%)} \\\\")
+    if has_recall:
+        lines.append("        \\textbf{Parameter} & \\textbf{Value} & \\textbf{Acc (\\%)} & \\textbf{Rec (\\%)} \\\\")
+    else:
+        lines.append("        \\textbf{Parameter} & \\textbf{Value} & \\textbf{Acc (\\%)} \\\\")
     lines.append("        \\midrule")
 
-    # Gamma
-    gamma_data = data.get("gamma", {})
-    gamma_vals = gamma_data.get("param", [])
-    gamma_acc  = gamma_data.get("accuracy", [])
-    lines.append(f"        \\multirow{{{len(gamma_vals)}}}{{*}}{{$\\gamma$ (contrast amplification)}} ")
-    for i, (v, a) in enumerate(zip(gamma_vals, gamma_acc)):
-        if v == 10:
-            lines.append(f"        & \\textbf{{{v}}} & \\textbf{{{a:.1f}}} \\\\")
-        else:
-            lines.append(f"        & {v} & {a:.1f} \\\\")
+    def _param_rows(param_label, param_data, default_val):
+        vals = param_data.get("param", [])
+        accs = param_data.get("accuracy", [])
+        recs = param_data.get("recall", [])
+        has_rec = len(recs) == len(vals)
+        n = len(vals)
+        lines.append(f"        \\multirow{{{n}}}{{*}}{{{param_label}}} ")
+        for i in range(n):
+            v = vals[i]
+            a = accs[i] if i < len(accs) else 0.0
+            r = recs[i] if has_rec else 0.0
+            is_default = (v == default_val or str(v) == str(default_val))
+            if is_default:
+                if has_rec:
+                    lines.append(f"        & \\textbf{{{v}}} & \\textbf{{{a:.1f}}} & \\textbf{{{r:.1f}}} \\\\")
+                else:
+                    lines.append(f"        & \\textbf{{{v}}} & \\textbf{{{a:.1f}}} \\\\")
+            else:
+                if has_rec:
+                    lines.append(f"        & {v} & {a:.1f} & {r:.1f} \\\\")
+                else:
+                    lines.append(f"        & {v} & {a:.1f} \\\\")
 
+    # Gamma
+    _param_rows("$\\gamma$ (contrast amplification)", data.get("gamma", {}), 10)
     lines.append("        \\midrule")
 
     # N
-    n_data = data.get("N", {})
-    n_vals = n_data.get("param", [])
-    n_acc  = n_data.get("accuracy", [])
-    lines.append(f"        \\multirow{{{len(n_vals)}}}{{*}}{{$N$ (PCNN iterations)}} ")
-    for i, (v, a) in enumerate(zip(n_vals, n_acc)):
-        if v == 20:
-            lines.append(f"        & \\textbf{{{v}}} & \\textbf{{{a:.1f}}} \\\\")
-        else:
-            lines.append(f"        & {v} & {a:.1f} \\\\")
-
+    _param_rows("$N$ (PCNN iterations)", data.get("N", {}), 20)
     lines.append("        \\midrule")
 
     # Alpha
-    alpha_data = data.get("alpha_LT", {})
-    alpha_vals = alpha_data.get("param", [])
-    alpha_acc  = alpha_data.get("accuracy", [])
-    lines.append(f"        \\multirow{{{len(alpha_vals)}}}{{*}}{{$\\alpha_L=\\alpha_T$ (decay)}} ")
-    for i, (v, a) in enumerate(zip(alpha_vals, alpha_acc)):
-        if v == "0.001":
-            lines.append(f"        & \\textbf{{{v}}} & \\textbf{{{a:.1f}}} \\\\")
-        else:
-            lines.append(f"        & {v} & {a:.1f} \\\\")
+    _param_rows("$\\alpha_L=\\alpha_T$ (decay)", data.get("alpha_LT", {}), "0.001")
 
     lines.append("        \\bottomrule")
     lines.append("    \\end{tabular}")

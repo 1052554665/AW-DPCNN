@@ -24,20 +24,11 @@ Output
 
 Usage::
 
-    # Auto‑discover checkpoint from exp config
-    python scripts/hyperparameter_sensitivity.py \
-        --exp-config experiments/exp1/MSCA_VGG16.yaml \
-        --auto-checkpoint
-
-    # Explicit checkpoint
-    python scripts/hyperparameter_sensitivity.py \
-        --exp-config experiments/exp1/MSCA_VGG16.yaml \
-        --checkpoint PATH/TO/best.pt
-
-    # Sweep a single parameter
-    python scripts/hyperparameter_sensitivity.py \
-        --exp-config experiments/exp1/MSCA_VGG16.yaml \
-        --auto-checkpoint --sweep gamma
+python scripts/hyperparameter_sensitivity.py \
+    --exp-config experiments/exp1/MSCA_VGG16.yaml \
+    --auto-checkpoint --trial trial_seed42 \
+    --mel-n-fft 1024 --mel-n-mels 128 --mel-fmax 6000 \
+    --max-samples 500
 """
 
 import argparse
@@ -80,15 +71,14 @@ from src.utils.config import load_config, load_yaml  # noqa: E402
 # ═══════════════════════════════════════════════════════════════════
 
 GAMMA_VALUES   = [1, 2, 4, 8, 10, 20]
-N_VALUES       = [5, 8, 10, 15, 20]
-ALPHA_VALUES   = [0.0001, 0.001, 0.01]
+N_VALUES       = [5, 8, 10, 15, 20, 25]
+ALPHA_VALUES   = [0.0001, 0.001, 0.01, 0.1]
 
-DEFAULT_GAMMA  = 4.0
+DEFAULT_GAMMA  = 10.0   # match paper default (γ=10 for full AW‑DPCNN)
 DEFAULT_N      = 20
 DEFAULT_ALPHA  = 0.001
 
 IMG_SIZE       = 224
-BATCH_SIZE     = 64
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -110,7 +100,7 @@ CWRU_CLASS_MAP = {
 
 CWRU_ROOT = Path("raw-data/CWRU-dataset")
 
-# Mel params for 12 kHz CWRU
+# Mel params for 12 kHz CWRU — overridable via CLI
 CWRU_SR       = 12000
 CWRU_N_FFT    = 1024
 CWRU_HOP_LEN  = 256
@@ -212,23 +202,49 @@ def _collect_cwru_test_windows(
 #  On‑the‑fly fusion
 # ═══════════════════════════════════════════════════════════════════
 
-def _fuse_window(window: np.ndarray, sr: int,
-                 gamma: float, n_iter: int, alpha: float) -> torch.Tensor:
-    """Mel + GADF + AW‑DPCNN → normalised tensor."""
-    mel = generate_mel_image(
-        window, sr,
-        n_fft=CWRU_N_FFT, hop_length=CWRU_HOP_LEN,
-        n_mels=CWRU_N_MELS, fmax=CWRU_FMAX,
-        img_size=IMG_SIZE, cmap=cv2.COLORMAP_VIRIDIS,
+def _precompute_mel_gadf(windows: list, sr: int,
+                          n_fft: int, hop_len: int, n_mels: int,
+                          fmax: int) -> list:
+    """Pre‑compute Mel + GADF BGR images for all windows (cached — independent of γ, N, α)."""
+    import torchvision.transforms as T
+    tf = T.Compose([
+        T.ToTensor(),
+        T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
+    pairs = []
+    for win, _, _ in tqdm(windows, desc="  Pre‑computing Mel+GADF", ncols=80):
+        mel = generate_mel_image(
+            win, sr,
+            n_fft=n_fft, hop_length=hop_len,
+            n_mels=n_mels, fmax=fmax,
+            img_size=IMG_SIZE, cmap=cv2.COLORMAP_VIRIDIS,
+        )
+        gadf = generate_gadf_image(win, img_size=IMG_SIZE,
+                                   cmap=cv2.COLORMAP_VIRIDIS)
+        # Store as float32 tensors (normalised) for faster re‑fusion
+        mel_t  = tf(mel)
+        gadf_t = tf(gadf)
+        pairs.append((mel_t, gadf_t))
+    return pairs
+
+
+def _fuse_precomputed(mel_t: torch.Tensor, gadf_t: torch.Tensor,
+                      gamma: float, n_iter: int, alpha: float) -> torch.Tensor:
+    """Run AW‑DPCNN fusion on pre‑computed Mel+GADF tensors → normalised tensor."""
+    import torchvision.transforms as T
+    # Convert back to BGR uint8 for aw_dpcnn_fusion_color (OpenCV-based)
+    denorm = T.Normalize(
+        mean=[-0.485/0.229, -0.456/0.224, -0.406/0.225],
+        std=[1/0.229, 1/0.224, 1/0.225],
     )
-    gadf = generate_gadf_image(window, img_size=IMG_SIZE,
-                                cmap=cv2.COLORMAP_VIRIDIS)
+    mel_bgr  = (denorm(mel_t).permute(1, 2, 0).numpy() * 255).clip(0, 255).astype(np.uint8)
+    gadf_bgr = (denorm(gadf_t).permute(1, 2, 0).numpy() * 255).clip(0, 255).astype(np.uint8)
+
     fused = aw_dpcnn_fusion_color(
-        mel, gadf, n_iter=n_iter, gamma=gamma,
+        mel_bgr, gadf_bgr, n_iter=n_iter, gamma=gamma,
         alpha_L=alpha, alpha_T=alpha,
     )
-
-    import torchvision.transforms as T
+    # Re-apply normalization for model input
     tf = T.Compose([
         T.ToTensor(),
         T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
@@ -240,49 +256,75 @@ def _fuse_window(window: np.ndarray, sr: int,
 #  Evaluation
 # ═══════════════════════════════════════════════════════════════════
 
-@torch.no_grad()
+@torch.inference_mode()
 def _evaluate_fused(model, fused_tensors: list, labels: list,
-                    device: torch.device) -> float:
+                    device: torch.device) -> tuple:
+    """Return (accuracy, macro_recall)."""
     model.eval()
-    correct, total = 0, 0
-    for i in range(0, len(fused_tensors), BATCH_SIZE):
-        batch = torch.stack(fused_tensors[i:i + BATCH_SIZE]).to(device)
-        y = torch.tensor(labels[i:i + BATCH_SIZE], device=device)
-        correct += (model(batch).argmax(dim=1) == y).sum().item()
-        total += y.size(0)
-    return correct / total if total > 0 else 0.0
+    all_preds, all_labels = [], []
+    bs = 128  # larger batch for RTX 5090
+    for i in range(0, len(fused_tensors), bs):
+        batch = torch.stack(fused_tensors[i:i + bs]).to(device)
+        y = torch.tensor(labels[i:i + bs], device=device)
+        preds = model(batch).argmax(dim=1)
+        all_preds.append(preds.cpu())
+        all_labels.append(y.cpu())
+    all_preds = torch.cat(all_preds)
+    all_labels = torch.cat(all_labels)
+
+    acc = (all_preds == all_labels).float().mean().item()
+
+    # Macro-averaged recall
+    classes = all_labels.unique()
+    recalls = []
+    for c in classes:
+        tp = ((all_preds == c) & (all_labels == c)).sum().item()
+        fn = ((all_preds != c) & (all_labels == c)).sum().item()
+        recalls.append(tp / (tp + fn) if (tp + fn) > 0 else 0.0)
+    rec = float(np.mean(recalls)) if recalls else 0.0
+
+    return acc, rec
 
 
 def _sweep_parameter(
-    windows, labels, sr, model, device,
+    mel_gadf_pairs: list, labels: list, model, device,
     param_name: str, param_values: list,
     fixed_gamma: float, fixed_n: int, fixed_alpha: float,
-    max_samples: int = 500,
 ) -> Dict[str, list]:
-    rng = np.random.RandomState(42)
-    n_sample = min(len(windows), max_samples)
-    indices = rng.choice(len(windows), n_sample, replace=False)
+    """Sweep one parameter using pre‑computed Mel+GADF pairs.
 
+    Only AW‑DPCNN fusion is re‑run for each parameter value;
+    Mel spectrograms and GADF images are computed once and cached.
+    """
     accuracies = []
+    recalls = []
+
     for pv in tqdm(param_values, desc=f"  {param_name}", ncols=70):
         gamma  = pv if param_name == "gamma"    else fixed_gamma
-        n_iter = pv if param_name == "N"        else fixed_n
-        alpha  = pv if param_name == "alpha_LT" else fixed_alpha
+        n_iter = int(pv) if param_name == "N"   else fixed_n
+        # alpha stored as str in param_values; convert for alpha_LT sweep
+        if param_name == "alpha_LT":
+            alpha = float(pv) if isinstance(pv, str) else pv
+        else:
+            alpha = fixed_alpha
 
-        fused, sub_labels = [], []
-        for idx in indices:
-            win, _, lbl = windows[idx]
+        fused = []
+        for mel_t, gadf_t in mel_gadf_pairs:
             try:
-                fused.append(_fuse_window(win, sr, gamma=gamma,
-                                           n_iter=n_iter, alpha=alpha))
-                sub_labels.append(lbl)
+                fused.append(_fuse_precomputed(mel_t, gadf_t,
+                                                gamma=gamma, n_iter=n_iter,
+                                                alpha=alpha))
             except Exception:
                 continue
 
-        acc = _evaluate_fused(model, fused, sub_labels, device) if fused else 0.0
+        if fused:
+            acc, rec = _evaluate_fused(model, fused, labels, device)
+        else:
+            acc, rec = 0.0, 0.0
         accuracies.append(round(acc * 100, 2))
+        recalls.append(round(rec * 100, 2))
 
-    return {"param": param_values, "accuracy": accuracies}
+    return {"param": param_values, "accuracy": accuracies, "recall": recalls}
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -336,13 +378,15 @@ def _plot_sensitivity(param_name: str, param_values: list,
 #  Checkpoint discovery
 # ═══════════════════════════════════════════════════════════════════
 
-def find_checkpoint(run_root: Path) -> Optional[Path]:
-    """Recursively search for best.pt."""
+def find_checkpoint(run_root: Path, trial: str = "trial_seed42") -> Optional[Path]:
+    """Recursively search for best.pt, preferring the given trial."""
     if not run_root.exists():
         return None
-    direct = run_root / "checkpoints" / "best.pt"
+    # Try specific trial first
+    direct = run_root / trial / "checkpoints" / "best.pt"
     if direct.exists():
         return direct
+    # Search all trials
     for pattern in ["**/checkpoints/best.pt", "**/best.pt"]:
         candidates = list(run_root.glob(pattern))
         if candidates:
@@ -377,6 +421,18 @@ def main():
     parser.add_argument("--device", default="")
     parser.add_argument("--sweep", default="all",
                         help="Parameter to sweep: gamma, N, alpha_LT, all")
+    # Mel parameters — must match training dataset
+    parser.add_argument("--mel-n-fft", type=int, default=CWRU_N_FFT,
+                        help=f"Mel STFT window size (default: {CWRU_N_FFT})")
+    parser.add_argument("--mel-hop-len", type=int, default=CWRU_HOP_LEN,
+                        help=f"Mel STFT hop length (default: {CWRU_HOP_LEN})")
+    parser.add_argument("--mel-n-mels", type=int, default=CWRU_N_MELS,
+                        help=f"Mel filter bank size (default: {CWRU_N_MELS})")
+    parser.add_argument("--mel-fmax", type=int, default=CWRU_FMAX,
+                        help=f"Mel max frequency (default: {CWRU_FMAX})")
+    # Trial seed for checkpoint discovery
+    parser.add_argument("--trial", default="trial_seed42",
+                        help="Trial name for checkpoint selection (default: trial_seed42)")
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
@@ -405,7 +461,7 @@ def main():
     elif args.auto_checkpoint and args.exp_config:
         run_root = Path(config.get("output", {}).get(
             "root_dir", "experiments/experiment_result/exp1"))
-        ckpt = find_checkpoint(run_root)
+        ckpt = find_checkpoint(run_root, trial=args.trial)
         if ckpt is None:
             print(f"[ERROR] No checkpoint found in {run_root}")
             sys.exit(1)
@@ -437,6 +493,25 @@ def main():
         print("[ERROR] No test windows found — check --dataset-dir")
         sys.exit(1)
 
+    # ── Sub‑sample windows ──
+    rng = np.random.RandomState(42)
+    n_sample = min(len(windows), args.max_samples)
+    indices = rng.choice(len(windows), n_sample, replace=False)
+    sampled_windows = [windows[i] for i in indices]
+    sampled_labels  = [labels[i] for i in indices]
+    print(f"Using {n_sample} windows for sensitivity sweep")
+
+    # ── Pre‑compute Mel + GADF (once — independent of γ, N, α) ──
+    print(f"\nPre‑computing Mel and GADF images for all sampled windows ...")
+    print(f"  Mel params: n_fft={args.mel_n_fft}, hop_len={args.mel_hop_len}, "
+          f"n_mels={args.mel_n_mels}, fmax={args.mel_fmax}")
+    mel_gadf_pairs = _precompute_mel_gadf(
+        sampled_windows, CWRU_SR,
+        n_fft=args.mel_n_fft, hop_len=args.mel_hop_len,
+        n_mels=args.mel_n_mels, fmax=args.mel_fmax,
+    )
+    print(f"Cached {len(mel_gadf_pairs)} Mel+GADF pairs")
+
     # ── Sweep ──
     all_results = {}
     sweeps = {
@@ -458,25 +533,24 @@ def main():
             fa = None
 
         res = _sweep_parameter(
-            windows, labels, CWRU_SR, model, device,
+            mel_gadf_pairs, sampled_labels, model, device,
             param_name, param_values,
             fixed_gamma=DEFAULT_GAMMA if fg is None else fg,
             fixed_n=DEFAULT_N if fn is None else fn,
             fixed_alpha=DEFAULT_ALPHA if fa is None else fa,
-            max_samples=args.max_samples,
         )
         all_results[param_name] = res
 
         # Table
-        print(f"  {'Value':>12s}  {'Acc %':>8s}")
-        print(f"  {'-'*20}")
-        for pv, acc in zip(res["param"], res["accuracy"]):
+        print(f"  {'Value':>12s}  {'Acc %':>8s}  {'Rec %':>8s}")
+        print(f"  {'-'*30}")
+        for pv, acc, rec in zip(res["param"], res["accuracy"], res["recall"]):
             is_default = (
                 (param_name == "gamma" and pv == DEFAULT_GAMMA) or
                 (param_name == "N" and pv == DEFAULT_N) or
                 (param_name == "alpha_LT" and abs(pv - DEFAULT_ALPHA) < 1e-8)
             )
-            print(f"  {pv:>12}  {acc:8.2f}{' ← default' if is_default else ''}")
+            print(f"  {pv:>12}  {acc:8.2f}  {rec:8.2f}{' ← default' if is_default else ''}")
 
         # Plot
         plot_path = os.path.join(args.output_dir,
@@ -488,10 +562,10 @@ def main():
     csv_path = os.path.join(args.output_dir, "sensitivity_summary.csv")
     with open(csv_path, "w", newline="") as f:
         writer = csv.writer(f)
-        writer.writerow(["parameter", "value", "accuracy"])
+        writer.writerow(["parameter", "value", "accuracy", "recall"])
         for param_name, res in all_results.items():
-            for pv, acc in zip(res["param"], res["accuracy"]):
-                writer.writerow([param_name, pv, acc])
+            for pv, acc, rec in zip(res["param"], res["accuracy"], res["recall"]):
+                writer.writerow([param_name, pv, acc, rec])
     print(f"\nCSV: {csv_path}")
 
     json_path = os.path.join(args.output_dir, "sensitivity_summary.json")
@@ -499,7 +573,8 @@ def main():
         json.dump({
             k: {"param": [str(x) if isinstance(x, float) else x
                           for x in v["param"]],
-                "accuracy": v["accuracy"]}
+                "accuracy": v["accuracy"],
+                "recall": v["recall"]}
             for k, v in all_results.items()
         }, f, indent=2)
     print(f"JSON: {json_path}")

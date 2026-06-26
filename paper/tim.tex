@@ -266,7 +266,7 @@ At the $n$-th iteration, the external stimulus from two channels is defined as
 	\boldsymbol{F}_2^n(i,j) = (\boldsymbol{W}_2 * \boldsymbol{Y}^{n-1})(i,j) + \boldsymbol{\tilde{S}}_2(i,j),
 	\label{eq:f2_update}
 \end{equation}
-where $\boldsymbol{W}_1$ and $\boldsymbol{W}_2$ denote the convolutional kernels corresponding to the Mel and GADF channels, respectively, and $*$ represents the convolution operation. Considering the distinct structural characteristics of the two representations, representation-specific convolutional kernels are introduced in the dual-channel architecture. Specifically, stripe-shaped kernels are applied to the Mel channel to emphasize frequency continuity and harmonic structures, while symmetric kernels are used for the GADF channel to capture temporal periodicity and global correlation patterns.
+where $\boldsymbol{W}_1$ and $\boldsymbol{W}_2$ denote the convolutional kernels corresponding to the Mel and GADF channels, respectively, and $*$ represents the convolution operation. Considering the distinct structural characteristics of the two representations, representation-specific convolutional kernels are introduced in the dual-channel architecture. Specifically, stripe-shaped kernels are applied to the Mel channel to emphasize frequency continuity and harmonic structures, while symmetric kernels are used for the GADF channel to capture temporal periodicity and global correlation patterns. In this study, $\boldsymbol{W}_1$, $\boldsymbol{W}_2$, and $\boldsymbol{M}$ are structural design choices grounded in the physical interpretation of each representation, not free hyperparameters.
 
 The internal linking state is updated by
 \begin{equation}
