@@ -502,6 +502,14 @@ Early stopping is employed to prevent overfitting, where training is terminated 
 % 	\label{fig:equipment}
 % \end{figure}
 
+\begin{figure}[!htbp]
+	\centering
+	\includegraphics[width=\linewidth]{equipment/CWRU_teststand}
+	\caption{Test stand of datasets. (a) CWRU bearing dataset. (b) Toya}
+	\label{MSCA-VGG}
+\end{figure}
+
+
 All acoustic data were recorded across multiple independent acquisition sessions under different operating conditions. The continuous audio signals were first resampled to a uniform sampling rate of 44.1kHz to ensure consistency. Each recording was then segmented into fixed-length clips of 1s with 60\% overlap. To prevent data leakage caused by temporal correlation between overlapping segments, dataset partitioning was conducted at the recording-session level rather than at the segment level. Specifically, all segments derived from the same recording session were assigned exclusively to either the training, validation, or test subset. The dataset is divided into training, validation, and test subsets with a ratio of 60\%, 20\%, and 20\%, respectively, using a fixed random seed to ensure reproducibility and strict independence between the subsets.
 
 The collected acoustic signals were categorized into multiple classes corresponding to different transformer operating conditions, including normal operation and several typical fault states, as shown in Table~\ref{tab:operating_conditions}. Each acoustic segment was independently labeled according to the operating condition during the recording period. The detailed composition of the dataset, including the number of samples in each subset, is summarized in Table~\ref{dataset}.
@@ -1213,6 +1221,29 @@ To evaluate model robustness, we inject zero-mean additive Gaussian noise at SNR
 % \label{}
 % \end{figure*}
 
+
+
+\begin{table*}[!t]
+\caption{Cross-Dataset Generalization: CWRU → MIMII (Mean $\pm$ Std over 3 Trials)}
+\label{tab:cross_dataset}
+\begin{tabular}{l|cccc|cccc}
+\toprule
+\multirow{2}{*}{\textbf{Model}} 
+  & \multicolumn{4}{c|}{\textbf{CWRU (12k DE)}} 
+  & \multicolumn{4}{c}{\textbf{MIMII}} \\
+\cmidrule(lr){2-5}\cmidrule(lr){6-9}
+  & \textbf{Acc} & \textbf{F1} & \textbf{G-Mean} & $\boldsymbol{\kappa}$
+  & \textbf{Acc} & \textbf{F1} & \textbf{G-Mean} & $\boldsymbol{\kappa}$ \\
+\midrule
+\textbf{MSCA-VGG16} & xx.x±x.x & xx.x±x.x & xx.x±x.x & xx.x±x.x & xx.x±x.x & xx.x±x.x & xx.x±x.x & xx.x±x.x \\
+VGG16 & ... \\
+EfficientNet-B0 & ... \\
+ViT & ... \\
+MobileNetV3-Small & ... \\
+ConvNeXt-Tiny & ... \\
+\bottomrule
+\end{tabular}
+\end{table*}
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

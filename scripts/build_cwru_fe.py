@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
 AW-DPCNN Dataset Builder — CWRU 12kHz Fan End (10‑class)
-==========================================================
+===========================================================
 
-Builds AW-DPCNN fused images from the **12 kHz fan-end** bearing fault
+Builds AW-DPCNN fused images from the **12 kHz fan‑end** bearing fault
 data of the CWRU dataset.  The output is a 10‑class ImageFolder‑compatible
 directory.
 
@@ -22,20 +22,30 @@ Data source
     OR/{007,014,021}/@6/       (outer race @ 6 o'clock)
   raw-data/CWRU-dataset/Normal/ (normal baseline .mat files)
 
+Purpose — Cross‑Sensor Generalization
+--------------------------------------
+  The drive‑end (DE) sensor is mounted on the bearing housing;
+  the fan‑end (FE) sensor is farther from the fault source.
+  Testing on FE data evaluates robustness to **sensor placement**
+  — a critical challenge for acoustic fault diagnosis where
+  microphone position may vary in field deployments.
+
 Usage::
 
     # Full build with file‑level train/val/test split
-    python scripts/build_cwru_de.py --output-dir ./datasets/cwru_de --file-split 60,20,20 --split-seed 42 --metadata --verify --workers 16 --win-len 4096 --hop-len 2048
+    python scripts/build_cwru_fe.py \
+        --output-dir ./datasets/cwru_fe \
+        --file-split 60,20,20 --split-seed 42 \
+        --metadata --verify --workers 64
 
     # Dry‑run (preview split plan without generating images)
     python scripts/build_cwru_fe.py --dry-run
 
 Notes
 -----
-- OR faults default to the **@6** (6 o'clock) load position.  Some fan‑end
-  OR fault sizes may not have the @6 sub‑directory — in that case the
-  loader falls back to the size directory itself.
-- Fault size 0.028" is excluded (not in the 10 target classes).
+- Uses **FE_time** sensor signal from 12 kHz fan‑end .mat files.
+- OR faults default to the **@6** (6 o'clock) load position.
+- Normal files are shared with DE (same normal baseline).
 """
 
 import argparse
@@ -304,7 +314,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--sequence-length", type=int, default=None,
                    help="Max time-steps for GAF")
     p.add_argument("--n-iter", type=int, default=20)
-    p.add_argument("--gamma", type=float, default=4.0)
+    p.add_argument("--gamma", type=float, default=10.0,
+                   help="AW-DPCNN contrast amplification (paper: γ=10)")
     p.add_argument("--file-split", type=str, default="60,20,20",
                    help="Train/val/test ratios")
     p.add_argument("--split-seed", type=int, default=42)
