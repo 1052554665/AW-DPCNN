@@ -724,31 +724,7 @@ To isolate and quantify the contribution of each component in the proposed frame
 
 \textbf{3) Overall contribution decomposition.} From the lower bound B0 (Mel-only, VGG16, 80.82\%) to the full model B8 (AW-DPCNN + MSCA-VGG16, 87.45\%), the cumulative accuracy improvement of 6.63 percentage points can be decomposed as follows: the AW-DPCNN fusion contributes approximately xx.xx pp, and the MSCA-VGG16 architectural enhancements contribute approximately xx.xx pp. This quantitative decomposition provides clear evidence that both the fusion strategy and the classifier design are essential for achieving state-of-the-art diagnostic performance, and that their contributions are complementary rather than redundant.
 
-\begin{table*}
-	\centering
-	\caption{Unified Component Decomposition Ablation (B0–B8, Mean $\pm$ Std over 3 Independent Trials). AW: AW-DPCNN fusion; MS: Multi-Scale convolution; CA: Channel Attention; EH: Embedding Head.}
-	\label{tab:ablation_unified}
-	\renewcommand{\arraystretch}{1.15}
-	\small
-	\begin{tabular}{lcccccccc}
-		\toprule
-		\textbf{Exp.} & \textbf{AW-DPCNN} & \textbf{MS} & \textbf{CA} & \textbf{EH} & \textbf{Acc (\%)} & \textbf{F1 (\%)} & \textbf{G-mean (\%)} & \textbf{Kappa (\%)} \\
-		\midrule
-		\multicolumn{9}{c}{\textit{Fusion-level ablation (VGG16 classifier)}} \\
-		B0 & $\times$ & $\times$ & $\times$ & $\times$ & $80.82_{\pm x.xx}$ & $77.89_{\pm x.xx}$ & $49.68_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
-		B1 & $\times$ & $\times$ & $\times$ & $\times$ & $85.10_{\pm x.xx}$ & $86.80_{\pm x.xx}$ & $81.08_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
-		B2 & $\times$ & $\times$ & $\times$ & $\times$ & $82.20_{\pm x.xx}$ & $83.50_{\pm x.xx}$ & $81.08_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
-		B3 & $\checkmark$ ($\gamma=1$) & $\times$ & $\times$ & $\times$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
-		B4 & $\checkmark$ ($\gamma=10$) & $\times$ & $\times$ & $\times$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
-		\midrule
-		\multicolumn{9}{c}{\textit{Classifier-level ablation (full AW-DPCNN fusion)}} \\
-		B5 & $\checkmark$ & $\checkmark$ & $\times$ & $\times$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
-		B6 & $\checkmark$ & $\times$ & $\checkmark$ & $\times$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
-		B7 & $\checkmark$ & $\times$ & $\times$ & $\checkmark$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ & $xx.xx_{\pm x.xx}$ \\
-		\textbf{B8} & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\mathbf{87.45_{\pm x.xx}}$ & $\mathbf{86.97_{\pm x.xx}}$ & $\mathbf{85.69_{\pm x.xx}}$ & $\mathbf{86.03_{\pm x.xx}}$ \\
-		\bottomrule
-	\end{tabular}
-\end{table*}
+\input{auto_tables/ablation_table.tex}
 
 For qualitative analysis, t-SNE visualization is applied to the feature embeddings extracted before the final classification layer. Fig.~\ref{Fig:tsne} presents the t-SNE projections corresponding to B0 (Mel-only), B1 (GADF-only), B2 (Concat), and B4 (full AW-DPCNN). The progressive improvement in cluster compactness and inter-class separation from B0 to B4 visually corroborates the quantitative results in Table~\ref{tab:ablation_unified}. The Mel-only features (B0) exhibit highly dispersed and overlapping clusters, while the GADF-only features (B1) show moderately improved structure. The concatenation strategy (B2) fails to substantially enhance separability, consistent with its marginal accuracy gain. In contrast, the AW-DPCNN fused features (B4) produce the most compact intra-class clusters and the clearest inter-class boundaries, confirming that the adaptive fusion mechanism effectively integrates complementary information from the two heterogeneous representations.
 
@@ -857,39 +833,7 @@ Table~\ref{tab:hyperparam_sensitivity} summarizes the accuracy results for all s
 
 Overall, the sensitivity analysis confirms that the default hyperparameter configuration ($\gamma=10$, $N=20$, $\alpha=0.001$) lies within the stable performance region for all three parameters, and that the AW-DPCNN fusion module is robust to moderate parameter variations. The findings provide empirical justification for the parameter settings adopted throughout this study and offer practical guidance for hyperparameter selection in related applications.
 
-\begin{table}
-	\centering
-	\caption{Hyperparameter Sensitivity Analysis. Accuracy is evaluated on re-fused test windows using a frozen MSCA-VGG16 classifier. Default values are highlighted in bold.}
-	\label{tab:hyperparam_sensitivity}
-	\renewcommand{\arraystretch}{1.15}
-	\small
-	\begin{tabular}{cc|c}
-		\toprule
-		\textbf{Parameter} & \textbf{Value} & \textbf{Acc (\%)} \\
-		\midrule
-		\multirow{6}{*}{$\gamma$ (contrast amplification)} 
-		& 1    & xx.xx \\
-		& 2    & xx.xx \\
-		& 4    & xx.xx \\
-		& 8    & xx.xx \\
-		& \textbf{10} & \textbf{xx.xx} \\
-		& 20   & xx.xx \\
-		\midrule
-		\multirow{5}{*}{$N$ (PCNN iterations)} 
-		& 5    & xx.xx \\
-		& 8    & xx.xx \\
-		& 10   & xx.xx \\
-		& 15   & xx.xx \\
-		& \textbf{20} & \textbf{xx.xx} \\
-		\midrule
-		\multirow{3}{*}{$\alpha_L=\alpha_T$ (decay)} 
-		& 0.0001 & xx.xx \\
-		& \textbf{0.001}  & \textbf{xx.xx} \\
-		& 0.01   & xx.xx \\
-		\bottomrule
-	\end{tabular}
-\end{table}
-
+\input{auto_tables/hyperparam_sensitivity_table.tex}
 
 \subsection{Raw Input Feature Visualization}
 \label{sec:raw_tsne}
@@ -935,36 +879,38 @@ Table~\ref{tab:rep_compare} reports the test-set performance of all twelve combi
 
 These findings confirm that the performance advantage of the proposed method is not merely attributable to the AW-DPCNN fusion mechanism or the MSCA-VGG16 classifier, but is fundamentally supported by the carefully selected input representations. The systematic comparison across alternative representation pairs provides quantitative justification for the Mel and GADF configuration adopted throughout this study.
 
-\begin{table*}
-	\centering
-	\caption{Representation Comparison Across Time--Frequency and Temporal Encoding Methods. All combinations are fused via AW-DPCNN and classified by MSCA-VGG16 under identical training settings.}
-	\label{tab:rep_compare}
-	\renewcommand{\arraystretch}{1.15}
-	\small
-	\begin{tabular}{llcccccc}
-		\toprule
-		\textbf{TF Method} & \textbf{Temporal} & \textbf{Acc (\%)} & \textbf{Prec. (\%)} & \textbf{Rec. (\%)} & \textbf{F1 (\%)} & \textbf{G-mean (\%)} & \textbf{Kappa (\%)} \\
-		\midrule
-		\multirow{4}{*}{Mel} 
-		& GADF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-		& GASF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-		& MTF   & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-		& RP    & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-		\cmidrule(lr){2-8}
-		\multirow{4}{*}{STFT} 
-		& GADF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-		& GASF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-		& MTF   & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-		& RP    & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-		\cmidrule(lr){2-8}
-		\multirow{4}{*}{CWT} 
-		& GADF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-		& GASF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-		& MTF   & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-		& RP    & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-		\bottomrule
-	\end{tabular}
-\end{table*}
+% \begin{table*}
+% 	\centering
+% 	\caption{Representation Comparison Across Time--Frequency and Temporal Encoding Methods. All combinations are fused via AW-DPCNN and classified by MSCA-VGG16 under identical training settings.}
+% 	\label{tab:rep_compare}
+% 	\renewcommand{\arraystretch}{1.15}
+% 	\small
+% 	\begin{tabular}{llcccccc}
+% 		\toprule
+% 		\textbf{TF Method} & \textbf{Temporal} & \textbf{Acc (\%)} & \textbf{Prec. (\%)} & \textbf{Rec. (\%)} & \textbf{F1 (\%)} & \textbf{G-mean (\%)} & \textbf{Kappa (\%)} \\
+% 		\midrule
+% 		\multirow{4}{*}{Mel} 
+% 		& GADF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+% 		& GASF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+% 		& MTF   & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+% 		& RP    & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+% 		\cmidrule(lr){2-8}
+% 		\multirow{4}{*}{STFT} 
+% 		& GADF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+% 		& GASF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+% 		& MTF   & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+% 		& RP    & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+% 		\cmidrule(lr){2-8}
+% 		\multirow{4}{*}{CWT} 
+% 		& GADF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+% 		& GASF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+% 		& MTF   & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+% 		& RP    & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
+% 		\bottomrule
+% 	\end{tabular}
+% \end{table*}
+
+\input{auto_tables/rep_compare_table.tex}
 
 % \begin{table}
 % 	\centering
@@ -1100,66 +1046,71 @@ In future work, we aim to further optimize the proposed framework to improve rec
 
 To evaluate model robustness, we inject zero-mean additive Gaussian noise at SNR levels ranging from 0 to 30 dB. This range spans realistic field conditions (10–20 dB) to idealized lab scenarios ($\ge30dB$), allowing assessment of graceful degradation under increasing noise. Noise is added independently to each test sample post-augmentation to avoid distribution shift; SNR is computed per-signal as $\text{SNR}_{\text{dB}} = 10\log_{10}(P_s/P_n)$ where $P_s$ and $P_n$ are signal and noise power respectively.
 
-\begin{table*}[!htbp]
-\centering
-\caption{Noise Robustness Comparison --- Accuracy (\%) at Different SNR Levels.}
-\label{tab:noise_robustness}
-\renewcommand{\arraystretch}{1.1}
-\small
-\begin{tabular}{lccccccc}
-\toprule
-\textbf{Model} & Clean & 5.0~dB & 10.0~dB & 15.0~dB & 20.0~dB & 25.0~dB & 30.0~dB \\
-\midrule
-\textbf{MSCA-VGG16} & 95.1 & 92.9 & 93.9 & 94.7 & 94.8 & 95.1 & 95.2 \\
-VGG16 & 94.7 & 83.5 & 93.7 & 94.5 & 94.6 & 94.8 & 94.7 \\
-ViT & 88.0 & 73.8 & 85.8 & 87.7 & 88.4 & 88.0 & 88.4 \\
-EfficientNet-B0 & 91.0 & 14.1 & 75.3 & 88.4 & 91.0 & 90.8 & 91.3 \\
-MobileNetV3-Small & 84.7 & 56.9 & 72.6 & 83.6 & 84.2 & 84.0 & 84.0 \\
-ConvNeXt-Tiny & 76.4 & 78.5 & 78.0 & 77.0 & 76.4 & 76.7 & 76.4 \\
-\bottomrule
-\end{tabular}
-\end{table*}
+% \begin{table*}[!htbp]
+% \centering
+% \caption{Noise Robustness Comparison --- Accuracy (\%) at Different SNR Levels.}
+% \label{tab:noise_robustness}
+% \renewcommand{\arraystretch}{1.1}
+% \small
+% \begin{tabular}{lccccccc}
+% \toprule
+% \textbf{Model} & Clean & 5.0~dB & 10.0~dB & 15.0~dB & 20.0~dB & 25.0~dB & 30.0~dB \\
+% \midrule
+% \textbf{MSCA-VGG16} & 95.1 & 92.9 & 93.9 & 94.7 & 94.8 & 95.1 & 95.2 \\
+% VGG16 & 94.7 & 83.5 & 93.7 & 94.5 & 94.6 & 94.8 & 94.7 \\
+% ViT & 88.0 & 73.8 & 85.8 & 87.7 & 88.4 & 88.0 & 88.4 \\
+% EfficientNet-B0 & 91.0 & 14.1 & 75.3 & 88.4 & 91.0 & 90.8 & 91.3 \\
+% MobileNetV3-Small & 84.7 & 56.9 & 72.6 & 83.6 & 84.2 & 84.0 & 84.0 \\
+% ConvNeXt-Tiny & 76.4 & 78.5 & 78.0 & 77.0 & 76.4 & 76.7 & 76.4 \\
+% \bottomrule
+% \end{tabular}
+% \end{table*}
+
+\input{auto_tables/noise_robustness_table.tex}
 
 
-\begin{table*}[!htbp]
-\centering
-\caption{Performance Comparison on the EXP1 Dataset (Seed 42)}
-\label{tab:exp1_comparison}
-\renewcommand{\arraystretch}{1.15}
-\small
-\begin{tabular}{lcccccc}
-\toprule
-\textbf{Network} & \textbf{Acc} & \textbf{F1} & \textbf{G-Mean} & \textbf{AUC} & \textbf{$\kappa$} & \textbf{Params (M)} \\
-\midrule
-\textbf{MSCA-VGG16 (Ours)} & \textbf{95.1} & \textbf{92.9} & \textbf{90.3} & 99.9 & \textbf{94.3} & 26.8 \\
-VGG16 & 94.7 & 91.9 & 89.0 & \textbf{99.9} & 93.8 & 15.3 \\
-EfficientNet-B0 & 91.0 & 86.7 & 83.1 & 98.9 & 89.5 & 4.0 \\
-ViT & 88.0 & 84.1 & 82.3 & 99.2 & 85.9 & 11.0 \\
-MobileNetV3-Small & 84.7 & 79.3 & 75.0 & 98.2 & 82.0 & 1.5 \\
-ConvNeXt-Tiny & 76.4 & 66.0 & 45.1 & 97.1 & 72.3 & 27.8 \\
-\bottomrule
-\end{tabular}
-\end{table*}
+% \begin{table*}[!htbp]
+% \centering
+% \caption{Performance Comparison on the EXP1 Dataset (Seed 42)}
+% \label{tab:exp1_comparison}
+% \renewcommand{\arraystretch}{1.15}
+% \small
+% \begin{tabular}{lcccccc}
+% \toprule
+% \textbf{Network} & \textbf{Acc} & \textbf{F1} & \textbf{G-Mean} & \textbf{AUC} & \textbf{$\kappa$} & \textbf{Params (M)} \\
+% \midrule
+% \textbf{MSCA-VGG16 (Ours)} & \textbf{95.1} & \textbf{92.9} & \textbf{90.3} & 99.9 & \textbf{94.3} & 26.8 \\
+% VGG16 & 94.7 & 91.9 & 89.0 & \textbf{99.9} & 93.8 & 15.3 \\
+% EfficientNet-B0 & 91.0 & 86.7 & 83.1 & 98.9 & 89.5 & 4.0 \\
+% ViT & 88.0 & 84.1 & 82.3 & 99.2 & 85.9 & 11.0 \\
+% MobileNetV3-Small & 84.7 & 79.3 & 75.0 & 98.2 & 82.0 & 1.5 \\
+% ConvNeXt-Tiny & 76.4 & 66.0 & 45.1 & 97.1 & 72.3 & 27.8 \\
+% \bottomrule
+% \end{tabular}
+% \end{table*}
 
-\begin{table*}[!htbp]
-\centering
-\caption{Training Summary and Leakage Check}
-\label{tab:exp1_training}
-\renewcommand{\arraystretch}{1.15}
-\small
-\begin{tabular}{lccccc}
-\toprule
-\textbf{Network} & \textbf{Best Epoch} & \textbf{Val F1} & \textbf{Params (M)} & \textbf{FLOPs (M)} & \textbf{Shuffled Acc} \\
-\midrule
-\textbf{MSCA-VGG16 (Ours)} & 24 & 99.8 & 26.8 & 15947 & 15.7 \\
-VGG16 & 30 & 99.8 & 15.3 & 15394 & 15.6 \\
-EfficientNet-B0 & 14 & 92.0 & 4.0 & 15338 & 15.7 \\
-ViT & 29 & 78.8 & 11.0 & 65 & 15.5 \\
-MobileNetV3-Small & 30 & 84.3 & 1.5 & 1845 & 15.8 \\
-ConvNeXt-Tiny & 18 & 95.3 & 27.8 & 25708 & 15.5 \\
-\bottomrule
-\end{tabular}
-\end{table*}
+\input{auto_tables/backbone_comparison_table.tex}
+
+
+% \begin{table*}[!htbp]
+% \centering
+% \caption{Training Summary and Leakage Check}
+% \label{tab:exp1_training}
+% \renewcommand{\arraystretch}{1.15}
+% \small
+% \begin{tabular}{lccccc}
+% \toprule
+% \textbf{Network} & \textbf{Best Epoch} & \textbf{Val F1} & \textbf{Params (M)} & \textbf{FLOPs (M)} & \textbf{Shuffled Acc} \\
+% \midrule
+% \textbf{MSCA-VGG16 (Ours)} & 24 & 99.8 & 26.8 & 15947 & 15.7 \\
+% VGG16 & 30 & 99.8 & 15.3 & 15394 & 15.6 \\
+% EfficientNet-B0 & 14 & 92.0 & 4.0 & 15338 & 15.7 \\
+% ViT & 29 & 78.8 & 11.0 & 65 & 15.5 \\
+% MobileNetV3-Small & 30 & 84.3 & 1.5 & 1845 & 15.8 \\
+% ConvNeXt-Tiny & 18 & 95.3 & 27.8 & 25708 & 15.5 \\
+% \bottomrule
+% \end{tabular}
+% \end{table*}
 
 % \begin{figure*}[!htbp]
 % 	\centering

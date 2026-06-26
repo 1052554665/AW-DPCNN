@@ -45,7 +45,7 @@ METRIC_DISPLAY_NAMES = {
 # Keys to format as percentage (multiply × 100)
 _PERCENT_KEYS = {
     "test_acc", "test_precision", "test_recall", "test_f1",
-    "test_gmean", "test_bal_acc", "test_auc", "best_val_f1",
+    "test_gmean", "test_bal_acc", "test_auc", "test_kappa", "best_val_f1",
 }
 
 # Keys to format as integer

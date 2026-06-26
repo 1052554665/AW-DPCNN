@@ -24,6 +24,7 @@ Outputs a consolidated CSV summary in ``experiments/ablation_results/``.
 
 Usage::
 
+    # Single trial (default)
     python scripts/run_ablation_experiments.py --epochs 30
 
     # Dry‑run
@@ -31,6 +32,18 @@ Usage::
 
     # Single experiment
     python scripts/run_ablation_experiments.py --exp-ids B0,B8
+
+    # Specific trial seed
+    python scripts/run_ablation_experiments.py --trial trial_seed456
+
+    # Three independent trials with aggregation (mean ± std)
+    python scripts/run_ablation_experiments.py --num-trials 3
+
+    # Custom trial seeds
+    python scripts/run_ablation_experiments.py --trial-seeds 42,123,456,789
+
+    # Continue on error
+    python scripts/run_ablation_experiments.py --num-trials 3 --continue-on-error
 """
 
 import argparse
@@ -90,6 +103,8 @@ EXPERIMENTS: List[Dict] = [
 ]
 
 OUTPUT_ROOT = Path("experiments/ablation_results")
+DEFAULT_TRIAL = "trial_seed42"
+DEFAULT_TRIAL_SEEDS = [42, 123, 456]
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -124,18 +139,49 @@ def build_config(base_cfg: Dict, exp: Dict, num_classes: int,
 #  CLI
 # ═══════════════════════════════════════════════════════════════════════
 
+def _parse_seed_from_trial(trial: str) -> int:
+    """Extract seed integer from trial name, e.g. 'trial_seed42' → 42."""
+    import re
+    m = re.search(r"seed(\d+)", trial)
+    if m:
+        return int(m.group(1))
+    # Fallback: hash the trial string to get a deterministic seed
+    return abs(hash(trial)) % (2**31)
+
+
 def main():
     parser = argparse.ArgumentParser(description="Unified B0–B8 ablation runner")
     parser.add_argument("--config", default="configs/default.yaml")
     parser.add_argument("--epochs", type=int, default=30)
-    parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--seed", type=int, default=None,
+                        help="Random seed for single-trial mode (auto-derived from --trial)")
+    parser.add_argument("--trial", default=DEFAULT_TRIAL,
+                        help=f"Trial name for single-trial mode (default: {DEFAULT_TRIAL})")
+    parser.add_argument("--num-trials", type=int, default=1,
+                        help=f"Number of independent trials (default: 1; uses first N of {DEFAULT_TRIAL_SEEDS})")
+    parser.add_argument("--trial-seeds", default=None,
+                        help="Comma-separated seeds, e.g. 42,123,456 (overrides --num-trials)")
     parser.add_argument("--device", default="auto")
     parser.add_argument("--exp-ids", default="all",
                         help="Comma‑separated IDs, e.g. B0,B4,B8")
+    parser.add_argument("--continue-on-error", action="store_true",
+                        help="Continue remaining trials after a failure")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
-    # Filter
+    # ── Resolve trial seeds ──
+    if args.trial_seeds:
+        seeds = [int(s.strip()) for s in args.trial_seeds.split(",")]
+    elif args.num_trials > 1:
+        seeds = DEFAULT_TRIAL_SEEDS[:args.num_trials]
+    else:
+        # Single-trial mode: use --seed or derive from --trial
+        single_seed = args.seed if args.seed is not None else _parse_seed_from_trial(args.trial)
+        seeds = [single_seed]
+
+    multi_trial = len(seeds) > 1
+
+    # ── Filter experiments ──
     if args.exp_ids == "all":
         selected = EXPERIMENTS
     else:
@@ -146,6 +192,7 @@ def main():
         print("[ERROR] No experiments selected.")
         sys.exit(1)
 
+    print(f"Trials:   {len(seeds)}  seeds={seeds}")
     print(f"Experiments: {len(selected)}")
     for e in selected:
         print(f"  {e['id']}: {e['desc']}  [{e['model']}]")
@@ -157,14 +204,14 @@ def main():
     base_config = load_yaml(args.config)
     device = torch.device("cuda" if (args.device == "auto" and
                           torch.cuda.is_available()) else args.device)
-    seed = args.seed
     epochs = args.epochs
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     results_table: List[Dict] = []
 
+    # ── Run experiments ──
     for idx, exp in enumerate(selected, 1):
         eid = exp["id"]
-        print(f"\n{'─'*70}\n[{idx}/{len(selected)}]  {eid}: {exp['desc']}\n{'─'*70}")
+        print(f"\n{'═'*70}\n  [{idx}/{len(selected)}]  {eid}: {exp['desc']}\n{'═'*70}")
 
         ds_path = Path(exp["dataset"])
         if not ds_path.is_dir():
@@ -181,71 +228,175 @@ def main():
             print(f"  [SKIP] {num_classes} class(es)")
             continue
 
-        config = build_config(base_config, exp, num_classes, seed, epochs)
-        run_dir = prepare_run_dir(config)
-        run_dir.mkdir(parents=True, exist_ok=True)
-        set_seed(seed)
+        # ── Run each trial ──
+        trial_dirs: List[Path] = []
+        trial_metrics: List[Dict] = []
+        for trial_idx, seed in enumerate(seeds, 1):
+            label = f"Trial {trial_idx}/{len(seeds)}" if multi_trial else "Trial"
+            print(f"\n  [{label}] seed={seed}")
 
-        try:
-            results = train_and_evaluate(config, run_dir, device, seed=seed)
-        except Exception as exc:
-            print(f"  [FAIL] {exc}")
+            config = build_config(base_config, exp, num_classes, seed, epochs)
+            run_dir = prepare_run_dir(config)
+            run_dir.mkdir(parents=True, exist_ok=True)
+            set_seed(seed)
+
+            try:
+                results = train_and_evaluate(config, run_dir, device, seed=seed)
+            except Exception as exc:
+                print(f"  [FAIL] {exc}")
+                if not args.continue_on_error:
+                    print(f"  [STOP] Use --continue-on-error to skip failures.")
+                    break
+                continue
+
+            dump_json(run_dir / "results" / "test_metrics.json", results)
+            trial_dirs.append(run_dir)
+            trial_metrics.append(results)
+
+            def _p(v): return f"{v*100:.2f}" if v == v else "N/A"
+            print(f"    Acc={_p(results.get('test_acc', float('nan')))}%  "
+                  f"F1={_p(results.get('test_f1', float('nan')))}%  "
+                  f"G-mean={_p(results.get('test_gmean', float('nan')))}%")
+
+        if not trial_dirs:
             results_table.append({"exp_id": eid, "desc": exp["desc"],
-                                  "acc": float("nan"), "error": str(exc)})
+                                  "acc": float("nan"), "error": "all trials failed"})
             continue
 
-        dump_json(run_dir / "results" / "test_metrics.json", results)
+        # ── Aggregate across trials ──
+        if len(trial_dirs) >= 2:
+            from src.utils.aggregation import aggregate_and_save
+            agg_dir = trial_dirs[0].parent / "aggregated"
+            title = f"Ablation {eid} — {exp['desc']} ({len(trial_dirs)} trials)"
+            aggregated = aggregate_and_save(trial_dirs, agg_dir, title=title)
+            print(f"  Aggregated → {agg_dir}")
+        else:
+            aggregated = None
+
+        # ── Build summary row ──
+        def _agg(key, fallback=float("nan")):
+            if aggregated and key in aggregated:
+                return aggregated[key]["mean"]
+            if trial_metrics:
+                return float(trial_metrics[0].get(key, fallback))
+            return fallback
+
+        def _agg_std(key, fallback=float("nan")):
+            if aggregated and key in aggregated:
+                return aggregated[key]["std"]
+            return fallback
+
+        awdpcnn_label = ("γ=10" if eid in ("B4","B5","B6","B7","B8")
+                         else "γ=1" if eid == "B3"
+                         else "none" if eid in ("B0","B1") else "concat")
 
         row = {
             "exp_id": eid, "desc": exp["desc"],
             "model": exp["model"],
-            "awdpcnn": ("γ=10" if eid in ("B4","B5","B6","B7","B8")
-                        else "γ=1" if eid == "B3"
-                        else "none" if eid in ("B0","B1") else "concat"),
+            "awdpcnn": awdpcnn_label,
             "ms": "✓" if exp["ms"] else "✗",
             "ca": "✓" if exp["ca"] else "✗",
             "eh": "✓" if exp["eh"] else "✗",
-            "acc": float(results.get("test_acc", float("nan"))),
-            "f1": float(results.get("test_f1", float("nan"))),
-            "gmean": float(results.get("test_gmean", float("nan"))),
-            "kappa": float(results.get("test_kappa", float("nan"))),
-            "auc": float(results.get("test_auc", float("nan"))),
+            "trials": len(trial_dirs),
+            "acc": _agg("test_acc"),
+            "acc_std": _agg_std("test_acc"),
+            "f1": _agg("test_f1"),
+            "f1_std": _agg_std("test_f1"),
+            "gmean": _agg("test_gmean"),
+            "gmean_std": _agg_std("test_gmean"),
+            "kappa": _agg("test_kappa"),
+            "kappa_std": _agg_std("test_kappa"),
+            "auc": _agg("test_auc"),
+            "auc_std": _agg_std("test_auc"),
             "error": "",
         }
         results_table.append(row)
 
-        def _p(v): return f"{v*100:.2f}" if v == v else "N/A"
-        print(f"  Acc={_p(row['acc'])}%  F1={_p(row['f1'])}%  "
-              f"G-mean={_p(row['gmean'])}%  κ={_p(row['kappa'])}%")
+    # ═══════════════════════════════════════════════════════════════════
+    #  Summary
+    # ═══════════════════════════════════════════════════════════════════
+    print(f"\n{'='*80}\n  ABLATION SUMMARY  ({len(seeds)} trial(s) each)\n{'='*80}")
+    if not results_table:
+        print("  No results.")
+        print(f"\n{'='*80}\n  Done.\n{'='*80}")
+        return
 
-    # ── Summary ──
-    print(f"\n{'='*80}\n  ABLATION SUMMARY\n{'='*80}")
-    if results_table:
-        csv_path = OUTPUT_ROOT / f"ablation_summary_{ts}.csv"
-        csv_path.parent.mkdir(parents=True, exist_ok=True)
-        keys = ["exp_id", "desc", "model", "awdpcnn", "ms", "ca", "eh",
-                "acc", "f1", "gmean", "kappa", "auc"]
-        with open(csv_path, "w", newline="") as f:
-            w = csv.DictWriter(f, fieldnames=keys, extrasaction="ignore")
-            w.writeheader()
-            w.writerows(results_table)
-        print(f"CSV: {csv_path}")
+    # ── CSV ──
+    csv_path = OUTPUT_ROOT / f"ablation_summary_{ts}.csv"
+    csv_path.parent.mkdir(parents=True, exist_ok=True)
+    keys = ["exp_id", "desc", "model", "awdpcnn", "ms", "ca", "eh", "trials",
+            "acc", "acc_std", "f1", "f1_std", "gmean", "gmean_std",
+            "kappa", "kappa_std", "auc", "auc_std"]
+    with open(csv_path, "w", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=keys, extrasaction="ignore")
+        w.writeheader()
+        w.writerows(results_table)
+    print(f"CSV: {csv_path}")
 
-        # Ranked table
-        ranked = sorted(results_table, key=lambda r: r.get("acc", 0.0),
-                        reverse=True)
+    # ── Markdown table ──
+    md_path = OUTPUT_ROOT / f"ablation_summary_{ts}.md"
+    md_lines = [
+        "# Ablation Study Results",
+        "",
+        f"**Trials**: {len(seeds)} independent runs per experiment.",
+        f"**Seeds**: {seeds}",
+        "",
+        "| ID | Description | AW-DPCNN | MS | CA | EH | Acc (%) | F1 (%) | G-Mean (%) | κ (%) |",
+        "|----|-------------|----------|----|----|----|---------|--------|------------|-------|",
+    ]
+
+    ranked = sorted(results_table,
+                    key=lambda r: (r.get("acc", float("nan"))
+                                   if r.get("acc", float("nan")) == r.get("acc", float("nan"))
+                                   else float("-inf")),
+                    reverse=True)
+
+    # ── Console ──
+    if multi_trial:
+        hdr = (f"{'ID':<4} {'AW-DPCNN':>10} {'MS':>4} {'CA':>4} {'EH':>4}  "
+               f"{'Acc %':>14} {'F1 %':>14} {'G-mean %':>14} {'κ %':>14}")
+    else:
         hdr = (f"{'ID':<4} {'AW-DPCNN':>10} {'MS':>4} {'CA':>4} {'EH':>4}  "
                f"{'Acc %':>7} {'F1 %':>7} {'G-mean %':>9} {'κ %':>7}")
-        print(hdr)
-        print("─" * len(hdr))
-        for r in ranked:
-            def _f(v): return f"{v*100:6.2f}" if isinstance(v, float) and v == v else "   N/A"
+    print(hdr)
+    print("─" * len(hdr))
+
+    for r in ranked:
+        acc = r.get("acc", float("nan"))
+        f1 = r.get("f1", float("nan"))
+        gm = r.get("gmean", float("nan"))
+        ka = r.get("kappa", float("nan"))
+
+        if multi_trial:
+            acc_s = r.get("acc_std", float("nan"))
+            f1_s = r.get("f1_std", float("nan"))
+            gm_s = r.get("gmean_std", float("nan"))
+            ka_s = r.get("kappa_std", float("nan"))
+            def _fs(m, s):
+                if isinstance(m, float) and m == m:
+                    return f"{m*100:5.2f}±{s*100:.2f}"
+                return "        N/A"
             print(f"{r['exp_id']:<4} {r['awdpcnn']:>10} {r['ms']:>4} "
                   f"{r['ca']:>4} {r['eh']:>4}  "
-                  f"{_f(r.get('acc',float('nan')))}  "
-                  f"{_f(r.get('f1',float('nan')))}  "
-                  f"{_f(r.get('gmean',float('nan')))}  "
-                  f"{_f(r.get('kappa',float('nan')))}")
+                  f"{_fs(acc, acc_s):>14}  {_fs(f1, f1_s):>14}  "
+                  f"{_fs(gm, gm_s):>14}  {_fs(ka, ka_s):>14}")
+            # Markdown row
+            md_lines.append(
+                f"| {r['exp_id']} | {r['desc']} | {r['awdpcnn']} | {r['ms']} | {r['ca']} | {r['eh']} | "
+                f"{_fs(acc, acc_s)} | {_fs(f1, f1_s)} | {_fs(gm, gm_s)} | {_fs(ka, ka_s)} |")
+        else:
+            def _f(v):
+                return f"{v*100:6.2f}" if isinstance(v, float) and v == v else "   N/A"
+            print(f"{r['exp_id']:<4} {r['awdpcnn']:>10} {r['ms']:>4} "
+                  f"{r['ca']:>4} {r['eh']:>4}  "
+                  f"{_f(acc)}  {_f(f1)}  {_f(gm)}  {_f(ka)}")
+            md_lines.append(
+                f"| {r['exp_id']} | {r['desc']} | {r['awdpcnn']} | {r['ms']} | {r['ca']} | {r['eh']} | "
+                f"{_f(acc)} | {_f(f1)} | {_f(gm)} | {_f(ka)} |")
+
+    with open(md_path, "w") as f:
+        f.write("\n".join(md_lines))
+    print(f"\nMD:  {md_path}")
 
     print(f"\n{'='*80}\n  Done.\n{'='*80}")
 
