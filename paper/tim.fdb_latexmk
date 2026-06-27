@@ -1,12 +1,12 @@
 # Fdb version 3
-["bibtex tim"] 1782531030 "tim.aux" "tim.bbl" "tim" 1782531032
+["bibtex tim"] 1782534354 "tim.aux" "tim.bbl" "tim" 1782534356
   "./IEEEtran.bst" 1440622569 57748 7c8250ecf02814ce6ddc0cdbb63df1dd ""
   "references.bib" 1782531018 49405 a3dbf4086fd613e719a807379af065f8 ""
-  "tim.aux" 1782531032 14039 8e36ed19d32e4a8a8c312bf863bd16f8 "pdflatex"
+  "tim.aux" 1782534356 13994 0d43c0fc3bd14c84dce23c0236f1145c "pdflatex"
   (generated)
   "tim.bbl"
   "tim.blg"
-["pdflatex"] 1782531030 "tim.tex" "tim.pdf" "tim" 1782531032
+["pdflatex"] 1782534354 "tim.tex" "tim.pdf" "tim" 1782534356
   "/etc/texmf/web2c/texmf.cnf" 1769606936 475 c0e671620eb5563b2130f56340a5fde8 ""
   "/home/yangchen/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm0900.600pk" 1782469769 10448 132a8d0d28ee7f387da3d0c5938b4c12 ""
   "/home/yangchen/git_clone/AW-DPCNN/experiments/ablation_results/B0/ablation_B0/trial_seed42/figures/tsne.png" 1782444861 286847 2c9edb8c6551647293a6c3ce82ea3ebd ""
@@ -151,6 +151,7 @@
   "MSCA-VGG16/MSCA-VGG16.pdf" 1778212560 538373 6367a34e7315517c8bfeed110ede4c09 ""
   "auto_tables/ablation_table.tex" 1782530467 2282 43cbe118f5c6ff9fc240bef722413f56 ""
   "auto_tables/backbone_comparison_table.tex" 1782530467 1638 f36f09c9ae72546f827a30125f3e8d24 ""
+  "auto_tables/external_comparison_table.tex" 1782534322 2035 61de170791c618e9a64d3320055850b7 ""
   "auto_tables/hyperparam_sensitivity_table.tex" 1782530467 1441 75364f8924960dc93d0f0441aae2923d ""
   "auto_tables/noise_robustness_table.tex" 1782530467 1079 775a169733b69837ae2f10f6888ea9b4 ""
   "auto_tables/rep_compare_table.tex" 1782530467 2477 b33c1642d25b92ce66179bb9afdfcd1a ""
@@ -165,9 +166,9 @@
   "framework/framework.pdf" 1779873656 58920 9df1984f24c72a0ec8a444675b68991c ""
   "representation//98_Normal_1_00000 copy.png" 1782370670 23263 07724e91b952e15464559b6382b07458 ""
   "representation//98_Normal_1_00000.png" 1782370612 130544 8575066df03a6352ff663cd85dff11b4 ""
-  "tim.aux" 1782531032 14039 8e36ed19d32e4a8a8c312bf863bd16f8 "pdflatex"
-  "tim.bbl" 1782531030 11988 8250702b7e28db6fd96e04116efa2bd3 "bibtex tim"
-  "tim.tex" 1782530965 114847 0d2f48719684f929eb40aff11f5f479e ""
+  "tim.aux" 1782534356 13994 0d43c0fc3bd14c84dce23c0236f1145c "pdflatex"
+  "tim.bbl" 1782534354 8945 2021d809bdcc1d9c89be52dd8382886d "bibtex tim"
+  "tim.tex" 1782534342 116709 cfcac6768672141ac157759ed726f94b ""
   "tsne_models//tsne_convnext_tiny.png" 1782441459 314512 357cd0e85e66600acb0f7785f250f8f7 ""
   "tsne_models//tsne_cwru_de_raw_input.png" 1782441476 245606 935360f2eef44b4cdddd4956e96994e7 ""
   "tsne_models//tsne_efficientnet_b0.png" 1782441461 229383 4e6c56a793d2d91ad11e9d190b21fff3 ""
