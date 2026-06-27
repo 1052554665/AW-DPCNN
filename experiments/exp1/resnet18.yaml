@@ -1,0 +1,30 @@
+# python scripts/train.py \
+#     --config configs/default.yaml \
+#     --exp-config experiments/exp1/resnet18.yaml
+
+experiment_name: exp1_resnet18
+device: cuda
+
+model:
+  name: resnet18
+  num_classes: 10
+  pretrained: false  # ImageNet features don't transfer to spectrograms
+
+train:
+  epochs: 30
+  lr: 1e-4
+  optimizer: adamw
+  weight_decay: 1e-3
+
+scheduler:
+  type: plateau
+  mode: max
+  factor: 0.5
+  patience: 5
+  min_lr: 0.000001
+
+visualization:
+  tsne: true
+
+output:
+  root_dir: ./experiments/experiment_result/exp1/resnet18

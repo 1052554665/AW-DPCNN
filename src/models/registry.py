@@ -4,6 +4,7 @@ from src.models.convnext_tiny import ConvNeXtTiny
 from src.models.efficientnet import EfficientNetB0
 from src.models.mobilenetv3 import MobileNetV3Small
 from src.models.MSCA_VGG16 import MSCA_VGG16
+from src.models.resnet18 import ResNet18
 from src.models.vgg16 import VGG16
 from src.models.vit import ViT
 
@@ -16,6 +17,9 @@ def build_model(config: Dict):
 
     if name == "vgg16":
         return VGG16(num_classes=num_classes, pretrained=pretrained)
+
+    if name in {"resnet18", "resnet-18"}:
+        return ResNet18(num_classes=num_classes, pretrained=pretrained)
 
     if name in {"convnext_tiny", "convnext-tiny"}:
         return ConvNeXtTiny(num_classes=num_classes, pretrained=pretrained)

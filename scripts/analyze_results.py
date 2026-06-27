@@ -65,6 +65,7 @@ ABLATION_EXPS = [
 # ── Exp1 model display names ──
 EXP1_MODELS = [
     ("MSCA_VGG16",      "MSCA-VGG16 (Ours)"),
+    ("resnet18",        "ResNet18"),
     ("vgg16",           "VGG16"),
     ("efficientnet_b0", "EfficientNet-B0"),
     ("vit",             "ViT"),
