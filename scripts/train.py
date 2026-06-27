@@ -12,6 +12,7 @@ import torch
 
 from src.trainers.workflow import train_and_evaluate
 from src.utils.config import load_config, save_yaml
+from src.utils.dataset_registry import DATASET_KEYS
 from src.utils.experiment import dump_json, prepare_run_dir, set_seed
 
 
@@ -19,6 +20,10 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Unified training entrypoint for AW-DPCNN experiments.")
     parser.add_argument("--config", default="configs/default.yaml", help="Base config YAML path")
     parser.add_argument("--exp-config", default="", help="Experiment override YAML path")
+    parser.add_argument("--dataset", default="", choices=[""] + DATASET_KEYS,
+                        help=f"Override dataset root_dir {{{','.join(DATASET_KEYS)}}}")
+    parser.add_argument("--output-root", default="",
+                        help="Override output root_dir")
     parser.add_argument("--device", default="", help="Override device (e.g. cuda, cuda:0, cpu)")
     parser.add_argument("--seed", type=int, default=None, help="Override random seed (for repeated trials)")
     return parser.parse_args()
@@ -58,6 +63,18 @@ def resolve_device(config_device: str, cli_device: str) -> torch.device:
 def main():
     args = parse_args()
     config = load_config(args.config, args.exp_config)
+
+    # --- Dataset / output overrides ---
+    if args.dataset:
+        from src.utils.dataset_registry import get_dataset_config
+        ds_cfg = get_dataset_config(args.dataset)
+        config.setdefault("dataset", {})
+        config["dataset"]["root_dir"] = ds_cfg["root_dir"]
+        print(f"[dataset] Override: {args.dataset} -> {ds_cfg['root_dir']}")
+    if args.output_root:
+        config.setdefault("output", {})
+        config["output"]["root_dir"] = args.output_root
+        print(f"[output] Override root_dir -> {args.output_root}")
 
     seed = args.seed if args.seed is not None else int(config.get("seed", 42))
     set_seed(seed)

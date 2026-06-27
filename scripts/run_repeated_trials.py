@@ -60,6 +60,8 @@ _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
+from src.utils.dataset_registry import DATASET_KEYS  # noqa: E402
+
 # ── Default seeds for independent trials ─────────────────────────────
 # Chosen to be well-separated and reproducible.
 DEFAULT_TRIAL_SEEDS = [42, 123, 456, 789, 1024]
@@ -83,6 +85,14 @@ def parse_args() -> argparse.Namespace:
         "--exp-dir",
         default="",
         help="Directory containing multiple experiment YAML files (batch mode)",
+    )
+    parser.add_argument(
+           "--datasets", nargs="+", default=["12k_de"], choices=DATASET_KEYS,
+        help=f"Dataset(s) {{{','.join(DATASET_KEYS)}}} (default: 12k_de)",
+    )
+    parser.add_argument(
+        "--output-root", default="",
+        help="Override output.root_dir (default: use config)",
     )
     parser.add_argument(
         "--pattern",
@@ -165,6 +175,8 @@ def run_single_trial(
     seed: int,
     device: str,
     trial_label: str,
+    dataset: str = "",
+    output_root: str = "",
     dry_run: bool = False,
 ) -> Optional[int]:
     """Run a single training trial with the given seed.
@@ -183,8 +195,13 @@ def run_single_trial(
     ]
     if device:
         command.extend(["--device", device])
+    if dataset:
+        command.extend(["--dataset", dataset])
+    if output_root:
+        command.extend(["--output-root", output_root])
 
-    print(f"  [{trial_label}] Seed={seed}")
+    print(f"  [{trial_label}] Seed={seed}"
+          + (f"  dataset={dataset}" if dataset else ""))
     print(f"  Command: {' '.join(command)}")
     if dry_run:
         return None
@@ -193,11 +210,22 @@ def run_single_trial(
     return result.returncode
 
 
-def build_output_dir(base_config: str, exp_config: Path) -> Path:
-    """Infer the aggregation output directory from the merged config."""
+def build_output_dir(base_config: str, exp_config: Path,
+                      output_root: str = "", dataset: str = "") -> Path:
+    """Infer the aggregation output directory from the merged config.
+
+    If *output_root* or *dataset* are given, they override the config values.
+    """
     from src.utils.config import load_config
+    from src.utils.dataset_registry import get_dataset_config
+
     config = load_config(base_config, str(exp_config))
-    root = config.get("output", {}).get("root_dir", "experiments/runs")
+    root = output_root or config.get("output", {}).get("root_dir", "experiments/runs")
+
+    # Append dataset suffix if overriding
+    if dataset:
+        root = str(Path(root) / dataset)
+
     return Path(root).resolve() / "aggregated"
 
 
@@ -209,6 +237,8 @@ def run_repeated_trials(
     continue_on_error: bool = False,
     dry_run: bool = False,
     aggregate_only: bool = False,
+    dataset: str = "",
+    output_root: str = "",
 ) -> int:
     """Run repeated trials for a single experiment config."""
     exp_name = exp_config.stem
@@ -217,14 +247,16 @@ def run_repeated_trials(
     print(f"Trials: {len(seeds)} seeds → {seeds}")
     print(f"{'='*60}")
 
-    agg_dir = build_output_dir(base_config, exp_config)
+    agg_dir = build_output_dir(base_config, exp_config,
+                                output_root=output_root, dataset=dataset)
     trial_dirs: List[Path] = []
 
     for i, seed in enumerate(seeds, start=1):
         label = f"Trial {i}/{len(seeds)}"
         if not aggregate_only:
             exit_code = run_single_trial(
-                base_config, exp_config, seed, device, label, dry_run,
+                base_config, exp_config, seed, device, label,
+                dataset=dataset, output_root=output_root, dry_run=dry_run,
             )
             if exit_code is not None and exit_code != 0:
                 msg = f"Trial {i} (seed={seed}) failed with exit code {exit_code}"
@@ -302,22 +334,30 @@ def main() -> int:
 
     print(f"Seeds: {seeds}")
     print(f"Configs to run: {len(exp_configs)}")
+    print(f"Datasets: {args.datasets}")
+    if args.output_root:
+        print(f"Output root: {args.output_root}")
 
     overall_exit = 0
-    for exp_config in exp_configs:
-        exit_code = run_repeated_trials(
-            base_config=args.config,
-            exp_config=exp_config,
-            seeds=seeds,
-            device=args.device,
-            continue_on_error=args.continue_on_error,
-            dry_run=args.dry_run,
-            aggregate_only=args.aggregate_only,
-        )
-        if exit_code != 0:
-            overall_exit = exit_code
-            if not args.continue_on_error:
-                return overall_exit
+    for dataset in args.datasets:
+        if len(args.datasets) > 1:
+            print(f"\n{'='*60}\n  Dataset: {dataset}\n{'='*60}")
+        for exp_config in exp_configs:
+            exit_code = run_repeated_trials(
+                base_config=args.config,
+                exp_config=exp_config,
+                seeds=seeds,
+                device=args.device,
+                continue_on_error=args.continue_on_error,
+                dry_run=args.dry_run,
+                aggregate_only=args.aggregate_only,
+                dataset=dataset,
+                output_root=args.output_root,
+            )
+            if exit_code != 0:
+                overall_exit = exit_code
+                if not args.continue_on_error:
+                    return overall_exit
 
     return overall_exit
 

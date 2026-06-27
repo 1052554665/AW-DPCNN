@@ -3,6 +3,7 @@ experiments/experiment_result/
 experiments/hyperparameter_sensitivity/
 experiments/noise_robustness/
 experiments/ablation_results/
+experiments/runs_48k/
 __pycache__/
 *.py[cod]
 *$py.class

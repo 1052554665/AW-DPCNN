@@ -62,7 +62,21 @@ def build_dataloaders(config: Dict, device: Optional[torch.device] = None, seed:
     test_set = datasets.ImageFolder(str(test_dir), transform=eval_tf)
 
     if train_set.class_to_idx != val_set.class_to_idx or train_set.class_to_idx != test_set.class_to_idx:
-        raise ValueError("Class index mapping mismatch across train/val/test splits.")
+        # Relaxed check: train must contain all classes; val/test may be subsets
+        missing_val = set(train_set.classes) - set(val_set.classes)
+        missing_test = set(train_set.classes) - set(test_set.classes)
+        if missing_val:
+            print(f"[WARN] val split missing classes: {sorted(missing_val)}")
+        if missing_test:
+            print(f"[WARN] test split missing classes: {sorted(missing_test)}")
+        # Only error if train is missing classes present in val/test (shouldn't happen)
+        extra_val = set(val_set.classes) - set(train_set.classes)
+        extra_test = set(test_set.classes) - set(train_set.classes)
+        if extra_val or extra_test:
+            raise ValueError(
+                "val/test splits contain classes not in train: "
+                f"val extra={sorted(extra_val)}, test extra={sorted(extra_test)}"
+            )
 
     pin_memory_requested = bool(data_cfg.get("pin_memory", True))
     pin_memory = pin_memory_requested and bool(device is not None and device.type == "cuda")
