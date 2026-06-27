@@ -13,16 +13,20 @@ import torch.nn as nn
 
 
 def compute_metrics(y_true, y_pred):
-    acc = accuracy_score(y_true, y_pred)
-    precision = precision_score(y_true, y_pred, average='macro', zero_division=0)
-    recall = recall_score(y_true, y_pred, average='macro', zero_division=0)
-    f1 = f1_score(y_true, y_pred, average='macro', zero_division=0)
+    import warnings
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", message=".*y_pred contains classes not in y_true.*")
+        warnings.filterwarnings("ignore", message=".*Only one class.*")
+        acc = accuracy_score(y_true, y_pred)
+        precision = precision_score(y_true, y_pred, average='macro', zero_division=0)
+        recall = recall_score(y_true, y_pred, average='macro', zero_division=0)
+        f1 = f1_score(y_true, y_pred, average='macro', zero_division=0)
 
-    recall_per_class = recall_score(y_true, y_pred, average=None, zero_division=0)
-    g_mean = gmean(recall_per_class + 1e-6)
+        recall_per_class = recall_score(y_true, y_pred, average=None, zero_division=0)
+        g_mean = gmean(recall_per_class + 1e-6)
 
-    bal_acc = balanced_accuracy_score(y_true, y_pred)
-    kappa = cohen_kappa_score(y_true, y_pred)
+        bal_acc = balanced_accuracy_score(y_true, y_pred)
+        kappa = cohen_kappa_score(y_true, y_pred)
 
     return acc, precision, recall, f1, g_mean, bal_acc, kappa
 
@@ -53,12 +57,15 @@ def compute_roc_auc(y_true, y_score, num_classes: int, average: str = "macro"):
     y_true_onehot = np.zeros((n_samples, num_classes), dtype=int)
     y_true_onehot[np.arange(n_samples), y_true] = 1
 
-    return roc_auc_score(
-        y_true_onehot,
-        y_score,
-        average=average,
-        multi_class="ovr",
-    )
+    import warnings
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=UserWarning)
+        try:
+            return roc_auc_score(
+                y_true_onehot, y_score, average=average, multi_class="ovr",
+            )
+        except ValueError:
+            return float("nan")
 
 
 # ---------------------------------------------------------------------------

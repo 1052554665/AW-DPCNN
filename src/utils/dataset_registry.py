@@ -21,7 +21,7 @@ from pathlib import Path
 DATASET_CONFIGS = {
     "12k_de": {
         "name": "CWRU 12k Drive-End",
-        "root_dir": "datasets/cwru_de",
+        "root_dir": "datasets/cwru_12k_de",
         "src_dir": "raw-data/CWRU-dataset/12k_Drive_End_Bearing_Fault_Data",
         "normal_dir": "raw-data/CWRU-dataset/Normal",
         "sensor_key": "DE_time",
@@ -35,7 +35,7 @@ DATASET_CONFIGS = {
     },
     "12k_fe": {
         "name": "CWRU 12k Fan-End",
-        "root_dir": "datasets/cwru_fe",
+        "root_dir": "datasets/cwru_12k_fe",
         "src_dir": "raw-data/CWRU-dataset/12k_Fan_End_Bearing_Fault_Data",
         "normal_dir": "raw-data/CWRU-dataset/Normal",
         "sensor_key": "FE_time",
@@ -49,7 +49,7 @@ DATASET_CONFIGS = {
     },
     "48k_de": {
         "name": "CWRU 48k Drive-End",
-        "root_dir": "datasets/cwru_de_48k",
+        "root_dir": "datasets/cwru_48k_de",
         "src_dir": "raw-data/CWRU-dataset/48k_Drive_End_Bearing_Fault_Data",
         "normal_dir": "raw-data/CWRU-dataset/Normal",
         "sensor_key": "DE_time",

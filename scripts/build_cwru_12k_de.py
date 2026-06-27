@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-AW-DPCNN Dataset Builder — CWRU 48kHz Drive End (10‑class)
+AW-DPCNN Dataset Builder — CWRU 12kHz Drive End (10‑class)
 ============================================================
 
-Builds AW-DPCNN fused images from the **48 kHz drive‑end** bearing fault
+Builds AW-DPCNN fused images from the **12 kHz drive-end** bearing fault
 data of the CWRU dataset.  The output is a 10‑class ImageFolder‑compatible
 directory.
 
@@ -16,45 +16,25 @@ Target classes
 
 Data source
 -----------
-  raw-data/CWRU-dataset/48k_Drive_End_Bearing_Fault_Data/
+  raw-data/CWRU-dataset/12k_Drive_End_Bearing_Fault_Data/
     B/{007,014,021}/           (ball fault .mat files)
     IR/{007,014,021}/          (inner race .mat files)
     OR/{007,014,021}/@6/       (outer race @ 6 o'clock)
   raw-data/CWRU-dataset/Normal/ (normal baseline .mat files)
 
-Purpose — Cross‑Sampling‑Rate Generalization
----------------------------------------------
-  The 12k DE dataset uses a 12 kHz acquisition rate; the 48k DE dataset
-  uses 48 kHz.  Testing on 48k data evaluates robustness to **sampling
-  rate** — a critical challenge for acoustic fault diagnosis where
-  different acquisition hardware may operate at different rates.
-
-  Key differences from 12k DE:
-    - Sampling rate:  48,000 Hz  (4× higher)
-    - Window length:   8,192 samples  (4× longer to maintain ~170 ms)
-    - Hop length:      4,096 samples  (50% overlap)
-    - STFT size:       4,096  (larger for better frequency resolution)
-    - Mel fmax:        20,000 Hz  (wider bandwidth)
-
 Usage::
 
     # Full build with file‑level train/val/test split
-    python scripts/build_cwru_de_48k.py \
-        --output-dir ./datasets/cwru_de_48k \
-        --file-split 60,20,20 --split-seed 42 \
-        --metadata --verify --workers 32
+    python scripts/build_cwru_12k_de.py --output-dir ./datasets/cwru_12k_de --file-split 60,20,20 --split-seed 42 --metadata --verify --workers 16
 
     # Dry‑run (preview split plan without generating images)
-    python scripts/build_cwru_de_48k.py --dry-run
+    python scripts/build_cwru_12k_de.py --dry-run
 
 Notes
 -----
-- Uses **DE_time** sensor signal from 48 kHz drive‑end .mat files.
-- OR faults default to the **@6** (6 o'clock) load position.
-- The CWRU 48k Normal data uses the same baseline files as 12k
-  (Normal recordings are agnostic to fault sampling rate).
-- Mel parameters are adjusted for the higher bandwidth:
-  n_fft=4096, n_mels=128, fmax=20000.
+- OR faults default to the **@6** (6 o'clock) load position, which is the
+  standard benchmark setting.
+- Fault size 0.028" is excluded (not in the 10 target classes).
 """
 
 import argparse
@@ -62,9 +42,12 @@ import csv
 import os
 import random
 import sys
+import warnings
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
+
+warnings.filterwarnings("ignore", message=".*TripleDES.*")
 
 import cv2
 import numpy as np
@@ -84,13 +67,13 @@ from build_cwru_dataset import (  # noqa: E402
 
 
 # ═══════════════════════════════════════════════════════════════════════
-#  Configuration — 48 kHz Drive End
+#  Configuration — 12 kHz Drive End
 # ═══════════════════════════════════════════════════════════════════════
 
 DATA_ROOT = "raw-data/CWRU-dataset"
-FAULT_DIR = f"{DATA_ROOT}/48k_Drive_End_Bearing_Fault_Data"
+FAULT_DIR = f"{DATA_ROOT}/12k_Drive_End_Bearing_Fault_Data"
 NORMAL_DIR = f"{DATA_ROOT}/Normal"
-SAMPLE_RATE = 48_000
+SAMPLE_RATE = 12_000
 MAT_KEY_PATTERN = "DE_time"       # extract DE_time from .mat
 OR_POSITION = "@6"                # load position for outer‑race faults
 
@@ -151,6 +134,7 @@ def _collect_fault_files() -> dict:
 
             # Resolve the innermost directory containing .mat files
             if fault_type == "OR":
+                # OR: prefer OR_POSITION sub‑dir; fall back to size_dir itself
                 mat_dir = size_dir / OR_POSITION
                 if not mat_dir.is_dir():
                     mat_dir = size_dir
@@ -170,13 +154,7 @@ def _collect_fault_files() -> dict:
 
 
 def _collect_normal_files() -> list:
-    """Collect normal baseline signals from NORMAL_DIR.
-
-    Note: The CWRU Normal data is recorded at 12 kHz.  For the 48k
-    dataset, we resample the normal signal to 48 kHz via Fourier
-    interpolation (signal.resample) in _build_tasks_and_metadata
-    to match the fault signal sampling rate.
-    """
+    """Collect normal baseline signals from NORMAL_DIR."""
     normal_root = Path(NORMAL_DIR)
     normal_files = []
     for mp in sorted(normal_root.glob("*.mat")):
@@ -308,32 +286,28 @@ def _save_metadata(csv_path: str, rows: list):
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        description="AW-DPCNN CWRU 48kHz Drive End Dataset Builder (10‑class)")
+        description="AW-DPCNN CWRU 12kHz Drive End Dataset Builder (10‑class)")
 
-    p.add_argument("--output-dir", default="datasets/cwru_de_48k",
+    p.add_argument("--output-dir", default="datasets/cwru_12k_de",
                    help="Root dir for fused PNG images (ImageFolder layout)")
     p.add_argument("--sr", type=int, default=SAMPLE_RATE,
                    help=f"Sample rate override (default: {SAMPLE_RATE})")
-    p.add_argument("--win-len", type=int, default=8192,
-                   help="Window length in samples (default: 8192 ≈ 170 ms @ 48k)")
-    p.add_argument("--hop-len", type=int, default=4096,
-                   help="Hop length between windows (default: 4096, 50% overlap)")
+    p.add_argument("--win-len", type=int, default=2048,
+                   help="Window length in samples (0 = one image per file)")
+    p.add_argument("--hop-len", type=int, default=1024,
+                   help="Hop length between windows")
     p.add_argument("--img-size", type=int, default=224)
     p.add_argument("--cmap", default="viridis")
-    p.add_argument("--n-fft", type=int, default=4096,
-                   help="STFT window size (larger for 48k to maintain freq. resolution)")
-    p.add_argument("--hop-length", type=int, default=512,
-                   help="STFT hop length")
+    p.add_argument("--n-fft", type=int, default=1024)
+    p.add_argument("--hop-length", type=int, default=128)
     p.add_argument("--n-mels", type=int, default=128)
-    p.add_argument("--fmax", type=int, default=20000,
-                   help="Max Mel frequency (wider bandwidth for 48k)")
+    p.add_argument("--fmax", type=int, default=6000)
     p.add_argument("--gaf-method", default="difference",
                    choices=["difference", "summation"])
     p.add_argument("--sequence-length", type=int, default=None,
                    help="Max time-steps for GAF")
     p.add_argument("--n-iter", type=int, default=20)
-    p.add_argument("--gamma", type=float, default=10.0,
-                   help="AW-DPCNN contrast amplification (paper: γ=10)")
+    p.add_argument("--gamma", type=float, default=4.0)
     p.add_argument("--file-split", type=str, default="60,20,20",
                    help="Train/val/test ratios")
     p.add_argument("--split-seed", type=int, default=42)
@@ -364,7 +338,7 @@ def main():
 
     # ── Header ──
     print("═" * 60)
-    print("AW-DPCNN CWRU 48kHz Drive End Dataset Builder (10‑class)")
+    print("AW-DPCNN CWRU 12kHz Drive End Dataset Builder (10‑class)")
     print("═" * 60)
     print(f"  Fault dir      : {FAULT_DIR}")
     print(f"  Normal dir     : {NORMAL_DIR}")
@@ -372,7 +346,6 @@ def main():
     print(f"  Mat key        : {MAT_KEY_PATTERN}")
     print(f"  OR position    : {OR_POSITION}")
     print(f"  Window / Hop   : {args.win_len} / {args.hop_len}")
-    print(f"  Mel params     : n_fft={args.n_fft}, n_mels={args.n_mels}, fmax={args.fmax}")
     print(f"  File split     : {args.file_split}  (seed={args.split_seed})")
     print(f"  Workers        : {args.workers}")
     print(f"  Dry run        : {args.dry_run}")

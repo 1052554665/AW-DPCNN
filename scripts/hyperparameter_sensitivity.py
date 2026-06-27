@@ -417,7 +417,7 @@ def main():
     parser.add_argument("--max-samples", type=int, default=500,
                         help="Max test windows per sweep")
     parser.add_argument("--output-dir",
-                        default="experiments/hyperparameter_sensitivity")
+                        default="experiments/experiment_result/hyperparameter_sensitivity")
     parser.add_argument("--device", default="")
     parser.add_argument("--sweep", default="all",
                         help="Parameter to sweep: gamma, N, alpha_LT, all")

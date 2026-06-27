@@ -33,13 +33,10 @@ Purpose — Cross‑Sensor Generalization
 Usage::
 
     # Full build with file‑level train/val/test split
-    python scripts/build_cwru_fe.py \
-        --output-dir ./datasets/cwru_fe \
-        --file-split 60,20,20 --split-seed 42 \
-        --metadata --verify --workers 64
+    python scripts/build_cwru_12k_fe.py --output-dir ./datasets/cwru_12k_fe --file-split 60,20,20 --split-seed 42 --metadata --verify --workers 32
 
     # Dry‑run (preview split plan without generating images)
-    python scripts/build_cwru_fe.py --dry-run
+    python scripts/build_cwru_12k_fe.py --dry-run
 
 Notes
 -----
@@ -53,9 +50,12 @@ import csv
 import os
 import random
 import sys
+import warnings
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
+
+warnings.filterwarnings("ignore", message=".*TripleDES.*")
 
 import cv2
 import numpy as np
@@ -191,14 +191,19 @@ def _file_level_split(
         files = sorted(items, key=lambda x: x[0])
         rng.shuffle(files)
         n = len(files)
-        n_train = max(1, round(n * r_train))
-        n_val = max(1, round(n * r_val))
-        if n_train + n_val >= n:
-            n_train = max(1, n - 2)
-            n_val = max(1, n - n_train - 1)
+        n_train = min(max(1, round(n * r_train)), n)
+        n_val   = min(max(1, round(n * r_val)), max(0, n - n_train - 1))
         train_map[cls] = files[:n_train]
         val_map[cls] = files[n_train:n_train + n_val]
         test_map[cls] = files[n_train + n_val:]
+
+        # Single-file classes: duplicate to val/test for window-level split
+        # (windows from the same recording are split by time-segment, not file)
+        if n == 1 and (n_val == 0 or len(test_map[cls]) == 0):
+            # Assign the same file to all splits; window segmentation will
+            # use different time-regions per split (see _build_tasks_and_metadata)
+            val_map[cls] = files[:1]
+            test_map[cls] = files[:1]
 
     return train_map, val_map, test_map
 
@@ -225,18 +230,40 @@ def _build_tasks_and_metadata(
     overwrite: bool,
 ) -> tuple:
     tasks, metadata_rows = [], []
+    # Track which files appear in multiple splits (single-file classes)
+    file_split_count: dict = defaultdict(set)
+    for split_name in ("train", "val", "test"):
+        for cls, items in split_map.get(split_name, {}).items():
+            for fpath, _, _ in items:
+                file_split_count[fpath].add(split_name)
+    shared_files = {f for f, splits in file_split_count.items() if len(splits) > 1}
 
     for split_name in ("train", "val", "test"):
+        split_ratio = {"train": 0.6, "val": 0.2, "test": 0.2}[split_name]
         for cls, items in sorted(split_map.get(split_name, {}).items()):
             out_cls_dir = os.path.join(output_dir, split_name, cls)
             for fpath, sr_val, signal in items:
                 stem = Path(fpath).stem
-                if win_len <= 0 or win_len >= len(signal):
+                sig_len = len(signal)
+
+                # For shared files: use time-region split to avoid leakage
+                if fpath in shared_files:
+                    if split_name == "train":
+                        t_start, t_end = 0, int(sig_len * 0.6)
+                    elif split_name == "val":
+                        t_start, t_end = int(sig_len * 0.6), int(sig_len * 0.8)
+                    else:
+                        t_start, t_end = int(sig_len * 0.8), sig_len
+                    region_signal = signal[t_start:t_end]
+                else:
+                    t_start, region_signal = 0, signal
+
+                if win_len <= 0 or win_len >= len(region_signal):
                     out_path = os.path.join(out_cls_dir, f"{stem}.png")
                     if not overwrite and os.path.exists(out_path):
                         continue
                     tasks.append((
-                        signal, sr_val, out_path, img_size, n_iter,
+                        region_signal, sr_val, out_path, img_size, n_iter,
                         n_fft, hop_length, n_mels, fmax, cmap,
                         gaf_method, False, gamma, sequence_length,
                     ))
@@ -246,12 +273,12 @@ def _build_tasks_and_metadata(
                         "source_file": os.path.basename(fpath),
                         "split": split_name,
                         "window_idx": 0,
-                        "window_start_sample": 0,
+                        "window_start_sample": t_start,
                     })
                 else:
                     idx = 0
-                    for start in range(0, len(signal) - win_len + 1, hop_len):
-                        window = signal[start:start + win_len]
+                    for start in range(0, len(region_signal) - win_len + 1, hop_len):
+                        window = region_signal[start:start + win_len]
                         fname = f"{stem}_{idx:05d}.png"
                         out_path = os.path.join(out_cls_dir, fname)
                         if not overwrite and os.path.exists(out_path):
@@ -268,7 +295,7 @@ def _build_tasks_and_metadata(
                             "source_file": os.path.basename(fpath),
                             "split": split_name,
                             "window_idx": idx,
-                            "window_start_sample": start,
+                            "window_start_sample": t_start + start,
                         })
                         idx += 1
 
@@ -295,7 +322,7 @@ def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         description="AW-DPCNN CWRU 12kHz Fan End Dataset Builder (10‑class)")
 
-    p.add_argument("--output-dir", default="datasets/cwru_fe",
+    p.add_argument("--output-dir", default="datasets/cwru_12k_fe",
                    help="Root dir for fused PNG images (ImageFolder layout)")
     p.add_argument("--sr", type=int, default=SAMPLE_RATE,
                    help=f"Sample rate override (default: {SAMPLE_RATE})")

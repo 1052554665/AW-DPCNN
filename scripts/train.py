@@ -1,3 +1,25 @@
+"""
+# 3 trials on three cwru datasets, results saved to experiments/experiment_result
+
+python scripts/run_repeated_trials.py \
+    --config configs/default.yaml \
+    --exp-dir experiments/exp1 \
+    --datasets 12k_de \
+    --num-runs 3
+
+python scripts/run_repeated_trials.py \
+    --config configs/default.yaml \
+    --exp-dir experiments/exp1 \
+    --datasets 12k_fe \
+    --num-runs 3
+
+python scripts/run_repeated_trials.py \
+    --config configs/default.yaml \
+    --exp-dir experiments/exp1 \
+    --datasets 48k_de \
+    --num-runs 3
+"""
+
 import argparse
 import sys
 import warnings

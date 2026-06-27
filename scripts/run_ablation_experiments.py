@@ -102,7 +102,7 @@ EXPERIMENTS: List[Dict] = [
      "desc": "AW-DPCNN + MSCA-VGG16 (full)"},
 ]
 
-OUTPUT_ROOT = Path("experiments/ablation_results")
+OUTPUT_ROOT = Path("experiments/experiment_result/ablation")
 DEFAULT_TRIAL = "trial_seed42"
 DEFAULT_TRIAL_SEEDS = [42, 123, 456]
 

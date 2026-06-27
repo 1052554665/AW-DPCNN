@@ -12,37 +12,30 @@
 \usepackage{balance}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage{siunitx}
 \captionsetup{font=small,labelfont=bf}
 
-% add common graphics paths to simplify includes
 \graphicspath{{framework/}{representation/}{AW-DPCNN/}{MSCA-VGG16/}{Fused images/}{equipment/}{confusion_matrix/}{tsne/}{tsne_cwru/}{raw_tsne/}{tsne_models/}{figures/}}
 
 \hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
 
 \begin{document}
 
-% \title{AW-DPCNN Based Multi-Representation and MSCA-VGG16 Signal Fusion for Fault Diagnosis}
+\title{AW-DPCNN Based Multi-Representation Supervised Learning for Mechanical Signal Fault Diagnosis}
 
-\title{AW-DPCNN Based Multi-Representation Supervised Learning for Vibration Signal Fault Diagnosis}
+\author{Chen Yang, Zonglong Bai, Zhiyuan Xie, Chenggang Liu, Junyan Zhang and Yihe Guo}
 
-% \author{Chen Yang, \IEEEmembership{Graduate Student Member, IEEE}, Zonglong Bai, Zhiyuan Xie, Chenggang Liu, Junyan Zhang and Yihe Guo% <- use \IEEEmembership{Member, IEEE} for IEEE members
-\author{Chen Yang, Zonglong Bai, Zhiyuan Xie, Chenggang Liu, Junyan Zhang and Yihe Guo% <- use \IEEEmembership{Member, IEEE} for IEEE members
-% \thanks{Manuscript received xx xxx, 2025; revised xx xxx, 2025. This work was supported by...}
-% \thanks{Author One and Author Two are with the...}
-% \thanks{Author Three is with the...}
-}
-
-\markboth{IEEE Transactions on Instrumentation and Measurement}%
-{Author~\MakeLowercase{\textit{et al.}}: AW-DPCNN and MSCA-VGG16 Based Multi-Representation Acoustic Signal Fusion}
+\markboth{IEEE Transactions on Instrumentation and Measurement}
+{Author~\MakeLowercase{\textit{et al.}}: AW-DPCNN Based Multi-Representation Supervised Learning for Mechanical Signal Fault Diagnosis}
 
 \maketitle
 
 \begin{abstract}
-% Power transformers play a crucial role in power systems, and reliable fault diagnosis is essential for ensuring operation stability. Conventional acoustic diagnostic approaches typically rely on single-spectrum representations, which are insufficient to capture the complex and diverse characteristics of transformer acoustic signals. To address this limitation, a multi-representation acoustic signal fusion framework is proposed for transformer fault diagnosis. Transformer acoustic signals are first converted into Mel spectrograms and Gramian Angular Difference Field (GADF) images to capture complementary time–frequency distributions and temporal correlation characteristics. An adaptive weighted dual-channel pulse-coupled neural network (AW-DPCNN) is then employed to fuse these heterogeneous acoustic representations into a unified representation. Based on the fused representations, a multi-scale channel attention enhanced VGG16 network (MSCA-VGG16) is developed to improve representation discrimination and classification robustness. Experimental results on field transformer acoustic data demonstrate that the proposed method achieves an accuracy of $87.45 \pm x.xx\%$ (mean $\pm$ std over 3 independent trials). In addition, experiments conducted on the Case Western Reserve University (CWRU) dataset further verify the effectiveness and generalization capability of the proposed framework. These results indicate that the proposed approach provides an effective solution for intelligent acoustic-based transformer fault diagnosis.
+
 \end{abstract}
 
 \begin{IEEEkeywords}
-Acoustic signal, Gramian angular difference field (GADF), Mel spectrograms, multi-representation, multi-scale convolution, pulse coupled neural network (PCNN).
+Mechanical signal, Gramian angular difference field (GADF), Mel spectrograms, multi-representation, supervised learning, multi-scale convolution, pulse coupled neural network (PCNN).
 \end{IEEEkeywords}
 
 \section{Introduction}
@@ -570,6 +563,11 @@ The collected acoustic signals were categorized into multiple classes correspond
 	\end{tabular}
 \end{table*}
 
+
+
+
+
+
 As shown in Table~\ref{dataset}, each fault class consists of 4 source recordings, which are partitioned into training, validation, and test subsets at a ratio of approximately 2:1:1 at the file level. The Normal baseline condition contains substantially more windows than the fault categories because the normal-operation recordings in the CWRU dataset are approximately $4\times$ longer than the fault recordings (roughly 40~s versus 10~s per recording). This inherent class imbalance reflects the physical ground truth of the data acquisition protocol and is addressed through two complementary strategies: a class-weighted cross-entropy loss during training to prevent the model from being biased toward the majority class, and macro-averaged evaluation metrics to ensure that each class contributes equally to the reported performance regardless of sample count.
 
 
@@ -689,7 +687,7 @@ The key hyperparameters of the AW-DPCNN fusion module are summarized in Table~\r
 
 To evaluate the effectiveness of the proposed classification network, a comparative experiment was conducted using several representative deep learning backbones, including Baseline CNN, AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16. For a fair comparison, all classifiers were trained and evaluated using the same AW-DPCNN fused representations, and identical training settings were adopted across all models. To ensure statistical reliability, each backbone is evaluated over three independent trials with different random seeds, and the results are reported as mean $\pm$ standard deviation in Table~\ref{tab:network_comparison}.
 
-The baseline model achieves relatively limited results, with an accuracy of $73.31 \pm x.xx\%$ and an F1-score of $69.59 \pm x.xx\%$. By adopting deeper architectures such as AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16, the classification performance improves to different extents, indicating that more powerful feature extraction networks can better capture discriminative acoustic characteristics. Among all compared methods, the proposed MSCA-VGG16 achieves the best performance across all evaluation metrics, attaining an accuracy of $87.45 \pm x.xx\%$, an F1-score of $86.97 \pm x.xx\%$, and a G-mean of $85.69 \pm x.xx\%$. The consistent performance across repeated trials, as evidenced by the small standard deviations, confirms the stability and reproducibility of the proposed approach. These results demonstrate the effectiveness of the proposed MSCA-VGG16 framework for transformer acoustic fault diagnosis.
+% The baseline model achieves relatively limited results, with an accuracy of $73.31 \pm x.xx\%$ and an F1-score of $69.59 \pm x.xx\%$. By adopting deeper architectures such as AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16, the classification performance improves to different extents, indicating that more powerful feature extraction networks can better capture discriminative acoustic characteristics. Among all compared methods, the proposed MSCA-VGG16 achieves the best performance across all evaluation metrics, attaining an accuracy of $87.45 \pm x.xx\%$, an F1-score of $86.97 \pm x.xx\%$, and a G-mean of $85.69 \pm x.xx\%$. The consistent performance across repeated trials, as evidenced by the small standard deviations, confirms the stability and reproducibility of the proposed approach. These results demonstrate the effectiveness of the proposed MSCA-VGG16 framework for transformer acoustic fault diagnosis.
 % \begin{table*}
 % 	\centering
 % 	\caption{Performance Comparison with Different Backbone Networks (Mean $\pm$ Std over 3 Independent Trials)}
@@ -720,16 +718,16 @@ The baseline model achieves relatively limited results, with an accuracy of $73.
 % \end{table*}
 
 
-To evaluate the classification performance of the proposed MSCA-VGG16 model, confusion matrices were employed to visualize the recognition accuracy across ten fault categories, as shown in Fig.~\ref{fig:confusion_matrix}. A hierarchical comparison was conducted among the baseline model, several representative deep learning architectures, and the proposed MSCA-enhanced framework. 
+% To evaluate the classification performance of the proposed MSCA-VGG16 model, confusion matrices were employed to visualize the recognition accuracy across ten fault categories, as shown in Fig.~\ref{fig:confusion_matrix}. A hierarchical comparison was conducted among the baseline model, several representative deep learning architectures, and the proposed MSCA-enhanced framework. 
 
-\textbf{1) Performance of the Baseline Model.}
-As illustrated in Fig.~\ref{fig:confusion_matrix}(a), the baseline model exhibits limited capability in distinguishing different transformer operating conditions, particularly harmonic-related conditions. Consequently, multiple harmonic-associated states are frequently misclassified. For example, the recognition accuracy of pure third harmonic category is extremely low, with most samples incorrectly classified as pure fifth harmonic category. In addition, the 30\% seventh harmonic category also shows poor performance and is frequently misclassified as pure fifth harmonic category. Similar confusion can be observed between other harmonic conditions, indicating that the baseline network has difficulty capturing subtle spectral differences among harmonic components. These results demonstrate that the baseline architecture lacks sufficient representation capability to effectively discriminate complex acoustic patterns in transformer fault signals.
+% \textbf{1) Performance of the Baseline Model.}
+% As illustrated in Fig.~\ref{fig:confusion_matrix}(a), the baseline model exhibits limited capability in distinguishing different transformer operating conditions, particularly harmonic-related conditions. Consequently, multiple harmonic-associated states are frequently misclassified. For example, the recognition accuracy of pure third harmonic category is extremely low, with most samples incorrectly classified as pure fifth harmonic category. In addition, the 30\% seventh harmonic category also shows poor performance and is frequently misclassified as pure fifth harmonic category. Similar confusion can be observed between other harmonic conditions, indicating that the baseline network has difficulty capturing subtle spectral differences among harmonic components. These results demonstrate that the baseline architecture lacks sufficient representation capability to effectively discriminate complex acoustic patterns in transformer fault signals.
 
-\textbf{2) Performance of Standard Deep Architectures.}
-With the adoption of deeper architectures, including AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16 (Fig.~\ref{fig:confusion_matrix}(b)–(e)), the overall diagnostic performance is noticeably improved compared with the baseline model. The confusion matrices show stronger diagonal dominance, indicating enhanced classification capability across most categories. AlexNet achieves high recognition accuracy for several conditions, such as 30\% fifth harmonic category and pure seventh harmonic category, while misclassification of the normal state remains evident. ResNet18 further improves the recognition of certain harmonic categories, particularly 30\% third harmonic category, although different harmonic components remain difficult to distinguish. ConvNeXt-Tiny and VGG16 exhibit relatively balanced performance across most classes but remain limited in distinguishing acoustically similar harmonic patterns. These observations suggest that although deeper networks strengthen representation capability, accurately discriminating highly similar harmonic signals remains challenging for conventional backbone architectures.
+% \textbf{2) Performance of Standard Deep Architectures.}
+% With the adoption of deeper architectures, including AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16 (Fig.~\ref{fig:confusion_matrix}(b)–(e)), the overall diagnostic performance is noticeably improved compared with the baseline model. The confusion matrices show stronger diagonal dominance, indicating enhanced classification capability across most categories. AlexNet achieves high recognition accuracy for several conditions, such as 30\% fifth harmonic category and pure seventh harmonic category, while misclassification of the normal state remains evident. ResNet18 further improves the recognition of certain harmonic categories, particularly 30\% third harmonic category, although different harmonic components remain difficult to distinguish. ConvNeXt-Tiny and VGG16 exhibit relatively balanced performance across most classes but remain limited in distinguishing acoustically similar harmonic patterns. These observations suggest that although deeper networks strengthen representation capability, accurately discriminating highly similar harmonic signals remains challenging for conventional backbone architectures.
 
-\textbf{3) Superiority of the Proposed MSCA-VGG16 Model.}
-As shown in Fig.~\ref{fig:confusion_matrix}(f), the proposed MSCA-VGG16 model achieves the most consistent and accurate classification results among all evaluated architectures. By incorporating the Multi-Scale Convolutional Attention (MSCA) mechanism, the model effectively enhances discriminative representation and suppresses inter-class confusion. Several categories, including 10 kV overload, loosen, partial discharge, and pure seventh harmonic, are recognized with perfect accuracy. Moreover, the recognition performance of previously challenging harmonic-related conditions is significantly improved. For example, the accuracy of the 30\% seventh harmonic category increases to 62\%, while the 30\% third harmonic category reaches 99\% accuracy. Although slight confusion still exists between pure third harmonic and pure fifth harmonic category, the overall confusion pattern is substantially reduced compared with the other backbone networks. These results indicate that the proposed MSCA-VGG16 framework provides more discriminative acoustic representation learning and achieves superior robustness for transformer acoustic fault diagnosis.
+% \textbf{3) Superiority of the Proposed MSCA-VGG16 Model.}
+% As shown in Fig.~\ref{fig:confusion_matrix}(f), the proposed MSCA-VGG16 model achieves the most consistent and accurate classification results among all evaluated architectures. By incorporating the Multi-Scale Convolutional Attention (MSCA) mechanism, the model effectively enhances discriminative representation and suppresses inter-class confusion. Several categories, including 10 kV overload, loosen, partial discharge, and pure seventh harmonic, are recognized with perfect accuracy. Moreover, the recognition performance of previously challenging harmonic-related conditions is significantly improved. For example, the accuracy of the 30\% seventh harmonic category increases to 62\%, while the 30\% third harmonic category reaches 99\% accuracy. Although slight confusion still exists between pure third harmonic and pure fifth harmonic category, the overall confusion pattern is substantially reduced compared with the other backbone networks. These results indicate that the proposed MSCA-VGG16 framework provides more discriminative acoustic representation learning and achieves superior robustness for transformer acoustic fault diagnosis.
 
 \subsection{Ablation Study}
 \label{sec:ablation}
@@ -966,9 +964,9 @@ These findings confirm that the performance advantage of the proposed method is 
 These results collectively demonstrate that the Mel and GADF combination provides the most effective input representation for the AW-DPCNN fusion framework, offering consistent advantages over alternative time--frequency and temporal encoding methods. The empirical evidence supports the representation design adopted in this work and further validates the robustness of the proposed diagnostic pipeline.
 
 \subsection{Generalization Validation on the CWRU Dataset}
-To further evaluate the generalization capability of the proposed method, experiments were conducted on the publicly available Case Western Reserve University (CWRU) bearing dataset. The 12 kHz drive-end vibration signals were selected, including four conditions: Normal (N), Inner race fault (IR), Outer race fault (OR, located at the load zone at 6 o’clock), and Ball fault (B), all with a fault diameter of 0.007 inches. The vibration signals were converted into Mel spectrograms and GADF images using the same preprocessing pipeline as that applied to the transformer acoustic signals. To provide a fair evaluation of cross-domain generalization, no dataset-specific parameter tuning was performed. A cross-severity evaluation strategy was adopted, where samples with a fault diameter of 0.007 inches were used for training and those with 0.014 inches were used for testing, while ensuring that segments from the same raw signal were assigned exclusively to one subset to prevent data leakage. Although the CWRU dataset is based on vibration signals rather than acoustic signals, it provides a widely used benchmark for evaluating the generalization capability of fault diagnosis models.
+% To further evaluate the generalization capability of the proposed method, experiments were conducted on the publicly available Case Western Reserve University (CWRU) bearing dataset. The 12 kHz drive-end vibration signals were selected, including four conditions: Normal (N), Inner race fault (IR), Outer race fault (OR, located at the load zone at 6 o’clock), and Ball fault (B), all with a fault diameter of 0.007 inches. The vibration signals were converted into Mel spectrograms and GADF images using the same preprocessing pipeline as that applied to the transformer acoustic signals. To provide a fair evaluation of cross-domain generalization, no dataset-specific parameter tuning was performed. A cross-severity evaluation strategy was adopted, where samples with a fault diameter of 0.007 inches were used for training and those with 0.014 inches were used for testing, while ensuring that segments from the same raw signal were assigned exclusively to one subset to prevent data leakage. Although the CWRU dataset is based on vibration signals rather than acoustic signals, it provides a widely used benchmark for evaluating the generalization capability of fault diagnosis models.
 
-As summarized in Table~\ref{tab:cwru_ablation}, all experiments are conducted over three independent trials and reported as mean $\pm$ standard deviation. The single-representation approaches (A1 and A2) achieve relatively limited performance, with accuracies of $89.72 \pm x.xx\%$ and $91.34 \pm x.xx\%$, respectively, indicating that Mel or GADF representations alone cannot fully characterize the fault information. When the two representations are directly fused through feature concatenation (A3), the accuracy increases to $96.41 \pm x.xx\%$, demonstrating that the Mel spectrogram and GADF representations provide complementary information. By introducing the proposed AW-DPCNN fusion strategy (A4), the accuracy further improves to $97.86 \pm x.xx\%$, showing that adaptive weighted fusion can better exploit cross-modal representation correlations than simple concatenation. Finally, combining AW-DPCNN with the MSCA-VGG16 classifier (A5) achieves the best performance with an accuracy of $99.67 \pm x.xx\%$. The small standard deviations across trials confirm the stability and reproducibility of the proposed framework on the CWRU benchmark.
+% As summarized in Table~\ref{tab:cwru_ablation}, all experiments are conducted over three independent trials and reported as mean $\pm$ standard deviation. The single-representation approaches (A1 and A2) achieve relatively limited performance, with accuracies of $89.72 \pm x.xx\%$ and $91.34 \pm x.xx\%$, respectively, indicating that Mel or GADF representations alone cannot fully characterize the fault information. When the two representations are directly fused through feature concatenation (A3), the accuracy increases to $96.41 \pm x.xx\%$, demonstrating that the Mel spectrogram and GADF representations provide complementary information. By introducing the proposed AW-DPCNN fusion strategy (A4), the accuracy further improves to $97.86 \pm x.xx\%$, showing that adaptive weighted fusion can better exploit cross-modal representation correlations than simple concatenation. Finally, combining AW-DPCNN with the MSCA-VGG16 classifier (A5) achieves the best performance with an accuracy of $99.67 \pm x.xx\%$. The small standard deviations across trials confirm the stability and reproducibility of the proposed framework on the CWRU benchmark.
 
 % \begin{table*}
 % \caption{
@@ -1057,7 +1055,7 @@ In future work, we aim to further optimize the proposed framework to improve rec
 	\hfill
 	\begin{subfigure}{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/ablation_results/B0/ablation_B0/trial_seed42/figures/tsne.png}
+		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/ablation_results/B0/ablation_B0/trial_seed42/figures/tsne.png}
 		\caption{MSCA-VGG16 (Ours)}
 	\end{subfigure}
 	\caption{t-SNE feature visualization of different backbone networks on the transformer acoustic test set. The proposed MSCA-VGG16 produces the most compact and well-separated clusters, indicating superior discriminative representation learning.}
@@ -1066,7 +1064,7 @@ In future work, we aim to further optimize the proposed framework to improve rec
 
 \begin{figure}[!htbp] 
 \centering
-\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/noise_robustness/noise_robustness.png}
+\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/noise_robustness/noise_robustness.png}
 \caption{}
 \label{}
 \end{figure}
@@ -1270,6 +1268,81 @@ ConvNeXt-Tiny & ... \\
 \bottomrule
 \end{tabular}
 \end{table*}
+
+
+
+
+\begin{table*}[t]
+\centering
+\caption{CWRU Bearing Fault Diagnosis Datasets: Configuration, Class Distribution, and Split Homogeneity}
+\label{tab:datasets_comprehensive}
+\begin{tabular}{llllrrrrr}
+\toprule
+\multicolumn{4}{c}{\textbf{Configuration}} & \multicolumn{4}{c}{\textbf{Sample Distribution}} & \textbf{Homogeneity} \\
+\cmidrule(lr){1-4} \cmidrule(lr){5-8} \cmidrule(lr){9-9}
+\textbf{Dataset} & \textbf{Sampling Rate} & \textbf{Window/Hop} & \textbf{Fault Class} & \textbf{Files} & \textbf{Train} & \textbf{Val} & \textbf{Test} & \textbf{JS Div.} \\
+\midrule
+\multirow{10}{*}{\textbf{CWRU 12k DE}} & \multirow{10}{*}{12\,kHz} & \multirow{10}{*}{2048/1024} & BF007 & 4 & 234 & 117 & 118 & \multirow{10}{*}{\shortstack{TV: 0.0021 \\ TT: 0.0020 \\ VT: 0.0000}} \\
+& & & BF014 & 4 & 236 & 117 & 118 & \\
+& & & BF021 & 4 & 235 & 118 & 118 & \\
+& & & IF007 & 4 & 236 & 117 & 119 & \\
+& & & IF014 & 4 & 234 & 117 & 117 & \\
+& & & IF021 & 4 & 235 & 117 & 118 & \\
+& & & OF007 & 4 & 236 & 118 & 117 & \\
+& & & OF014 & 4 & 234 & 118 & 118 & \\
+& & & OF021 & 4 & 236 & 118 & 118 & \\
+& & & Normal & 4 & 708 & 473 & 471 & \\
+\cmidrule{4-8}
+& & & \textbf{Total (10 cls)} & 40 & 2824 & 1530 & 1532 & \\
+\midrule
+\multirow{10}{*}{\textbf{CWRU 12k FE}} & \multirow{10}{*}{12\,kHz} & \multirow{10}{*}{2048/1024} & BF007 & 4 & 233 & 117 & 117 & \multirow{10}{*}{\shortstack{TV: 0.0037 \\ TT: 0.0037 \\ VT: 0.0000}} \\
+& & & BF014 & 4 & 235 & 118 & 117 & \\
+& & & BF021 & 4 & 233 & 117 & 117 & \\
+& & & IF007 & 4 & 234 & 117 & 117 & \\
+& & & IF014 & 4 & 234 & 117 & 117 & \\
+& & & IF021 & 4 & 234 & 117 & 117 & \\
+& & & OF007 & 4 & 235 & 117 & 117 & \\
+& & & OF014 & 1 & 69 & 22 & 22 & \\
+& & & OF021 & 1 & 69 & 22 & 22 & \\
+& & & Normal & 4 & 708 & 473 & 471 & \\
+\cmidrule{4-8}
+& & & \textbf{Total (10 cls)} & 34 & 2484 & 1337 & 1334 & \\
+\midrule
+\multirow{10}{*}{\textbf{CWRU 48k DE}} & \multirow{10}{*}{48\,kHz} & \multirow{10}{*}{8192/4096} & BF007 & 4 & 234 & 118 & 58 & \multirow{10}{*}{\shortstack{TV: 0.0182 \\ TT: 0.0356 \\ VT: 0.0640}} \\
+& & & BF014 & 4 & 234 & 59 & 117 & \\
+& & & BF021 & 4 & 234 & 117 & 58 & \\
+& & & IF007 & 4 & 234 & 58 & 117 & \\
+& & & IF014 & 4 & 236 & 117 & 14 & \\
+& & & IF021 & 4 & 235 & 118 & 58 & \\
+& & & OF007 & 4 & 235 & 58 & 117 & \\
+& & & OF014 & 4 & 175 & 117 & 118 & \\
+& & & OF021 & 4 & 236 & 59 & 118 & \\
+& & & Normal & 4 & 175 & 117 & 117 & \\
+\cmidrule{4-8}
+& & & \textbf{Total (10 cls)} & 40 & 2228 & 938 & 892 & \\
+\bottomrule
+\end{tabular}
+
+\vspace{4pt}
+\small
+\textit{Note:} Ball Fault (BF), Inner Race Fault (IF), Outer Race Fault (OF) with fault diameters 007, 014, 021\,mil. Train/Val/Test split: 60/20/20 at file level (seed 42). JS Divergence: TV = Train vs.\ Val; TT = Train vs.\ Test; VT = Val vs.\ Test. JS values $\leq 0.064$ indicate excellent distribution homogeneity across all datasets. For 12k FE, OF014 and OF021 have only 1 source file each; windows are drawn from non-overlapping time regions ($60\%/20\%/20\%$) to populate all splits. Normal recordings are $\sim$4$\times$ longer than fault recordings.
+\end{table*}
+
+
+
+For the 12k FE dataset, fault classes OF014 and OF021 each contain a single recording. For these two classes, validation and test windows are drawn from non-overlapping temporal segments of the same recording ($60\%/20\%/20\%$ time-region split), while all other classes use independent file-level splits.
+
+
+\textit{Temporal Consistency Across Sampling Rates.}
+Although the CWRU 48k DE dataset uses larger window and hop lengths in sample counts (8192/4096 vs.\ 2048/1024 for the 12k datasets), all three datasets are designed to preserve identical temporal characteristics. Specifically, each window spans 170.7~ms of vibration signal regardless of the sampling rate ($2048/12{,}000 = 8192/48{,}000 \approx 0.171$~s), and the 50\% hop corresponds to 85.3~ms in all cases. This ensures that every fused image fed to the network represents the same physical duration of bearing operation, eliminating temporal-scale confounds from cross-dataset comparisons. The short-time Fourier transform (STFT) parameters are scaled proportionally as well: $N_{\text{FFT}} = 1024$ at 12~kHz and $N_{\text{FFT}} = 4096$ at 48~kHz, yielding identical frequency resolution of 11.7~Hz/bin across datasets. The only deliberate difference is the Mel frequency cutoff — $f_{\max}=6$~kHz for the 12k datasets (full Nyquist bandwidth) versus $f_{\max}=20$~kHz for 48k DE — reflecting the richer high-frequency information available at the higher sampling rate, which constitutes the core challenge of the cross-sampling-rate generalization experiment.
+
+
+\textit{Temporal Consistency Across Sampling Rates.}
+Although the 48k DE dataset uses 4$\times$ larger window and hop lengths in sample counts (8192/4096 vs.\ 2048/1024), the temporal durations are identical across all datasets: each window spans 170.7~ms ($2048/12{,}000 = 8192/48{,}000$) with 50\% overlap (85.3~ms hop). The STFT parameters are scaled proportionally ($N_{\text{FFT}}=1024$ at 12~kHz, $N_{\text{FFT}}=4096$ at 48~kHz), preserving a consistent frequency resolution of 11.7~Hz/bin. The only deliberate variation is the Mel bandwidth: $f_{\max}=6$~kHz (full Nyquist) for the 12k datasets versus $f_{\max}=20$~kHz for 48k DE, reflecting the richer high-frequency content that defines the cross-sampling-rate generalization challenge.
+
+
+
+
 
 \bibliographystyle{IEEEtran}
 \bibliography{references}

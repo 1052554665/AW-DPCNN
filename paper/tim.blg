@@ -9,12 +9,6 @@ Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: references.bib
 Warning--I didn't find a database entry for "loshchilov2017adamw"
-Warning--I didn't find a database entry for "ref:svm_wavelet"
-Warning--I didn't find a database entry for "ref:zhang2017wdcnn"
-Warning--I didn't find a database entry for "ref:resnet_stft"
-Warning--I didn't find a database entry for "ref:gaf_cnn"
-Warning--I didn't find a database entry for "ref:mscnn"
-Warning--I didn't find a database entry for "ref:convnext_cwt"
 -- IEEEtran.bst version 1.14 (2015/08/26) by Michael Shell.
 -- http://www.michaelshell.org/tex/ieeetran/bibtex/
 -- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
@@ -22,7 +16,7 @@ Warning--I didn't find a database entry for "ref:convnext_cwt"
 Done.
 You've used 31 entries,
             4087 wiz_defined-function locations,
-            1012 strings with 14540 characters,
+            1006 strings with 14456 characters,
 and the built_in function-call counts, 30156 in all, are:
 = -- 2467
 > -- 780
@@ -61,4 +55,4 @@ warning$ -- 0
 while$ -- 120
 width$ -- 33
 write$ -- 341
-(There were 7 warnings)
+(There was 1 warning)

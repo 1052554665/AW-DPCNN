@@ -274,7 +274,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--snr", type=float, nargs="+",
                    default=[-5, 0, 5, 10, 15, 20],
                    help="SNR levels in dB (default: -5 0 5 10 15 20)")
-    p.add_argument("--output-dir", default="experiments/noise_robustness",
+    p.add_argument("--output-dir", default="experiments/experiment_result/noise_robustness",
                    help="Output directory for results and plots")
     p.add_argument("--device", default="",
                    help="cuda / cpu override")
