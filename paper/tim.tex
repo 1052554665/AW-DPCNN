@@ -540,28 +540,28 @@ The collected acoustic signals were categorized into multiple classes correspond
 	\label{tab:operating_conditions}
 \end{table}
 
-\begin{table*}
-	\centering
-	\caption{Composition of the CWRU Bearing Dataset (12 kHz Drive‑End)}
-	\label{dataset}
-	\renewcommand{\arraystretch}{1.15}
-	\small
-	\begin{tabular}{l c c c c c c c c c c c}
-		\toprule
-		\multirow{2}{*}{Split} &
-		\multirow{2}{*}{Total} &
-		\multicolumn{10}{c}{Number of Samples per Class} \\
-		\cmidrule(lr){3-12}
-		& & BF007 & BF014 & BF021 & IF007 & IF014 & IF021 & OF007 & OF014 & OF021 & Normal \\
-		\midrule
-		Source files & 40 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 \\
-		\midrule
-		Training set  & 1397 & 116 & 116 & 116 & 116 & 116 & 116 & 116 & 116 & 116 & 353 \\
-		Validating set & 758 & 58 & 58 & 58 & 58 & 58 & 58 & 58 & 58 & 58 & 236 \\
-		Testing set   & 758 & 58 & 58 & 58 & 59 & 58 & 58 & 58 & 58 & 58 & 235 \\
-		\bottomrule
-	\end{tabular}
-\end{table*}
+% \begin{table*}
+% 	\centering
+% 	\caption{Composition of the CWRU Bearing Dataset (12 kHz Drive‑End)}
+% 	\label{dataset}
+% 	\renewcommand{\arraystretch}{1.15}
+% 	\small
+% 	\begin{tabular}{l c c c c c c c c c c c}
+% 		\toprule
+% 		\multirow{2}{*}{Split} &
+% 		\multirow{2}{*}{Total} &
+% 		\multicolumn{10}{c}{Number of Samples per Class} \\
+% 		\cmidrule(lr){3-12}
+% 		& & BF007 & BF014 & BF021 & IF007 & IF014 & IF021 & OF007 & OF014 & OF021 & Normal \\
+% 		\midrule
+% 		Source files & 40 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 & 4 \\
+% 		\midrule
+% 		Training set  & 1397 & 116 & 116 & 116 & 116 & 116 & 116 & 116 & 116 & 116 & 353 \\
+% 		Validating set & 758 & 58 & 58 & 58 & 58 & 58 & 58 & 58 & 58 & 58 & 236 \\
+% 		Testing set   & 758 & 58 & 58 & 58 & 59 & 58 & 58 & 58 & 58 & 58 & 235 \\
+% 		\bottomrule
+% 	\end{tabular}
+% \end{table*}
 
 
 
@@ -597,46 +597,46 @@ where $\mathrm{TP}_c$, $\mathrm{FN}_c$, $\mathrm{FP}_c$, and $\mathrm{TN}_c$ den
 \end{equation}
 The macro-averaging strategy ensures that each class contributes equally to the final AUC, regardless of class imbalance, thereby providing a balanced assessment of the model's discriminative capability across all fault categories.
 
-	% \begin{figure*}[!htbp]
-	% 	\centering
-	% 	\begin{subfigure}{0.42\textwidth}
-	% 		\centering
-	% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/convnext_tiny/exp1_convnext_tiny/trial_seed42/figures/confusion_matrix.png}
-	% 		\caption{convnext Tiny}
-	% 	\end{subfigure}
-	% 	\hfill
-	% 	\begin{subfigure}{0.42\textwidth}
-	% 		\centering
-	% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/exp1_efficientnet_b0/trial_seed42/figures/confusion_matrix.png}
-	% 		\caption{efficientnet B0}
-	% 	\end{subfigure}\\[2mm]
+	\begin{figure*}[!htbp]
+		\centering
+		\begin{subfigure}{0.42\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix_48k_de_convnext_tiny_exp1_convnext_tiny_trial_seed123}
+			\caption{convnext Tiny}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}{0.42\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix_48k_de_efficientnet_b0_exp1_efficientnet_b0_trial_seed456}
+			\caption{efficientnet B0}
+		\end{subfigure}\\[2mm]
 
-	% 	\begin{subfigure}{0.42\textwidth}
-	% 		\centering
-	% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vit/exp1_vit/trial_seed42/figures/confusion_matrix.png}
-	% 		\caption{Vit}
-	% 	\end{subfigure}
-	% 	\hfill
-	% 	\begin{subfigure}{0.42\textwidth}
-	% 		\centering
-	% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/mobilenetv3_small/exp1_mobilenetv3_small/trial_seed42/figures/confusion_matrix.png}
-	% 		\caption{MobileNetV3-Small}
-	% 	\end{subfigure}\\[2mm]
+		\begin{subfigure}{0.42\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix_48k_de_vit_exp1_vit_trial_seed42}
+			\caption{Vit}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}{0.42\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix_48k_de_mobilenetv3_small_exp1_mobilenetv3_small_trial_seed42}
+			\caption{MobileNetV3-Small}
+		\end{subfigure}\\[2mm]
 
-	% 	\begin{subfigure}{0.42\textwidth}
-	% 		\centering
-	% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/exp1_vgg16/trial_seed42/figures/confusion_matrix.png}
-	% 		\caption{VGG16}
-	% 	\end{subfigure}
-	% 	\hfill
-	% 	\begin{subfigure}{0.42\textwidth}
-	% 		\centering
-	% 		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/MSCA_VGG16/exp1_MSCA_VGG16/trial_seed42/figures/confusion_matrix.png}
-	% 		\caption{MSCA-VGG16 (Ours)}
-	% 	\end{subfigure}
-	% 	\caption{Confusion matrices of different network backbones trained using the AW-DPCNN fusion representations. The proposed MSCA-VGG16 achieves the most accurate classification performance with significantly reduced inter-class confusion.}
-	% 	\label{fig:confusion_matrix}
-	% \end{figure*}
+		\begin{subfigure}{0.42\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix_48k_de_vgg16_exp1_vgg16_trial_seed123}
+			\caption{VGG16}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}{0.42\textwidth}
+			\centering
+			\includegraphics[width=\linewidth]{confusion_matrix_12k_de_MSCA_VGG16_exp1_MSCA_VGG16_trial_seed123}
+			\caption{MSCA-VGG16 (Ours)}
+		\end{subfigure}
+		\caption{Confusion matrices of different network backbones trained using the AW-DPCNN fusion representations. The proposed MSCA-VGG16 achieves the most accurate classification performance with significantly reduced inter-class confusion.}
+		\label{fig:confusion_matrix}
+	\end{figure*}
 
 \subsection{Backbone Comparison}
 \label{sec:backbone_comparison}
@@ -791,7 +791,6 @@ For qualitative analysis, t-SNE visualization is applied to the feature embeddin
 % 	\label{Fig:tsne}
 % 	\vspace{-5pt}
 % \end{figure*}
-
 
 
 % The CWRU t-SNE results in Fig.~\ref{Fig:tsne_CWRU} further support these findings. Compared with the scattered distributions of single representations and the partially overlapping clusters under concatenation fusion, the AW-DPCNN fused features exhibit substantially more compact intra-class distributions and clearer inter-class boundaries across all four bearing conditions. This cross-domain consistency demonstrates that the proposed AW-DPCNN fusion mechanism provides robust and generalizable representation enhancement, independent of the specific dataset characteristics.
@@ -1091,8 +1090,6 @@ To evaluate model robustness, we inject zero-mean additive Gaussian noise at SNR
 % \end{tabular}
 % \end{table*}
 
-\input{auto_tables/noise_robustness_table.tex}
-
 
 % \begin{table*}[!htbp]
 % \centering
@@ -1305,24 +1302,19 @@ To evaluate model robustness, we inject zero-mean additive Gaussian noise at SNR
 \textit{Note:} Ball Fault (BF), Inner Race Fault (IF), Outer Race Fault (OF) with fault diameters 007, 014, 021\,mil. Train/Val/Test split: 60/20/20 at file level (seed 42). JS Divergence: TV = Train vs.\ Val; TT = Train vs.\ Test; VT = Val vs.\ Test. JS values $\leq 0.064$ indicate excellent distribution homogeneity across all datasets. For 12k FE, OF014 and OF021 have only 1 source file each; windows are drawn from non-overlapping time regions ($60\%/20\%/20\%$) to populate all splits. Normal recordings are $\sim$4$\times$ longer than fault recordings.
 \end{table*}
 
-
-
 For the 12k FE dataset, fault classes OF014 and OF021 each contain a single recording. For these two classes, validation and test windows are drawn from non-overlapping temporal segments of the same recording ($60\%/20\%/20\%$ time-region split), while all other classes use independent file-level splits.
-
 
 \textit{Temporal Consistency Across Sampling Rates.}
 Although the CWRU 48k DE dataset uses larger window and hop lengths in sample counts (8192/4096 vs.\ 2048/1024 for the 12k datasets), all three datasets are designed to preserve identical temporal characteristics. Specifically, each window spans 170.7~ms of vibration signal regardless of the sampling rate ($2048/12{,}000 = 8192/48{,}000 \approx 0.171$~s), and the 50\% hop corresponds to 85.3~ms in all cases. This ensures that every fused image fed to the network represents the same physical duration of bearing operation, eliminating temporal-scale confounds from cross-dataset comparisons. The short-time Fourier transform (STFT) parameters are scaled proportionally as well: $N_{\text{FFT}} = 1024$ at 12~kHz and $N_{\text{FFT}} = 4096$ at 48~kHz, yielding identical frequency resolution of 11.7~Hz/bin across datasets. The only deliberate difference is the Mel frequency cutoff — $f_{\max}=6$~kHz for the 12k datasets (full Nyquist bandwidth) versus $f_{\max}=20$~kHz for 48k DE — reflecting the richer high-frequency information available at the higher sampling rate, which constitutes the core challenge of the cross-sampling-rate generalization experiment.
-
 
 \textit{Temporal Consistency Across Sampling Rates.}
 Although the 48k DE dataset uses 4$\times$ larger window and hop lengths in sample counts (8192/4096 vs.\ 2048/1024), the temporal durations are identical across all datasets: each window spans 170.7~ms ($2048/12{,}000 = 8192/48{,}000$) with 50\% overlap (85.3~ms hop). The STFT parameters are scaled proportionally ($N_{\text{FFT}}=1024$ at 12~kHz, $N_{\text{FFT}}=4096$ at 48~kHz), preserving a consistent frequency resolution of 11.7~Hz/bin. The only deliberate variation is the Mel bandwidth: $f_{\max}=6$~kHz (full Nyquist) for the 12k datasets versus $f_{\max}=20$~kHz for 48k DE, reflecting the richer high-frequency content that defines the cross-sampling-rate generalization challenge.
 
 \include{auto_tables/three_trial_summary.tex}
 
+% \input{auto_tables/noise_robustness_table.tex}
+
 \bibliographystyle{IEEEtran}
 \bibliography{references}
 
-
 \end{document}
-
-
