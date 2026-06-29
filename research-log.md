@@ -1,91 +1,24 @@
->create a new script to analyze all the results of the experiments and generate a summary table of metrics with IEEE latex format. The script should be named `analyze_results_three.py` and should be placed in the `scripts` directory. The script should read the results from the `experiment_result/exp1/` files and extract relevant metrics such as accuracy, precision, recall, F1-score, etc. The output should be formatted in a table and saved as a LaTeX file in the `paper/auto_tables` directory.
-the latex table should like 
+>create a script that finds all confusion matrix PNG files in the `experiments/experiment_result` directory tree and renames them with a consistent naming convention: `confusion_matrix_{dataset}_{model}_{experiment_name}_{trial_seed}.png`.
 
-\begin{table*}[!t]
-\centering
-\caption{Performance of Three Datasets in the Closed-Set Setting, Including Accuracy (Acc\%) and F1-score (F1\%)}
-\label{tab:closed_set_performance}
-\small
-\setlength{\tabcolsep}{2.5pt}  % Reduce column spacing for fit
-\begin{tabular}{@{\hspace{2pt}}c|c|cc|cc|cc|c|c|cc@{\hspace{2pt}}}
-  \toprule
-  \multirow{2}{*}{Dataset} & \multirow{2}{*}{\makebox[20pt]{Label}} & \multicolumn{2}{c|}{Flexmatch} & 
-  \multicolumn{2}{c|}{BYOL} & 
-  \multicolumn{2}{c|}{Flexmatch} & 
-  \multicolumn{1}{c|}{SSCL} & 
-  \multicolumn{1}{c|}{HSFD} & 
-  \multicolumn{2}{c}{OSCL} \\
-  \cmidrule{3-12}
-  & \makebox[20pt]{Num} & Acc & F1 & Acc & F1 & Acc & F1 & Acc & Acc & Acc & F1 \\
-  \midrule
-  
-  % CWRU Dataset
-  \multirow{7}{*}{\textbf{CWRU}} 
-  & 10   & 72.40±11.85  & 66.05±14.93  & 93.30±0.03  & 92.56±0.03  & 65.27±4.77  & 54.50±3.83  & 64.75  & 66.73  & \textbf{97.26±0.09}  & \textbf{97.05±0.17} \\
-  & 50   & 84.38±15.63  & 81.59±19.73  & 94.88±0.04  & 94.34±0.04  & 80.56±7.37  & 76.44±10.04 & 88.92  & 79.81  & \textbf{97.28±0.08}  & \textbf{97.02±0.09} \\
-  & 100  & 85.23±15.31  & 81.32±19.72  & 96.23±0.04  & 96.16±0.18  & 89.21±7.16  & 81.66±9.38  & 91.53  & 92.13  & \textbf{97.49±0.04}  & \textbf{97.25±0.04} \\
-  & 150  & 87.80±6.66   & 84.55±13.36  & 97.27±0.04  & 97.09±0.05  & 92.07±7.65  & 91.79±0.41  & 95.77  & 94.01  & \textbf{97.42±0.05}  & \textbf{97.18±0.05} \\
-  & 250  & 91.88±1.79   & 90.85±2.20   & 97.78±0.03  & 97.55±0.03  & 92.07±4.02  & 90.83±4.88  & 97.10  & 97.97  & \textbf{97.44±0.02}  & \textbf{97.20±0.02} \\
-  & 500  & 95.51±8.54   & 94.73±10.06  & 97.49±0.05  & 97.23±0.05  & 93.40±5.71  & 92.25±6.65  & 99.03  & 99.29  & \textbf{99.12±0.09}  & \textbf{99.03±0.10} \\
-  & 2000 & 99.18±0.87   & 99.09±0.97   & 98.39±0.06  & 98.23±0.07  & 96.33±2.66  & 94.55±5.95  & 99.97  & 99.84  & \textbf{99.37±0.11}  & \textbf{99.30±0.13} \\
-  
-  \midrule
-  
-  % MFPT Dataset
-  \multirow{8}{*}{\textbf{MFPT}} 
-  & 3    & 84.63±7.96   & 79.65±13.65  & 85.64±0.64  & 82.71±0.58  & 84.85±7.64  & 80.15±10.58 & 85.73  & 87.38  & \textbf{96.85±0.08}  & \textbf{95.76±0.10} \\
-  & 9    & 90.56±4.46   & 88.40±4.30   & 92.19±0.46  & 89.78±0.61  & 92.10±7.45  & 90.08±9.03  & 92.09  & 91.33  & \textbf{96.83±0.07}  & \textbf{95.74±0.08} \\
-  & 30   & 93.06±3.67   & 91.16±4.77   & 92.55±0.06  & 89.02±0.09  & 93.67±6.56  & 93.48±6.33  & 93.36  & 91.69  & \textbf{97.11±0.05}  & \textbf{96.11±0.07} \\
-  & 60   & 94.83±1.98   & 93.55±2.42   & 91.77±0.05  & 88.81±0.07  & 94.24±3.46  & 92.35±4.70  & 94.97  & 94.21  & \textbf{97.15±0.07}  & \textbf{96.19±0.11} \\
-  & 300  & 97.38±1.99   & 96.44±2.70   & 98.37±0.24  & 97.86±0.31  & 95.63±5.64  & 95.23±5.56  & 98.98  & 99.01  & \textbf{99.07±0.11}  & \textbf{98.76±0.15} \\
-  & 600  & 97.77±1.21   & 97.54±1.07   & 98.25±0.08  & 97.68±0.11  & 97.12±2.53  & 96.37±2.05  & 99.72  & 99.60  & \textbf{99.26±0.06}  & \textbf{99.00±0.08} \\
-  
-  \midrule
-  
-  % XJTU-SY Dataset
-  \multirow{6}{*}{\textbf{XJTU-SY}} 
-  & 15   & 40.16±4.65   & 35.77±6.78   & 69.84±0.11  & 68.57±0.08  & 34.13±3.02  & 26.98±4.35  & ---       & ---       & \textbf{92.27±0.23}  & \textbf{91.04±0.25} \\
-  & 45   & 55.92±14.76  & 53.55±15.43  & 72.17±0.08  & 70.27±0.11  & 69.01±3.36  & 58.92±3.30  & ---       & ---       & \textbf{92.17±0.33}  & \textbf{90.86±0.58} \\
-  & 150  & 78.85±7.34   & 76.61±9.10   & 80.46±0.50  & 79.26±0.57  & 79.88±7.71  & 88.10±6.87  & ---       & ---       & \textbf{93.32±0.18}  & \textbf{92.04±0.19} \\
-  & 300  & 80.36±6.54   & 78.44±8.06   & 84.80±0.51  & 83.46±0.63  & 90.24±3.87  & 89.61±4.25  & ---       & ---       & \textbf{92.92±0.23}  & \textbf{91.71±0.19} \\
-  & 1500 & 89.93±1.91   & 89.44±1.10   & 92.56±0.35  & 91.48±0.51  & 89.17±4.52  & 87.85±3.55  & ---       & ---       & \textbf{93.34±0.07}  & \textbf{93.18±0.14} \\
-  & 3000 & 91.92±2.25   & 87.70±2.26   & 91.43±0.12  & 90.51±0.10  & 90.41±9.10  & 89.61±0.69  & ---       & ---       & \textbf{94.29±0.11}  & \textbf{93.02±0.12} \\
-  
-  \midrule
-  
-  % HIT Dataset
-  \multirow{6}{*}{\textbf{HIT}} 
-  & 4    & 79.53±9.79   & 79.43±9.48   & 57.91±1.74  & 57.43±1.76  & 64.03±7.36  & 61.27±4.6   & ---       & ---       & \textbf{93.05±0.93}  & \textbf{92.95±0.96} \\
-  & 12   & 93.14±0.19   & 93.04±0.17   & 79.41±0.21  & 79.44±0.25  & 75.96±2.65  & 72.55±4.27  & ---       & ---       & \textbf{94.88±0.25}  & \textbf{94.83±0.26} \\
-  & 40   & 95.70±1.55   & 95.70±1.55   & 86.53±0.88  & 86.83±1.05  & 93.21±1.66  & 93.24±1.66  & ---       & ---       & \textbf{95.17±0.06}  & \textbf{95.12±0.06} \\
-  & 80   & 90.75±3.76   & 90.98±3.35   & 88.26±0.88  & 87.94±0.93  & 91.76±1.23  & 91.63±1.23  & ---       & ---       & \textbf{94.99±0.16}  & \textbf{94.95±0.17} \\
-  & 400  & 99.26±0.32   & 99.26±0.33   & 97.48±0.95  & 96.91±0.64  & 98.01±0.93  & 98.02±0.87  & ---       & ---       & \textbf{99.76±0.03}  & \textbf{99.76±0.05} \\
-  & 800  & 99.87±0.04   & 99.87±0.04   & 99.55±0.03  & 99.56±0.03  & 98.52±1.2   & 98.51±1.22  & ---       & ---       & \textbf{99.85±0.06}  & \textbf{99.86±0.07} \\
-  
-  \bottomrule
-\end{tabular}
-\end{table*}
+### Naming convention
 
->add a metric: false position rate (FPR)
+| Source | Example output filename |
+|---|---|
+| `exp1/{model}/{dataset}/...` | `confusion_matrix_12k_de_MSCA_VGG16_exp1_MSCA_VGG16_trial_seed42.png` |
+| `rep_compare/{combo}/...` | `confusion_matrix_cwt_gadf_msca-vgg16_rep_compare_cwt_gadf_trial_seed123.png` |
+| `ablation_results/{B#}/...` | `confusion_matrix_ablation_B0_ablation_B0_trial_seed456.png` |
 
-FPR isn't directly stored in `test_metrics.json`. I can compute it from existing metrics: $\text{FPR} = 1 - \text{specificity}$, and $\text{specificity} = 2 \times \text{BalAcc} - \text{Recall}$. Let me add it as a derived metric.
+### Usage
 
+```bash
+# Dry run (preview without copying)
+python scripts/collect_confusion_matrices.py --dry-run
 
-FPR needs to be derived. I'll compute it from `bal_acc` and `recall`: $\text{FPR} = 1 - (2 \times \text{BalAcc} - \text{Recall})$.
+# Copy all to paper/figures
+python scripts/collect_confusion_matrices.py
 
-
-FPR added. The table now shows 3 metrics per dataset (Acc, F1, FPR). FPR is derived from $\text{BalAcc}$ and $\text{Recall}$:
-
-$$\text{FPR} = 1 - (2 \times \text{BalAcc} - \text{Recall})$$
-
-10 columns (1 model + 9 data) fits in `table*`:
-
-```
-Model           CWRU 12k DE              CWRU 12k FE              CWRU 48k DE
-                Acc       F1     FPR     Acc       F1     FPR     Acc       F1     FPR
-MSCA-VGG16      93.26±2.27 90.38±3.37 8.76±2.95  ...
-ConvNeXt-Tiny   85.25±3.09 78.11±3.74 19.16±4.03 ...
-...
+# Custom output directory
+python scripts/collect_confusion_matrices.py --output-dir paper/figures/confusion_matrix
 ```
 
-Lower FPR is better — bolded values show best (lowest) per dataset×metric.
+Made changes.
