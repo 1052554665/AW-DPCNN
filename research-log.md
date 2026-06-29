@@ -1,24 +1,30 @@
->create a script that finds all confusion matrix PNG files in the `experiments/experiment_result` directory tree and renames them with a consistent naming convention: `confusion_matrix_{dataset}_{model}_{experiment_name}_{trial_seed}.png`.
+>for this supervised task, is it correct that some value of confusion matrix is 100%? early stopping has been applied during training, and JS Divergence is also used.
 
-### Naming convention
+### Evidence from your results
 
-| Source | Example output filename |
-|---|---|
-| `exp1/{model}/{dataset}/...` | `confusion_matrix_12k_de_MSCA_VGG16_exp1_MSCA_VGG16_trial_seed42.png` |
-| `rep_compare/{combo}/...` | `confusion_matrix_cwt_gadf_msca-vgg16_rep_compare_cwt_gadf_trial_seed123.png` |
-| `ablation_results/{B#}/...` | `confusion_matrix_ablation_B0_ablation_B0_trial_seed456.png` |
+| Check | Value | Interpretation |
+|---|---|---|
+| `leakage_suspicious` | `False` | No train/test overlap detected ✅ |
+| `shuffled_acc` | 14.5% (vs 10% chance) | Model isn't exploiting spurious correlations ✅ |
+| `test_auc` | 99.6–99.9% | Near-perfect ROC → classes are highly separable ✅ |
+| Early stopping | `best_epoch` ~10/30 | Did not train to convergence → not memorizing ✅ |
 
-### Usage
+### Is 100% per-class accuracy legitimate here? **Yes, likely correct.**
 
-```bash
-# Dry run (preview without copying)
-python scripts/collect_confusion_matrices.py --dry-run
+1. **CWRU is an "easy" dataset** — bearing fault signatures (inner race, outer race, ball) produce spectrally distinct vibration patterns that are trivially separable with modern CNNs. Many published papers report >99% overall accuracy. Per-class 100% on well-separated classes (e.g., Normal vs severe faults) is expected.
 
-# Copy all to paper/figures
-python scripts/collect_confusion_matrices.py
+2. **Early stopping** at epoch ~10 (out of 30 max) means the model stopped well before overfitting. If it were memorizing, it would train longer and show a growing train/val gap.
 
-# Custom output directory
-python scripts/collect_confusion_matrices.py --output-dir paper/figures/confusion_matrix
-```
+3. **JS Divergence** as regularization further constrains the representation space, making extreme overfitting harder.
 
-Made changes.
+4. **The AUC of 99.6%+** independently confirms the separability — AUC is threshold-invariant and not affected by class imbalance.
+
+### When to be suspicious
+
+100% per-class accuracy is a **red flag only if**:
+- The class has very few test samples (<5) → could be luck
+- Training accuracy is also 100% but validation is low → overfitting
+- You used data augmentation that leaks between train/test → but your `leakage_suspicious` check is clean
+- The test set wasn't properly stratified
+
+**Bottom line**: For CWRU with AW-DPCNN fusion, 100% on some classes is **expected and valid**. The built-in leakage check, shuffled baseline, and early AUC all corroborate this.
