@@ -18,6 +18,16 @@ python scripts/run_repeated_trials.py \
     --exp-dir experiments/exp1 \
     --datasets 48k_de \
     --num-runs 3
+
+Run all 3 datasets × 7 models × 3 trials
+
+python scripts/run_repeated_trials.py \
+    --config configs/default.yaml \
+    --exp-dir experiments/exp1 \
+    --datasets 12k_de 12k_fe 48k_de \
+    --output-root experiments/experiment_result/exp1 \
+    --num-runs 3 \
+    --continue-on-error
 """
 
 import argparse
@@ -92,11 +102,16 @@ def main():
         ds_cfg = get_dataset_config(args.dataset)
         config.setdefault("dataset", {})
         config["dataset"]["root_dir"] = ds_cfg["root_dir"]
+        config["dataset"]["key"] = args.dataset      # short key for directory naming
         print(f"[dataset] Override: {args.dataset} -> {ds_cfg['root_dir']}")
     if args.output_root:
         config.setdefault("output", {})
         config["output"]["root_dir"] = args.output_root
         print(f"[output] Override root_dir -> {args.output_root}")
+
+    # --- Model directory name (from exp-config stem) ---
+    if args.exp_config:
+        config["model_dir"] = Path(args.exp_config).stem
 
     seed = args.seed if args.seed is not None else int(config.get("seed", 42))
     set_seed(seed)

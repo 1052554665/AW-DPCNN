@@ -214,19 +214,26 @@ def build_output_dir(base_config: str, exp_config: Path,
                       output_root: str = "", dataset: str = "") -> Path:
     """Infer the aggregation output directory from the merged config.
 
+    Directory layout::
+
+        {output_root}/{model_dir}/{dataset}/aggregated
+
     If *output_root* or *dataset* are given, they override the config values.
+    *model_dir* is derived from the experiment config filename stem.
     """
     from src.utils.config import load_config
-    from src.utils.dataset_registry import get_dataset_config
 
     config = load_config(base_config, str(exp_config))
-    root = output_root or config.get("output", {}).get("root_dir", "experiments/runs")
+    root = Path(output_root or config.get("output", {}).get("root_dir", "experiments/runs"))
+    model_dir = exp_config.stem
 
-    # Append dataset suffix if overriding
+    parts = [root]
+    if model_dir:
+        parts.append(model_dir)
     if dataset:
-        root = str(Path(root) / dataset)
+        parts.append(dataset)
 
-    return Path(root).resolve() / "aggregated"
+    return Path(*parts).resolve() / "aggregated"
 
 
 def run_repeated_trials(
@@ -267,7 +274,8 @@ def run_repeated_trials(
                 return exit_code
 
         # Construct the deterministic trial directory path
-        trial_dir = _get_trial_dir(base_config, exp_config, seed)
+        trial_dir = _get_trial_dir(base_config, exp_config, seed,
+                                   dataset=dataset, output_root=output_root)
         if trial_dir.exists() and (trial_dir / "results" / "test_metrics.json").exists():
             trial_dirs.append(trial_dir)
         elif not aggregate_only:
@@ -288,18 +296,32 @@ def run_repeated_trials(
     return 0
 
 
-def _get_trial_dir(base_config: str, exp_config: Path, seed: int) -> Path:
+def _get_trial_dir(base_config: str, exp_config: Path, seed: int,
+                   dataset: str = "", output_root: str = "") -> Path:
     """Construct the deterministic trial directory path for a given seed.
 
     Uses the same config merging logic as train.py (base + exp override)
     to guarantee the path matches what prepare_run_dir created.
+
+    Directory layout::
+
+        {output_root}/{model_dir}/{dataset}/{experiment_name}/trial_seed{seed}
     """
     from src.utils.config import load_config
     config = load_config(base_config, str(exp_config))
     output_cfg = config.get("output", {})
-    root = Path(output_cfg.get("root_dir", "experiments/runs")).resolve()
+    root = Path(output_root or output_cfg.get("root_dir", "experiments/runs")).resolve()
     exp_name = str(config.get("experiment_name", exp_config.stem))
-    return root / exp_name / f"trial_seed{seed}"
+    model_dir = exp_config.stem
+
+    parts = [root]
+    if model_dir:
+        parts.append(model_dir)
+    if dataset:
+        parts.append(dataset)
+    parts.append(exp_name)
+
+    return Path(*parts) / f"trial_seed{seed}"
 
 
 def _aggregate_trial_results(trial_dirs: List[Path], agg_dir: Path, title: str) -> None:

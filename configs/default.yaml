@@ -43,7 +43,7 @@ scheduler:
   min_lr: 0.000001
 
 output:
-  root_dir: ./experiments/runs
+  root_dir: ./experiments/experiment_result/exp1
 
 visualization:
   confusion_matrix: true

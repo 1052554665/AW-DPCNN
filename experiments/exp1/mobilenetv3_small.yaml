@@ -23,6 +23,3 @@ scheduler:
   
 visualization:
   tsne: true
-
-output:
-  root_dir: ./experiments/experiment_result/exp1/mobilenetv3_small

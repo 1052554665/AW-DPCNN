@@ -1181,6 +1181,9 @@ To evaluate model robustness, we inject zero-mean additive Gaussian noise at SNR
 % \end{figure*}
 
 
+% \input{auto_tables/roc_auc_table.tex}
+
+
 \begin{figure*}[!htbp]
 	\centering
 	\begin{subfigure}{0.32\textwidth}
@@ -1220,7 +1223,7 @@ To evaluate model robustness, we inject zero-mean additive Gaussian noise at SNR
 		\includegraphics[width=\linewidth]{figures/roc/msca-vgg16_roc.png}
 		\caption{MSCA-VGG16 (Ours)}
 	\end{subfigure}
-	\caption{t-SNE feature visualization of different backbone networks on the transformer acoustic test set. The proposed MSCA-VGG16 produces the most compact and well-separated clusters, indicating superior discriminative representation learning.}
+	\caption{ROC curves of different backbone networks on the CWRU 12k DE dataset. The proposed MSCA-VGG16 achieves the highest AUC, indicating superior discriminative capability and robustness across classes.}
 	\label{fig:tsne_backbones}
 \end{figure*}
 

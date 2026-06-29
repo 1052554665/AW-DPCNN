@@ -22,13 +22,21 @@ Output
       sensitivity_gamma.png  /  sensitivity_N.png  /  sensitivity_alpha.png
       sensitivity_summary.json
 
-Usage::
-
+# 12k drive-end (default — same as before)
 python scripts/hyperparameter_sensitivity.py \
     --exp-config experiments/exp1/MSCA_VGG16.yaml \
-    --auto-checkpoint --trial trial_seed42 \
-    --mel-n-fft 1024 --mel-n-mels 128 --mel-fmax 6000 \
-    --max-samples 500
+    --auto-checkpoint --trial trial_seed42 --dataset 12k_de --max-samples 500
+
+# 12k fan-end
+python scripts/hyperparameter_sensitivity.py \
+    --exp-config experiments/exp1/MSCA_VGG16.yaml \
+    --auto-checkpoint --trial trial_seed42 --dataset 12k_fe --max-samples 500
+
+# 48k drive-end
+python scripts/hyperparameter_sensitivity.py \
+    --exp-config experiments/exp1/MSCA_VGG16.yaml \
+    --auto-checkpoint --trial trial_seed42 --dataset 48k_de --max-samples 500
+
 """
 
 import argparse
@@ -64,6 +72,10 @@ from build_cwru_dataset import (  # noqa: E402
 )
 from src.models import build_model  # noqa: E402
 from src.utils.config import load_config, load_yaml  # noqa: E402
+from src.utils.dataset_registry import (  # noqa: E402
+    DATASET_KEYS,
+    get_dataset_config,
+)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -85,27 +97,40 @@ IMG_SIZE       = 224
 #  CWRU .mat file helpers
 # ═══════════════════════════════════════════════════════════════════
 
-CWRU_CLASS_MAP = {
-    "BF007": ("12k_Drive_End_Bearing_Fault_Data/B/007",       "DE_time"),
-    "BF014": ("12k_Drive_End_Bearing_Fault_Data/B/014",       "DE_time"),
-    "BF021": ("12k_Drive_End_Bearing_Fault_Data/B/021",       "DE_time"),
-    "IF007": ("12k_Drive_End_Bearing_Fault_Data/IR/007",      "DE_time"),
-    "IF014": ("12k_Drive_End_Bearing_Fault_Data/IR/014",      "DE_time"),
-    "IF021": ("12k_Drive_End_Bearing_Fault_Data/IR/021",      "DE_time"),
-    "OF007": ("12k_Drive_End_Bearing_Fault_Data/OR/007/@6",   "DE_time"),
-    "OF014": ("12k_Drive_End_Bearing_Fault_Data/OR/014/@6",   "DE_time"),
-    "OF021": ("12k_Drive_End_Bearing_Fault_Data/OR/021/@6",   "DE_time"),
-    "Normal": ("Normal",                                       "DE_time"),
-}
+def _build_cwru_class_map(src_dir: str, sensor_key: str) -> dict:
+    """Build a CWRU class→(subpath, sensor_key) map for a given dataset.
+
+    Uses the positional ``@6`` suffix for outer-race faults (standard
+    CWRU convention for the centred load-zone position).
+    """
+    return {
+        "BF007": (f"{src_dir}/B/007",        sensor_key),
+        "BF014": (f"{src_dir}/B/014",        sensor_key),
+        "BF021": (f"{src_dir}/B/021",        sensor_key),
+        "IF007": (f"{src_dir}/IR/007",       sensor_key),
+        "IF014": (f"{src_dir}/IR/014",       sensor_key),
+        "IF021": (f"{src_dir}/IR/021",       sensor_key),
+        "OF007": (f"{src_dir}/OR/007/@6",    sensor_key),
+        "OF014": (f"{src_dir}/OR/014/@6",    sensor_key),
+        "OF021": (f"{src_dir}/OR/021/@6",    sensor_key),
+        "Normal": ("Normal",                  sensor_key),
+    }
+
+
+# Default class map for 12k drive-end (backward‑compatible fallback)
+CWRU_CLASS_MAP = _build_cwru_class_map(
+    "12k_Drive_End_Bearing_Fault_Data", "DE_time")
 
 CWRU_ROOT = Path("raw-data/CWRU-dataset")
 
-# Mel params for 12 kHz CWRU — overridable via CLI
+# Mel / signal params for 12 kHz CWRU — overridable via CLI or --dataset
 CWRU_SR       = 12000
 CWRU_N_FFT    = 1024
 CWRU_HOP_LEN  = 256
 CWRU_N_MELS   = 128
 CWRU_FMAX     = 6000
+CWRU_WIN_LEN  = 2048
+CWRU_SEG_HOP  = 1024
 
 
 def _load_mat_signal(mat_path: str, sensor_key: str) -> np.ndarray:
@@ -125,6 +150,7 @@ def _collect_cwru_test_windows(
     win_len: int = 2048,
     hop_len: int = 1024,
     max_windows: int = 500,
+    class_map: dict = None,
 ) -> tuple:
     """Collect raw CWRU windows for the *test* split.
 
@@ -134,6 +160,9 @@ def _collect_cwru_test_windows(
 
     Returns (windows, class_names).
     """
+    if class_map is None:
+        class_map = CWRU_CLASS_MAP
+
     test_root = Path(dataset_dir) / "test"
     if not test_root.exists():
         raise FileNotFoundError(f"Test split not found: {test_root}")
@@ -164,7 +193,7 @@ def _collect_cwru_test_windows(
     windows = []
     for cls_name in class_names:
         label_idx = class_to_idx[cls_name]
-        cwru_info = CWRU_CLASS_MAP.get(cls_name)
+        cwru_info = class_map.get(cls_name)
         if cwru_info is None:
             print(f"  [WARN] No CWRU mapping for '{cls_name}'")
             continue
@@ -378,20 +407,52 @@ def _plot_sensitivity(param_name: str, param_values: list,
 #  Checkpoint discovery
 # ═══════════════════════════════════════════════════════════════════
 
-def find_checkpoint(run_root: Path, trial: str = "trial_seed42") -> Optional[Path]:
-    """Recursively search for best.pt, preferring the given trial."""
+def find_checkpoint(run_root: Path, trial: str = "trial_seed42",
+                    model_dir: Optional[str] = None,
+                    dataset_key: Optional[str] = None) -> Optional[Path]:
+    """Recursively search for best.pt, preferring the given trial.
+
+    When ``model_dir`` is provided, the search is scoped to
+    ``run_root / model_dir`` first to avoid picking up checkpoints
+    from other models in the same experiment group.
+
+    When ``dataset_key`` is also provided (e.g. ``"12k_de"``), the
+    search is further narrowed to ``model_dir / dataset_key``.
+    """
     if not run_root.exists():
         return None
-    # Try specific trial first
-    direct = run_root / trial / "checkpoints" / "best.pt"
-    if direct.exists():
-        return direct
-    # Search all trials
-    for pattern in ["**/checkpoints/best.pt", "**/best.pt"]:
-        candidates = list(run_root.glob(pattern))
-        if candidates:
-            return sorted(candidates, key=lambda p: p.stat().st_mtime,
+
+    # Build a list of search roots: most specific first, then broad
+    search_roots = [run_root]
+    if model_dir:
+        if dataset_key:
+            scoped = run_root / model_dir / dataset_key
+        else:
+            scoped = run_root / model_dir
+        if scoped.exists():
+            search_roots.insert(0, scoped)
+
+    for root in search_roots:
+        # Try precise path: root / ** / trial / checkpoints / best.pt
+        precise = list(root.glob(f"**/{trial}/checkpoints/best.pt"))
+        if precise:
+            return sorted(precise, key=lambda p: p.stat().st_mtime,
                           reverse=True)[0]
+
+    for root in search_roots:
+        # Try any trial: root / ** / trial_seed* / checkpoints / best.pt
+        any_trial = list(root.glob("**/trial_seed*/checkpoints/best.pt"))
+        if any_trial:
+            return sorted(any_trial, key=lambda p: p.stat().st_mtime,
+                          reverse=True)[0]
+
+    for root in search_roots:
+        # Last resort: any best.pt
+        any_best = list(root.glob("**/best.pt"))
+        if any_best:
+            return sorted(any_best, key=lambda p: p.stat().st_mtime,
+                          reverse=True)[0]
+
     return None
 
 
@@ -410,10 +471,14 @@ def main():
                         help="Explicit path to best.pt")
     parser.add_argument("--auto-checkpoint", action="store_true",
                         help="Auto‑discover checkpoint from exp‑config")
-    parser.add_argument("--dataset-dir", default="datasets/cwru_de",
-                        help="ImageFolder dataset root (for test split list)")
-    parser.add_argument("--win-len", type=int, default=2048)
-    parser.add_argument("--hop-len", type=int, default=1024)
+    parser.add_argument("--dataset", default="", choices=[""] + DATASET_KEYS,
+                        help=f"Dataset key to auto‑configure paths & params "
+                             f"{{{','.join(DATASET_KEYS)}}}")
+    parser.add_argument("--dataset-dir", default="datasets/cwru_12k_de",
+                        help="ImageFolder dataset root (for test split list). "
+                             "Overridden when --dataset is set.")
+    parser.add_argument("--win-len", type=int, default=CWRU_WIN_LEN)
+    parser.add_argument("--hop-len", type=int, default=CWRU_SEG_HOP)
     parser.add_argument("--max-samples", type=int, default=500,
                         help="Max test windows per sweep")
     parser.add_argument("--output-dir",
@@ -436,6 +501,54 @@ def main():
     args = parser.parse_args()
 
     os.makedirs(args.output_dir, exist_ok=True)
+
+    # ── Resolve dataset via registry (if --dataset is given) ──
+    dataset_key = ""                 # stays empty when --dataset is not used
+    cwru_class_map = CWRU_CLASS_MAP  # mutable: may be rebuilt below
+    cwru_sr      = CWRU_SR
+    cwru_n_fft   = CWRU_N_FFT
+    cwru_hop_len = CWRU_HOP_LEN
+    cwru_n_mels  = CWRU_N_MELS
+    cwru_fmax    = CWRU_FMAX
+    cwru_win_len = CWRU_WIN_LEN
+    cwru_seg_hop = CWRU_SEG_HOP
+
+    if args.dataset:
+        dataset_key = args.dataset
+        ds_cfg = get_dataset_config(dataset_key)
+        # Override dataset directory & all signal / Mel params from registry
+        args.dataset_dir = ds_cfg["root_dir"]
+        cwru_sr      = int(ds_cfg.get("sr", CWRU_SR))
+        cwru_n_fft   = int(ds_cfg.get("n_fft", CWRU_N_FFT))
+        cwru_hop_len = int(ds_cfg.get("hop_len", CWRU_HOP_LEN))
+        cwru_n_mels  = int(ds_cfg.get("n_mels", CWRU_N_MELS))
+        cwru_fmax    = int(ds_cfg.get("fmax", CWRU_FMAX))
+        cwru_win_len = int(ds_cfg.get("win_len", CWRU_WIN_LEN))
+        cwru_seg_hop = int(ds_cfg.get("seg_hop", CWRU_SEG_HOP))
+        # Rebuild class map with correct src_dir & sensor_key.
+        # Strip CWRU_ROOT prefix because _collect_cwru_test_windows
+        # prepends it again (CWRU_ROOT / sub_path).
+        src_dir_rel = ds_cfg["src_dir"]
+        root_str = str(CWRU_ROOT) + "/"
+        if src_dir_rel.startswith(root_str):
+            src_dir_rel = src_dir_rel[len(root_str):]
+        cwru_class_map = _build_cwru_class_map(
+            src_dir_rel, ds_cfg["sensor_key"])
+        # CLI Mel-param overrides still take precedence when explicitly set
+        if args.mel_n_fft != CWRU_N_FFT:
+            cwru_n_fft = args.mel_n_fft
+        if args.mel_hop_len != CWRU_HOP_LEN:
+            cwru_hop_len = args.mel_hop_len
+        if args.mel_n_mels != CWRU_N_MELS:
+            cwru_n_mels = args.mel_n_mels
+        if args.mel_fmax != CWRU_FMAX:
+            cwru_fmax = args.mel_fmax
+        if args.win_len != CWRU_WIN_LEN:
+            cwru_win_len = args.win_len
+        if args.hop_len != CWRU_SEG_HOP:
+            cwru_seg_hop = args.hop_len
+        print(f"[dataset] {dataset_key} → {args.dataset_dir}  "
+              f"(sr={cwru_sr}, sensor={ds_cfg['sensor_key']})")
 
     # ── Device ──
     base_config = load_yaml(args.config)
@@ -461,7 +574,10 @@ def main():
     elif args.auto_checkpoint and args.exp_config:
         run_root = Path(config.get("output", {}).get(
             "root_dir", "experiments/experiment_result/exp1"))
-        ckpt = find_checkpoint(run_root, trial=args.trial)
+        model_dir = Path(args.exp_config).stem  # e.g. "MSCA_VGG16" from MSCA_VGG16.yaml
+        ckpt = find_checkpoint(run_root, trial=args.trial,
+                               model_dir=model_dir,
+                               dataset_key=dataset_key or None)
         if ckpt is None:
             print(f"[ERROR] No checkpoint found in {run_root}")
             sys.exit(1)
@@ -482,8 +598,9 @@ def main():
     # ── Load CWRU test windows ──
     print(f"\nCollecting test windows from {args.dataset_dir} ...")
     windows, class_names = _collect_cwru_test_windows(
-        args.dataset_dir, args.win_len, args.hop_len,
+        args.dataset_dir, cwru_win_len, cwru_seg_hop,
         max_windows=args.max_samples * 2,
+        class_map=cwru_class_map,
     )
     labels = [lbl for _, _, lbl in windows]
     print(f"Loaded {len(windows)} test windows "
@@ -503,12 +620,12 @@ def main():
 
     # ── Pre‑compute Mel + GADF (once — independent of γ, N, α) ──
     print(f"\nPre‑computing Mel and GADF images for all sampled windows ...")
-    print(f"  Mel params: n_fft={args.mel_n_fft}, hop_len={args.mel_hop_len}, "
-          f"n_mels={args.mel_n_mels}, fmax={args.mel_fmax}")
+    print(f"  Mel params: n_fft={cwru_n_fft}, hop_len={cwru_hop_len}, "
+          f"n_mels={cwru_n_mels}, fmax={cwru_fmax}")
     mel_gadf_pairs = _precompute_mel_gadf(
-        sampled_windows, CWRU_SR,
-        n_fft=args.mel_n_fft, hop_len=args.mel_hop_len,
-        n_mels=args.mel_n_mels, fmax=args.mel_fmax,
+        sampled_windows, cwru_sr,
+        n_fft=cwru_n_fft, hop_len=cwru_hop_len,
+        n_mels=cwru_n_mels, fmax=cwru_fmax,
     )
     print(f"Cached {len(mel_gadf_pairs)} Mel+GADF pairs")
 

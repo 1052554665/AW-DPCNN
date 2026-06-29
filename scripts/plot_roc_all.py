@@ -12,18 +12,27 @@ All from existing checkpoints — no retraining needed.
 
 Usage::
 
-    python scripts/plot_roc_all.py
+# Default (backward compat — broad search)
+python scripts/plot_roc_all.py
 
-    # Specific trial seed
-    python scripts/plot_roc_all.py --trial trial_seed456
+# Scoped to 12k_de dataset
+python scripts/plot_roc_all.py --dataset 48k_de
 
-    # Custom output directory
-    python scripts/plot_roc_all.py --output paper/figures/roc
+# Specific trial + dataset
+python scripts/plot_roc_all.py --dataset 12k_de --trial trial_seed42
+
+# Full run: plots + table
+python scripts/plot_roc_all.py --dataset 48k_de --trial trial_seed456
+
+# Custom table output directory
+python scripts/plot_roc_all.py --dataset 12k_de --table-dir paper/auto_tables
+
 """
 
 import argparse
 import json
 import sys
+from datetime import datetime
 from pathlib import Path
 
 import matplotlib
@@ -43,6 +52,7 @@ if str(_PROJECT_ROOT) not in sys.path:
 from src.datasets import build_dataloaders
 from src.models import build_model
 from src.utils.config import load_yaml
+from src.utils.dataset_registry import DATASET_KEYS
 
 # ── IEEE-compatible font configuration ────────────────────────────────
 plt.rcParams["font.family"] = "serif"
@@ -58,6 +68,7 @@ MODEL_DISPLAY = {
     "efficientnet-b0":    "EfficientNet-B0",
     "mobilenetv3_small":  "MobileNetV3-Small",
     "msca-vgg16":         "MSCA-VGG16 (Ours)",
+    "resnet18":           "ResNet18",
     "vgg16":              "VGG16",
     "vit":                "ViT",
 }
@@ -72,8 +83,11 @@ LINE_STYLES = {
 }
 
 
-def discover_models(trial: str) -> list:
+def discover_models(trial: str, dataset_key: str = "") -> list:
     """Find all model runs with checkpoints and resolved configs.
+
+    When ``dataset_key`` is provided (e.g. ``"12k_de"``), results are
+    read from ``RESULT_ROOT / model / dataset_key / exp1_* / trial``.
 
     Returns list of dicts with keys: model_name, display_name, checkpoint, config.
     """
@@ -81,7 +95,14 @@ def discover_models(trial: str) -> list:
     for exp_dir in sorted(RESULT_ROOT.glob("*")):
         if not exp_dir.is_dir():
             continue
-        inner = sorted(exp_dir.glob("exp1_*"))
+        # Search for exp1_* directories: scoped by dataset if given
+        if dataset_key:
+            inner = sorted(exp_dir.glob(f"{dataset_key}/exp1_*"))
+        else:
+            inner = sorted(exp_dir.glob("exp1_*"))
+            if not inner:
+                # Fallback: look one level deeper for any dataset
+                inner = sorted(exp_dir.glob("*/exp1_*"))
         if not inner:
             continue
         run_dir = inner[0]
@@ -261,14 +282,182 @@ def plot_combined_macro(results: list, output_dir: Path) -> None:
     print(f"\n  Combined macro-avg ROC: {out}")
 
 
+def generate_roc_table(results: list, table_dir: Path) -> None:
+    """Generate an IEEE-style LaTeX table of per-class AUC values.
+
+    Produces ``roc_auc_table.tex`` in *table_dir*.
+    """
+    table_dir.mkdir(parents=True, exist_ok=True)
+
+    # ── Compute AUC per class per model ──
+    table_data = []  # list of {model_name, class_aucs: {cls: auc}, macro, micro}
+    class_names_all = None
+
+    for r in results:
+        y_true = np.asarray(r["y_true"], dtype=int)
+        y_score = np.asarray(r["y_score"], dtype=float)
+        class_names = r["class_names"]
+        if class_names_all is None:
+            class_names_all = list(class_names)
+        n_classes = len(class_names)
+        y_true_bin = label_binarize(y_true, classes=range(n_classes))
+
+        class_aucs = {}
+        fpr_dict, tpr_dict = {}, {}
+        for i in range(n_classes):
+            if y_true_bin[:, i].sum() == 0:
+                class_aucs[class_names[i]] = float("nan")
+                continue
+            fpr_i, tpr_i, _ = roc_curve(y_true_bin[:, i], y_score[:, i])
+            fpr_dict[i] = fpr_i
+            tpr_dict[i] = tpr_i
+            class_aucs[class_names[i]] = auc(fpr_i, tpr_i)
+
+        # Micro-average
+        fpr_micro, tpr_micro, _ = roc_curve(y_true_bin.ravel(), y_score.ravel())
+        auc_micro = auc(fpr_micro, tpr_micro)
+
+        # Macro-average
+        valid_fprs = [fpr_dict[i] for i in fpr_dict]
+        if valid_fprs:
+            all_fpr = np.unique(np.concatenate(valid_fprs))
+            mean_tpr = np.zeros_like(all_fpr)
+            for i in fpr_dict:
+                mean_tpr += np.interp(all_fpr, fpr_dict[i], tpr_dict[i])
+            mean_tpr /= len(fpr_dict)
+            mean_tpr[0], mean_tpr[-1] = 0.0, 1.0
+            auc_macro = auc(all_fpr, mean_tpr)
+        else:
+            auc_macro = float("nan")
+
+        table_data.append({
+            "display_name": r["display_name"],
+            "model_name": r["model_name"],
+            "class_aucs": class_aucs,
+            "auc_macro": auc_macro,
+            "auc_micro": auc_micro,
+        })
+
+    # ── Build LaTeX (transposed: classes=rows, models=columns) ──
+    lines = []
+    lines.append("% Auto-generated by scripts/plot_roc_all.py")
+    lines.append(f"% Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    lines.append("")
+    lines.append("\\begin{table*}[!htbp]")
+    lines.append("    \\centering")
+    lines.append("    \\caption{Per-Class AUC Values Across Backbone Networks.}")
+    lines.append("    \\label{tab:roc_auc}")
+    lines.append("    \\renewcommand{\\arraystretch}{1.05}")
+    lines.append("    \\footnotesize")
+
+    n_models = len(table_data)
+    model_displays = [d["display_name"] for d in table_data]
+    model_keys = [d["model_name"] for d in table_data]
+
+    # Columns: Class + one per model
+    col_spec = "l" + "c" * n_models
+    lines.append(f"    \\begin{{tabular}}{{{col_spec}}}")
+    lines.append("        \\toprule")
+
+    # Header row: Class + model names
+    header_cells = ["\\textbf{Fault Class}"]
+    for md in model_displays:
+        if "ours" in md.lower():
+            header_cells.append(f"\\textbf{{{md}}}")
+        else:
+            header_cells.append(md)
+    lines.append("        " + " & ".join(header_cells) + " \\\\")
+    lines.append("        \\midrule")
+
+    # Find best per row (per class) for bolding
+    best_per_class = {}
+    for cn in class_names_all:
+        valid = [(d["display_name"], d["class_aucs"].get(cn, float("nan")))
+                 for d in table_data
+                 if cn in d["class_aucs"]
+                 and d["class_aucs"][cn] == d["class_aucs"][cn]]
+        if valid:
+            best_per_class[cn] = max(valid, key=lambda x: x[1])[0]
+    # Best macro / micro
+    valid_macro = [(d["display_name"], d["auc_macro"]) for d in table_data
+                   if d["auc_macro"] == d["auc_macro"]]
+    best_macro = max(valid_macro, key=lambda x: x[1])[0] if valid_macro else None
+    valid_micro = [(d["display_name"], d["auc_micro"]) for d in table_data
+                   if d["auc_micro"] == d["auc_micro"]]
+    best_micro = max(valid_micro, key=lambda x: x[1])[0] if valid_micro else None
+
+    # Per-class rows
+    for cn in class_names_all:
+        row_cells = [cn]
+        best_model = best_per_class.get(cn)
+        for d in table_data:
+            val = d["class_aucs"].get(cn, float("nan"))
+            if val != val:
+                v_str = "---"
+            else:
+                v_str = f"{val:.3f}"
+            if best_model is not None and d["display_name"] == best_model:
+                v_str = f"$\\mathbf{{{v_str}}}$"
+            else:
+                v_str = f"${v_str}$"
+            row_cells.append(v_str)
+        lines.append("        " + " & ".join(row_cells) + " \\\\")
+
+    # Mid-rule before aggregates
+    lines.append("        \\midrule")
+
+    # Macro row
+    macro_cells = ["\\textbf{Macro}"]
+    for d in table_data:
+        mac = d["auc_macro"]
+        if mac != mac:
+            s = "---"
+        else:
+            s = f"{mac:.3f}"
+        if best_macro is not None and d["display_name"] == best_macro:
+            s = f"$\\mathbf{{{s}}}$"
+        else:
+            s = f"${s}$"
+        macro_cells.append(s)
+    lines.append("        " + " & ".join(macro_cells) + " \\\\")
+
+    # Micro row
+    micro_cells = ["\\textbf{Micro}"]
+    for d in table_data:
+        mic = d["auc_micro"]
+        if mic != mic:
+            s = "---"
+        else:
+            s = f"{mic:.3f}"
+        if best_micro is not None and d["display_name"] == best_micro:
+            s = f"$\\mathbf{{{s}}}$"
+        else:
+            s = f"${s}$"
+        micro_cells.append(s)
+    lines.append("        " + " & ".join(micro_cells) + " \\\\")
+
+    lines.append("        \\bottomrule")
+    lines.append("    \\end{tabular}")
+    lines.append("\\end{table*}")
+
+    out_path = table_dir / "roc_auc_table.tex"
+    out_path.write_text("\n".join(lines) + "\n")
+    print(f"\n  ROC AUC table: {out_path}")
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Batch ROC curve plotter — no retraining required",
     )
     parser.add_argument("--trial", default="trial_seed42",
                         help="Trial subdirectory name (default: trial_seed42)")
+    parser.add_argument("--dataset", default="", choices=[""] + DATASET_KEYS,
+                        help=f"Dataset key to scope model discovery "
+                             f"{{{','.join(DATASET_KEYS)}}}")
     parser.add_argument("--output", default="paper/figures/roc",
                         help="Output directory for ROC figures")
+    parser.add_argument("--table-dir", default="paper/auto_tables",
+                        help="Output directory for LaTeX table (default: paper/auto_tables)")
     parser.add_argument("--device", default="cuda",
                         help="Device for inference (cuda/cpu)")
     args = parser.parse_args()
@@ -277,12 +466,14 @@ def main():
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
     print(f"Trial:  {args.trial}")
+    if args.dataset:
+        print(f"Dataset: {args.dataset}")
     print(f"Output: {output_dir}")
     print()
 
     # ── Discover models ──
     print("Discovering models...")
-    models = discover_models(args.trial)
+    models = discover_models(args.trial, args.dataset)
     if not models:
         print("[ERROR] No models found.")
         sys.exit(1)
@@ -309,6 +500,11 @@ def main():
 
     print(f"\nGenerating combined macro-average comparison...")
     plot_combined_macro(results, output_dir)
+
+    # ── LaTeX AUC table ──
+    print(f"\nGenerating ROC AUC LaTeX table...")
+    table_dir = Path(args.table_dir)
+    generate_roc_table(results, table_dir)
 
     print(f"\nDone. All ROC plots saved to {output_dir}")
 

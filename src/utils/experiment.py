@@ -38,18 +38,39 @@ def seed_worker(worker_id: int) -> None:
     random.seed(worker_seed)
 
 def prepare_run_dir(config: Dict) -> Path:
+    """Create the run directory and return its path.
+
+    Directory layout::
+
+        {root_dir}/{model_dir}/{dataset}/{experiment_name}/trial_seed{seed}
+
+    Where *model_dir* is the stem of the experiment config filename
+    (e.g. ``MSCA_VGG16``), and *dataset* is the short dataset key
+    (e.g. ``12k_de``).  Both are stored in *config* by the caller
+    (``scripts/train.py``).  When omitted, the layout falls back to
+    ``{root_dir}/{experiment_name}/trial_seed{seed}``.
+    """
     output_cfg = config.get("output", {})
     root = Path(output_cfg.get("root_dir", "experiments/runs")).resolve()
     exp_name = str(config.get("experiment_name", "experiment"))
+    model_dir = config.get("model_dir", "")
+    dataset_key = config.get("dataset", {}).get("key", "")
 
-    # If a seed is explicitly set, use deterministic naming (for repeated trials).
-    # Otherwise, use a timestamp-based unique name.
+    # Build the path components — skip empty levels for backwards
+    # compatibility (e.g. single-shot runs without --dataset).
+    parts = [root]
+    if model_dir:
+        parts.append(model_dir)
+    if dataset_key:
+        parts.append(dataset_key)
+    parts.append(exp_name)
+
     seed = config.get("seed", None)
     if seed is not None:
-        run_dir = root / exp_name / f"trial_seed{seed}"
+        run_dir = Path(*parts) / f"trial_seed{seed}"
     else:
         ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-        run_dir = root / f"{exp_name}_{ts}"
+        run_dir = Path(*parts).with_name(f"{exp_name}_{ts}")
 
     run_dir.mkdir(parents=True, exist_ok=True)
 

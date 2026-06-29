@@ -10,22 +10,25 @@ acoustic measurement noise propagating through the fused representation.
 
 Usage::
 
-    # Single model
+    # Single model (auto‑checkpoint with dataset scoping)
     python scripts/noise_robustness.py \\
         --config configs/default.yaml \\
         --exp-config experiments/exp1/MSCA_VGG16.yaml \\
-        --checkpoint PATH/TO/best.pt
+        --auto-checkpoint --dataset 12k_de \\
+        --snr -5 0 5 10 15 20
 
     # Batch: evaluate all models in an experiment directory
     python scripts/noise_robustness.py \
         --config configs/default.yaml \
         --exp-dir experiments/exp1 \
-        --auto-checkpoint  --snr 5 10 15 20 25 30 # picks best.pt from the latest run of each config
+        --dataset 48k_de \
+        --auto-checkpoint --snr 5 10 15 20 25 30
 
-    # Custom SNR range
+    # Explicit checkpoint path
     python scripts/noise_robustness.py \\
         --config configs/default.yaml \\
         --exp-config experiments/exp1/vgg16.yaml \\
+        --dataset 12k_de \\
         --checkpoint .../best.pt \\
         --snr -10 -5 0 5 10 15 20
 """
@@ -53,6 +56,7 @@ from tqdm import tqdm
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from src.models import build_model
 from src.utils.config import load_config, load_yaml
+from src.utils.dataset_registry import DATASET_KEYS, get_dataset_config
 from src.utils.train_eval import evaluate
 
 
@@ -278,6 +282,9 @@ def build_parser() -> argparse.ArgumentParser:
                    help="Output directory for results and plots")
     p.add_argument("--device", default="",
                    help="cuda / cpu override")
+    p.add_argument("--dataset", default="", choices=[""] + DATASET_KEYS,
+                   help=f"Dataset key to auto‑configure paths & scope "
+                        f"checkpoint search {{{','.join(DATASET_KEYS)}}}")
     p.add_argument("--workers", type=int, default=8)
     return p
 
@@ -291,32 +298,51 @@ def resolve_device(config_device: str, cli_device: str) -> torch.device:
     return torch.device(requested)
 
 
-def find_checkpoint(run_root: Path) -> Optional[Path]:
-    """Find best.pt anywhere under *run_root* (searches up to 3 levels deep).
+def find_checkpoint(run_root: Path,
+                    model_dir: Optional[str] = None,
+                    dataset_key: Optional[str] = None) -> Optional[Path]:
+    """Find best.pt, scoped by model and optionally dataset.
 
-    Handles nested structures like::
+    Handles the nested structure::
 
         run_root/
-          exp1_MSCA_VGG16/
-            trial_seed42/
-              checkpoints/
-                best.pt
+          MSCA_VGG16/
+            12k_de/
+              exp1_MSCA_VGG16/
+                trial_seed42/
+                  checkpoints/
+                    best.pt
 
-    Returns None if no checkpoint is found.
+    Search order:
+    1. ``run_root / model_dir / dataset_key / ** / checkpoints / best.pt``
+    2. ``run_root / model_dir / ** / checkpoints / best.pt``
+    3. ``run_root / ** / checkpoints / best.pt`` (broad fallback)
     """
     if not run_root.exists():
         return None
 
-    # Direct path
-    direct = run_root / "checkpoints" / "best.pt"
-    if direct.exists():
-        return direct
+    # Build scoped search roots: narrowest first
+    search_roots = [run_root]
+    if model_dir:
+        if dataset_key:
+            scoped = run_root / model_dir / dataset_key
+        else:
+            scoped = run_root / model_dir
+        if scoped.exists():
+            search_roots.insert(0, scoped)
 
-    # Recursive search (max 4 levels to avoid deep filesystem walks)
-    for depth in range(1, 5):
-        pattern = "/".join(["*"] * depth)
-        for ckpt in sorted(run_root.glob(f"{pattern}/checkpoints/best.pt"), reverse=True):
-            return ckpt
+    for root in search_roots:
+        # Try any checkpoints/best.pt at any depth
+        for depth in range(1, 6):
+            pattern = "/".join(["*"] * depth)
+            candidates = sorted(
+                root.glob(f"{pattern}/checkpoints/best.pt"), reverse=True)
+            if candidates:
+                # Prefer trial_seed* subdirectories
+                for ckpt in candidates:
+                    if "trial_seed" in str(ckpt):
+                        return ckpt
+                return candidates[0]
 
     return None
 
@@ -332,23 +358,37 @@ def main():
     device = resolve_device(base_config.get("device", "auto"), args.device)
     print(f"Device: {device}")
 
+    # ── Resolve dataset via registry ──
+    dataset_key = ""
+    if args.dataset:
+        dataset_key = args.dataset
+        ds_cfg = get_dataset_config(dataset_key)
+        # Inject into base_config so load_config picks it up for all configs
+        base_config.setdefault("dataset", {})
+        base_config["dataset"]["root_dir"] = ds_cfg["root_dir"]
+        print(f"[dataset] {dataset_key} → {ds_cfg['root_dir']}")
+
     # ── Resolve models to evaluate ──
     tasks: List[Tuple[str, Dict, str]] = []  # (name, config, ckpt_path)
+
+    # Common run_root for checkpoint discovery
+    run_root = Path(base_config.get("output", {}).get(
+        "root_dir", "experiments/experiment_result/exp1"))
 
     if args.exp_config:
         # Single model mode
         config = load_config(args.config, args.exp_config)
         name = config.get("experiment_name", config["model"]["name"])
         model_name = config["model"]["name"]
+        model_dir = Path(args.exp_config).stem  # e.g. "MSCA_VGG16"
 
         if args.checkpoint:
             ckpt_path = args.checkpoint
         elif args.auto_checkpoint:
-            run_root = Path(config.get("output", {}).get(
-                "root_dir", f"experiments/exp1/{model_name}"))
-            ckpt = find_checkpoint(run_root)
+            ckpt = find_checkpoint(run_root, model_dir=model_dir,
+                                   dataset_key=dataset_key or None)
             if ckpt is None:
-                print(f"[ERROR] No checkpoint found in {run_root}")
+                print(f"[ERROR] No checkpoint found in {run_root / model_dir}")
                 sys.exit(1)
             ckpt_path = str(ckpt)
         else:
@@ -364,13 +404,14 @@ def main():
             config = load_config(args.config, str(yaml_file))
             name = config.get("experiment_name", config["model"]["name"])
             model_name = config["model"]["name"]
+            model_dir = yaml_file.stem  # e.g. "MSCA_VGG16"
 
             if args.auto_checkpoint:
-                run_root = Path(config.get("output", {}).get(
-                    "root_dir", f"experiments/exp1/{model_name}"))
-                ckpt = find_checkpoint(run_root)
+                ckpt = find_checkpoint(run_root, model_dir=model_dir,
+                                       dataset_key=dataset_key or None)
                 if ckpt is None:
-                    print(f"[SKIP] {name}: no checkpoint found in {run_root}")
+                    print(f"[SKIP] {name}: no checkpoint found in "
+                          f"{run_root / model_dir}")
                     continue
                 tasks.append((name, config, str(ckpt)))
             else:

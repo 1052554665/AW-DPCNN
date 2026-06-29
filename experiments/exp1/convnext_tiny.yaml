@@ -29,6 +29,3 @@ label_smoothing: 0.1
 visualization:
   tsne: true
 
-output:
-  root_dir: ./experiments/experiment_result/exp1/convnext_tiny
-

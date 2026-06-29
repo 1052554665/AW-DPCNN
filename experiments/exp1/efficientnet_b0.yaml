@@ -18,5 +18,3 @@ scheduler:
   min_lr: 0.000001
 visualization:
   tsne: true
-output:
-  root_dir: ./experiments/experiment_result/exp1/efficientnet_b0

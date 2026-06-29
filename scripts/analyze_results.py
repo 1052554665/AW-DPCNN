@@ -39,15 +39,17 @@ from typing import Dict, List, Optional, Tuple
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_PROJECT_ROOT))
 
+from src.utils.dataset_registry import DATASET_KEYS  # noqa: E402
+
 # ═══════════════════════════════════════════════════════════════════════
 #  Paths & Constants
 # ═══════════════════════════════════════════════════════════════════════
 
-ABLATION_ROOT   = Path("experiments/ablation_results")
+ABLATION_ROOT   = Path("experiments/experiment_result/ablation_results")
 EXP1_ROOT       = Path("experiments/experiment_result/exp1")
 REP_COMPARE_ROOT = Path("experiments/experiment_result/rep_compare")
-HYPERPARAM_FILE  = Path("experiments/hyperparameter_sensitivity/sensitivity_summary.json")
-NOISE_FILE       = Path("experiments/noise_robustness/noise_robustness.json")
+HYPERPARAM_FILE  = Path("experiments/experiment_result/hyperparameter_sensitivity/sensitivity_summary.json")
+NOISE_FILE       = Path("experiments/experiment_result/noise_robustness/noise_robustness.json")
 
 # ── Ablation definitions (matches run_ablation_experiments.py) ──
 ABLATION_EXPS = [
@@ -260,16 +262,37 @@ def _build_ablation_row(exp: Dict, trial_seeds: List[int], multi: bool) -> str:
 #  2. Backbone Comparison Table (network_comparison)
 # ═══════════════════════════════════════════════════════════════════════
 
-def generate_backbone_table(trial_seeds: List[int]) -> str:
-    """Generate LaTeX for tab:network_comparison."""
+def generate_backbone_table(trial_seeds: List[int],
+                            dataset_key: str = "") -> str:
+    """Generate LaTeX for tab:network_comparison.
+
+    When ``dataset_key`` is provided (e.g. ``"12k_de"``), results are
+    read from ``EXP1_ROOT / model / dataset_key / exp1_* / trial_seed*``.
+    """
     multi = len(trial_seeds) > 1
+
+    def _find_base_dir(exp_dir: Path) -> Optional[Path]:
+        """Locate the innermost experiment directory (e.g. exp1_MSCA_VGG16)."""
+        if dataset_key:
+            # New structure: model/dataset/exp_name/trial_seed*
+            pattern = f"{dataset_key}/exp1_*"
+        else:
+            # Old structure (backward compat): model/exp_name/trial_seed*
+            # Also try the new structure without a dataset filter
+            pattern = "exp1_*"
+        candidates = sorted(exp_dir.glob(pattern))
+        if not candidates and not dataset_key:
+            # Fallback: look one level deeper
+            candidates = sorted(exp_dir.glob("*/exp1_*"))
+        return candidates[0] if candidates else None
+
     # Determine actual max trials available
     max_trials = 0
     for dir_name, _ in EXP1_MODELS:
         exp_dir = EXP1_ROOT / dir_name
-        inner_dirs = sorted(exp_dir.glob("exp1_*"))
-        if inner_dirs:
-            n = len(_get_trial_dirs(inner_dirs[0], trial_seeds))
+        base_dir = _find_base_dir(exp_dir)
+        if base_dir:
+            n = len(_get_trial_dirs(base_dir, trial_seeds))
             if n > max_trials:
                 max_trials = n
     actual_multi = max_trials >= 2
@@ -297,12 +320,11 @@ def generate_backbone_table(trial_seeds: List[int]) -> str:
     raw_means = []
     for dir_name, display_name in EXP1_MODELS:
         exp_dir = EXP1_ROOT / dir_name
-        inner_dirs = sorted(exp_dir.glob("exp1_*"))
-        if not inner_dirs:
+        base_dir = _find_base_dir(exp_dir)
+        if base_dir is None:
             rows_data.append((display_name, None))
             raw_means.append((display_name, {}))
             continue
-        base_dir = inner_dirs[0]
         trial_dirs = _get_trial_dirs(base_dir, trial_seeds)
         if not trial_dirs:
             rows_data.append((display_name, None))
@@ -598,12 +620,16 @@ def main():
                         help="Comma-separated: ablation,backbone,rep_compare,hyperparam,noise,all")
     parser.add_argument("--output-dir", default="paper/auto_tables",
                         help="Output directory for .tex files (default: paper/auto_tables)")
+    parser.add_argument("--dataset", default="", choices=[""] + DATASET_KEYS,
+                        help=f"Dataset key to scope backbone results "
+                             f"{{{','.join(DATASET_KEYS)}}}")
     parser.add_argument("--dry-run", action="store_true",
                         help="Print LaTeX to stdout instead of writing files")
     args = parser.parse_args()
 
     trial_seeds = [int(s.strip()) for s in args.trial_seeds.split(",")]
     multi = len(trial_seeds) > 1
+    dataset_key = args.dataset
 
     # Resolve analyses
     if args.analyses == "all":
@@ -616,13 +642,15 @@ def main():
         output_dir.mkdir(parents=True, exist_ok=True)
 
     print(f"Trial seeds: {trial_seeds}  ({'multi-trial mean±std' if multi else 'single-trial'})")
+    if dataset_key:
+        print(f"Dataset:     {dataset_key}")
     print(f"Analyses:    {analyses}")
     print()
 
     all_latex = {}
     generators = {
         "ablation":    ("ablation_table.tex",    lambda: generate_ablation_table(trial_seeds)),
-        "backbone":    ("backbone_comparison_table.tex", lambda: generate_backbone_table(trial_seeds)),
+        "backbone":    ("backbone_comparison_table.tex", lambda: generate_backbone_table(trial_seeds, dataset_key)),
         "rep_compare": ("rep_compare_table.tex", lambda: generate_rep_compare_table(trial_seeds)),
         "hyperparam":  ("hyperparam_sensitivity_table.tex", generate_hyperparam_table),
         "noise":       ("noise_robustness_table.tex", generate_noise_table),
