@@ -1,257 +1,91 @@
->the directory of checkpoint has changed, there are three dataset under each model in `exp1`
+>create a new script to analyze all the results of the experiments and generate a summary table of metrics with IEEE latex format. The script should be named `analyze_results_three.py` and should be placed in the `scripts` directory. The script should read the results from the `experiment_result/exp1/` files and extract relevant metrics such as accuracy, precision, recall, F1-score, etc. The output should be formatted in a table and saved as a LaTeX file in the `paper/auto_tables` directory.
+the latex table should like 
 
-Here's a summary of the three fixes applied to hyperparameter_sensitivity.py:
+\begin{table*}[!t]
+\centering
+\caption{Performance of Three Datasets in the Closed-Set Setting, Including Accuracy (Acc\%) and F1-score (F1\%)}
+\label{tab:closed_set_performance}
+\small
+\setlength{\tabcolsep}{2.5pt}  % Reduce column spacing for fit
+\begin{tabular}{@{\hspace{2pt}}c|c|cc|cc|cc|c|c|cc@{\hspace{2pt}}}
+  \toprule
+  \multirow{2}{*}{Dataset} & \multirow{2}{*}{\makebox[20pt]{Label}} & \multicolumn{2}{c|}{Flexmatch} & 
+  \multicolumn{2}{c|}{BYOL} & 
+  \multicolumn{2}{c|}{Flexmatch} & 
+  \multicolumn{1}{c|}{SSCL} & 
+  \multicolumn{1}{c|}{HSFD} & 
+  \multicolumn{2}{c}{OSCL} \\
+  \cmidrule{3-12}
+  & \makebox[20pt]{Num} & Acc & F1 & Acc & F1 & Acc & F1 & Acc & Acc & Acc & F1 \\
+  \midrule
+  
+  % CWRU Dataset
+  \multirow{7}{*}{\textbf{CWRU}} 
+  & 10   & 72.40±11.85  & 66.05±14.93  & 93.30±0.03  & 92.56±0.03  & 65.27±4.77  & 54.50±3.83  & 64.75  & 66.73  & \textbf{97.26±0.09}  & \textbf{97.05±0.17} \\
+  & 50   & 84.38±15.63  & 81.59±19.73  & 94.88±0.04  & 94.34±0.04  & 80.56±7.37  & 76.44±10.04 & 88.92  & 79.81  & \textbf{97.28±0.08}  & \textbf{97.02±0.09} \\
+  & 100  & 85.23±15.31  & 81.32±19.72  & 96.23±0.04  & 96.16±0.18  & 89.21±7.16  & 81.66±9.38  & 91.53  & 92.13  & \textbf{97.49±0.04}  & \textbf{97.25±0.04} \\
+  & 150  & 87.80±6.66   & 84.55±13.36  & 97.27±0.04  & 97.09±0.05  & 92.07±7.65  & 91.79±0.41  & 95.77  & 94.01  & \textbf{97.42±0.05}  & \textbf{97.18±0.05} \\
+  & 250  & 91.88±1.79   & 90.85±2.20   & 97.78±0.03  & 97.55±0.03  & 92.07±4.02  & 90.83±4.88  & 97.10  & 97.97  & \textbf{97.44±0.02}  & \textbf{97.20±0.02} \\
+  & 500  & 95.51±8.54   & 94.73±10.06  & 97.49±0.05  & 97.23±0.05  & 93.40±5.71  & 92.25±6.65  & 99.03  & 99.29  & \textbf{99.12±0.09}  & \textbf{99.03±0.10} \\
+  & 2000 & 99.18±0.87   & 99.09±0.97   & 98.39±0.06  & 98.23±0.07  & 96.33±2.66  & 94.55±5.95  & 99.97  & 99.84  & \textbf{99.37±0.11}  & \textbf{99.30±0.13} \\
+  
+  \midrule
+  
+  % MFPT Dataset
+  \multirow{8}{*}{\textbf{MFPT}} 
+  & 3    & 84.63±7.96   & 79.65±13.65  & 85.64±0.64  & 82.71±0.58  & 84.85±7.64  & 80.15±10.58 & 85.73  & 87.38  & \textbf{96.85±0.08}  & \textbf{95.76±0.10} \\
+  & 9    & 90.56±4.46   & 88.40±4.30   & 92.19±0.46  & 89.78±0.61  & 92.10±7.45  & 90.08±9.03  & 92.09  & 91.33  & \textbf{96.83±0.07}  & \textbf{95.74±0.08} \\
+  & 30   & 93.06±3.67   & 91.16±4.77   & 92.55±0.06  & 89.02±0.09  & 93.67±6.56  & 93.48±6.33  & 93.36  & 91.69  & \textbf{97.11±0.05}  & \textbf{96.11±0.07} \\
+  & 60   & 94.83±1.98   & 93.55±2.42   & 91.77±0.05  & 88.81±0.07  & 94.24±3.46  & 92.35±4.70  & 94.97  & 94.21  & \textbf{97.15±0.07}  & \textbf{96.19±0.11} \\
+  & 300  & 97.38±1.99   & 96.44±2.70   & 98.37±0.24  & 97.86±0.31  & 95.63±5.64  & 95.23±5.56  & 98.98  & 99.01  & \textbf{99.07±0.11}  & \textbf{98.76±0.15} \\
+  & 600  & 97.77±1.21   & 97.54±1.07   & 98.25±0.08  & 97.68±0.11  & 97.12±2.53  & 96.37±2.05  & 99.72  & 99.60  & \textbf{99.26±0.06}  & \textbf{99.00±0.08} \\
+  
+  \midrule
+  
+  % XJTU-SY Dataset
+  \multirow{6}{*}{\textbf{XJTU-SY}} 
+  & 15   & 40.16±4.65   & 35.77±6.78   & 69.84±0.11  & 68.57±0.08  & 34.13±3.02  & 26.98±4.35  & ---       & ---       & \textbf{92.27±0.23}  & \textbf{91.04±0.25} \\
+  & 45   & 55.92±14.76  & 53.55±15.43  & 72.17±0.08  & 70.27±0.11  & 69.01±3.36  & 58.92±3.30  & ---       & ---       & \textbf{92.17±0.33}  & \textbf{90.86±0.58} \\
+  & 150  & 78.85±7.34   & 76.61±9.10   & 80.46±0.50  & 79.26±0.57  & 79.88±7.71  & 88.10±6.87  & ---       & ---       & \textbf{93.32±0.18}  & \textbf{92.04±0.19} \\
+  & 300  & 80.36±6.54   & 78.44±8.06   & 84.80±0.51  & 83.46±0.63  & 90.24±3.87  & 89.61±4.25  & ---       & ---       & \textbf{92.92±0.23}  & \textbf{91.71±0.19} \\
+  & 1500 & 89.93±1.91   & 89.44±1.10   & 92.56±0.35  & 91.48±0.51  & 89.17±4.52  & 87.85±3.55  & ---       & ---       & \textbf{93.34±0.07}  & \textbf{93.18±0.14} \\
+  & 3000 & 91.92±2.25   & 87.70±2.26   & 91.43±0.12  & 90.51±0.10  & 90.41±9.10  & 89.61±0.69  & ---       & ---       & \textbf{94.29±0.11}  & \textbf{93.02±0.12} \\
+  
+  \midrule
+  
+  % HIT Dataset
+  \multirow{6}{*}{\textbf{HIT}} 
+  & 4    & 79.53±9.79   & 79.43±9.48   & 57.91±1.74  & 57.43±1.76  & 64.03±7.36  & 61.27±4.6   & ---       & ---       & \textbf{93.05±0.93}  & \textbf{92.95±0.96} \\
+  & 12   & 93.14±0.19   & 93.04±0.17   & 79.41±0.21  & 79.44±0.25  & 75.96±2.65  & 72.55±4.27  & ---       & ---       & \textbf{94.88±0.25}  & \textbf{94.83±0.26} \\
+  & 40   & 95.70±1.55   & 95.70±1.55   & 86.53±0.88  & 86.83±1.05  & 93.21±1.66  & 93.24±1.66  & ---       & ---       & \textbf{95.17±0.06}  & \textbf{95.12±0.06} \\
+  & 80   & 90.75±3.76   & 90.98±3.35   & 88.26±0.88  & 87.94±0.93  & 91.76±1.23  & 91.63±1.23  & ---       & ---       & \textbf{94.99±0.16}  & \textbf{94.95±0.17} \\
+  & 400  & 99.26±0.32   & 99.26±0.33   & 97.48±0.95  & 96.91±0.64  & 98.01±0.93  & 98.02±0.87  & ---       & ---       & \textbf{99.76±0.03}  & \textbf{99.76±0.05} \\
+  & 800  & 99.87±0.04   & 99.87±0.04   & 99.55±0.03  & 99.56±0.03  & 98.52±1.2   & 98.51±1.22  & ---       & ---       & \textbf{99.85±0.06}  & \textbf{99.86±0.07} \\
+  
+  \bottomrule
+\end{tabular}
+\end{table*}
 
-### Root cause
-The old `find_checkpoint` searched `exp1/**/checkpoints/best.pt` across **all** models and picked the most recently modified — which was a ViT checkpoint, not MSCA_VGG16.
+>add a metric: false position rate (FPR)
 
-### Changes made
-
-| # | Fix | Detail |
-|---|---|---|
-| 1 | **`find_checkpoint`** now accepts `model_dir` | Searches `exp1/MSCA_VGG16/` first before falling back to the broad search. Tries precise `trial_seed42/` path first, then any trial, then any `best.pt` |
-| 2 | **`model_dir` derived from exp-config** | `Path(args.exp_config).stem` → `MSCA_VGG16`, matching train.py's behavior |
-| 3 | **Default `--dataset-dir`** | Changed from nonexistent `datasets/cwru_de` → cwru_12k_de |
-
-The script should now correctly find `exp1/MSCA_VGG16/12k_de/exp1_MSCA_VGG16/trial_seed42/checkpoints/best.pt` and load it into the MSCA_VGG16 model.
-
-Made changes.
-
-
->add a `--dataset` flag to `hyperparameter_sensitivity.py` that allows the user to specify which dataset to use. such as 
-```python
-python scripts/hyperparameter_sensitivity.py \
-    --exp-config experiments/exp1/MSCA_VGG16.yaml \
-    --auto-checkpoint --trial trial_seed42 \
-    --mel-n-fft 1024 --mel-n-mels 128 --mel-fmax 6000 \
-    --max-samples 500 --dataset cwru_12k_de
-```
-
->update this script since the directory of checkpoint has changed, there are three dataset under each model in `experiment_result/exp1`. and add a `--dataset` flag to `noise_sensitivity.py` that allows the user to specify which dataset to use. such as 
-```python
-    python scripts/noise_robustness.py \\
-        --config configs/default.yaml \\
-        --exp-config experiments/exp1/vgg16.yaml \\
-        --dataset cwru_12k_de \\
-        --checkpoint .../best.pt \\
-        --snr -10 -5 0 5 10 15 20
-```
-
-
-### Changes made
-
-| # | Change | Detail |
-|---|---|---|
-| 1 | **`find_checkpoint`** rewritten | Now accepts `model_dir` and `dataset_key`. Searches `exp1/{model_dir}/{dataset_key}/**/checkpoints/best.pt` first, then `exp1/{model_dir}/**/...`, then broad fallback. Prefers `trial_seed*` subdirectories |
-| 2 | **`--dataset` flag** added | Choices: `12k_de`, `12k_fe`, `48k_de`. Auto-configures `dataset.root_dir` from registry |
-| 3 | **`model_dir` derived from config file name** | Single-model: `Path(args.exp_config).stem` → `MSCA_VGG16`. Batch: `yaml_file.stem` → per-model |
-| 4 | **Usage examples** updated | Docstring now shows `--dataset 12k_de` in all examples |
-
-### Verified checkpoint discovery
-
-```
-MSCA_VGG16 + 12k_de → .../MSCA_VGG16/12k_de/exp1_MSCA_VGG16/trial_seed456/checkpoints/best.pt ✅
-vgg16 only           → .../vgg16/48k_de/exp1_vgg16/trial_seed456/checkpoints/best.pt ✅
-broad (no scope)     → .../vit/48k_de/... (most recent, only used as fallback)
-```
-
-
-
-### Single model (auto‑checkpoint — recommended)
-
-```bash
-python scripts/noise_robustness.py \
-    --config configs/default.yaml \
-    --exp-config experiments/exp1/MSCA_VGG16.yaml \
-    --dataset 12k_de \
-    --auto-checkpoint \
-    --snr 5 10 15 20 25 30
-```
-
-### Single model (explicit checkpoint path)
-
-```bash
-python scripts/noise_robustness.py \
-    --config configs/default.yaml \
-    --exp-config experiments/exp1/vgg16.yaml \
-    --dataset 12k_de \
-    --checkpoint experiments/experiment_result/exp1/vgg16/12k_de/exp1_vgg16/trial_seed42/checkpoints/best.pt \
-    --snr -5 0 5 10 15 20
-```
-
-### Batch mode (evaluate all 7 models in exp1)
-
-```bash
-python scripts/noise_robustness.py \
-    --config configs/default.yaml \
-    --exp-dir experiments/exp1 \
-    --dataset 12k_de \
-    --auto-checkpoint \
-    --snr -5 0 5 10 15 20
-```
-
-### Key flags
-
-| Flag | Purpose |
-|---|---|
-| `--dataset 12k_de` | Uses cwru_12k_de and scopes checkpoint search to `12k_de/` subdir |
-| `--dataset 12k_fe` | Fan-end sensor variant |
-| `--dataset 48k_de` | 48 kHz drive-end variant |
-| `--auto-checkpoint` | Auto-finds `best.pt` under `experiment_result/exp1/{model}/{dataset}/` |
-| `--snr -5 0 5 10 15 20` | SNR levels in dB (omit for default: `-5 0 5 10 15 20`) |
-| `--output-dir` | Where plots/CSV are saved (default: noise_robustness) |
-
->since all the experiment results are stored in `experiment_result/exp1`, the script should be updated to search for checkpoints under `experiment_result/exp1/{model}/{dataset}/trial_seed*/checkpoints/best.pt` instead of searching all models and datasets. and add a `--dataset` flag to `analyze_results.py` that allows the user to specify which dataset to use.
-
-### Changes to analyze_results.py
-
-| # | Fix | Before | After |
-|---|---|---|---|
-| 1 | **`ABLATION_ROOT` path** | `experiments/ablation_results` (404) | ablation_results ✅ |
-| 2 | **`HYPERPARAM_FILE` path** | `experiments/hyperparameter_sensitivity/...` | `experiments/experiment_result/hyperparameter_sensitivity/...` |
-| 3 | **`NOISE_FILE` path** | `experiments/noise_robustness/...` | `experiments/experiment_result/noise_robustness/...` |
-| 4 | **Backbone glob** | `exp_dir.glob("exp1_*")` (flat) | `exp_dir.glob(f"{dataset_key}/exp1_*")` (nested) + old-structure fallback |
-| 5 | **`--dataset` flag** | None | `--dataset {12k_de,12k_fe,48k_de}` |
-
-### Usage
-
-```bash
-# Single trial, 12k_de dataset
-python scripts/analyze_results.py --trial-seeds 42 --dataset 12k_de
-
-# Three trials with mean±std
-python scripts/analyze_results.py --trial-seeds 42,123,456 --dataset 12k_de
-
-# Backbone only, 12k_fe
-python scripts/analyze_results.py --trial-seeds 42,123,456 --dataset 12k_fe --analyses backbone
-
-# Write to files
-python scripts/analyze_results.py --trial-seeds 42,123,456 --dataset 12k_de --output-dir paper/auto_tables
-```
-
-Made changes.
-
->Update the `plot_roc_curves.py` script to accept a `--dataset` flag that allows the user to specify which dataset to use. The script should search for checkpoints under `experiment_result/exp1/{model}/{dataset}/trial_seed*/checkpoints/best.pt` instead of searching all models and datasets.
+FPR isn't directly stored in `test_metrics.json`. I can compute it from existing metrics: $\text{FPR} = 1 - \text{specificity}$, and $\text{specificity} = 2 \times \text{BalAcc} - \text{Recall}$. Let me add it as a derived metric.
 
 
-### Changes to plot_roc_all.py
-
-| # | Change | Detail |
-|---|---|---|
-| 1 | **`discover_models`** now accepts `dataset_key` | Searches `RESULT_ROOT/{model}/{dataset}/exp1_*/trial_seed*` when `--dataset` is given; falls back to old flat structure + `*/exp1_*` fallback when omitted |
-| 2 | **`--dataset` flag** added | Choices: `12k_de`, `12k_fe`, `48k_de` |
-| 3 | **`resnet18` added** to `MODEL_DISPLAY` | Was missing from the display-name map |
-
-### Usage
-
-```bash
-# Default (backward compat — broad search)
-python scripts/plot_roc_all.py
-
-# Scoped to 12k_de dataset
-python scripts/plot_roc_all.py --dataset 12k_de
-
-# Specific trial + dataset
-python scripts/plot_roc_all.py --trial trial_seed456 --dataset 12k_de
-```
-
-All 7 models now correctly resolve to `experiment_result/exp1/{model}/12k_de/exp1_{model}/trial_seed42/checkpoints/best.pt`.
-
-Made changes.
-
->add a table to `plot_roc_all.py` that list all the values in the ROC curves, including AUC, TPR, FPR, and thresholds, which should format with IEEE style. The table should be saved as latex format in the `paper/auto_tables` directory. 
-
-Done. Here's the summary:
-
-### New feature: `generate_roc_table()` in plot_roc_all.py
-
-Generates an IEEE-style LaTeX table (`roc_auc_table.tex`) with per-class AUC values for all models.
-
-**Table structure:**
-
-| Model | BF007 | BF014 | ... | OF021 | Macro | Micro |
-|---|---|---|---|---|---|---|
-| **MSCA-VGG16 (Ours)** | 0.8893 | 0.8676 | ... | **0.9102** | 0.8941 | 0.8941 |
-| VGG16 | 0.8980 | **0.8999** | ... | 0.9041 | **0.8972** | 0.8964 |
-| ... | | | | | | |
-
-**Features:**
-- Best value per column **bolded** via `\mathbf{}`
-- Proposed model name bolded via `\textbf{}`
-- NaN/missing classes shown as `---`
-- `booktabs` formatting (`\toprule`, `\midrule`, `\bottomrule`)
-- Compilable `\label{tab:roc_auc}` for cross-referencing
-
-### Usage
-
-```bash
-# Full run: plots + table
-python scripts/plot_roc_all.py --dataset 12k_de
-
-# Custom table output directory
-python scripts/plot_roc_all.py --dataset 12k_de --table-dir paper/auto_tables
-```
-
-### New CLI flag
-
-| Flag | Default | Purpose |
-|---|---|---|
-| `--table-dir` | auto_tables | Where `roc_auc_table.tex` is saved |
-
-Made changes.
+FPR needs to be derived. I'll compute it from `bal_acc` and `recall`: $\text{FPR} = 1 - (2 \times \text{BalAcc} - \text{Recall})$.
 
 
->The current table has 10 fault classes + 2 aggregate columns = 13 columns total (1 model name + 10 classes + Macro + Micro). This is way too wide for an IEEE double-column format.
+FPR added. The table now shows 3 metrics per dataset (Acc, F1, FPR). FPR is derived from $\text{BalAcc}$ and $\text{Recall}$:
 
-Table reorganized: **12 rows × 8 columns** (transposed). Key changes:
+$$\text{FPR} = 1 - (2 \times \text{BalAcc} - \text{Recall})$$
 
-| Before | After |
-|---|---|
-| 13 columns (too wide) | 8 columns (fits double-column) |
-| Models as rows | Fault classes as rows |
-| `\small` font | `\footnotesize` + `\arraystretch{1.05}` |
-| 4 decimal places | 3 decimal places |
-
-The layout is now:
+10 columns (1 model + 9 data) fits in `table*`:
 
 ```
-Fault Class  MSCA-VGG16 (Ours)  VGG16  ResNet18  ...  ConvNeXt-T
-BF007                0.889      0.898    0.915  ...      0.892
-BF014                0.868      0.900    0.892  ...      0.891
+Model           CWRU 12k DE              CWRU 12k FE              CWRU 48k DE
+                Acc       F1     FPR     Acc       F1     FPR     Acc       F1     FPR
+MSCA-VGG16      93.26±2.27 90.38±3.37 8.76±2.95  ...
+ConvNeXt-Tiny   85.25±3.09 78.11±3.74 19.16±4.03 ...
 ...
-Macro                0.894      0.897    0.894  ...      0.895
-Micro                0.894      0.896    0.894  ...      0.895
 ```
 
-Let me regenerate with real data:
-
-Ran terminal command:  cd /home/yangchen/git_clone/AW-DPCNN && python -c "
-from scripts.plot_roc_all import generate_roc_table, discover_models, evaluate_one
-import torch
-from pathlib import Path
-
-# We just need the table, skip plots
-print('Loading existing results from checkpoint evaluation...')
-# Just regenerate table from existing roc_auc_table.tex? No — need to re-evaluate.
-# Let's just run the table generation part with mock data to show the format.
-print('Table format updated. Run: python scripts/plot_roc_all.py --dataset 12k_de')
-" && cat paper/auto_tables/roc_auc_table.tex | head -20
-
-
-The code is updated. The old `roc_auc_table.tex` on disk is stale — regenerate it:
-
-```bash
-python scripts/plot_roc_all.py --dataset 12k_de
-```
-
-The new transposed layout (8 columns, `\footnotesize`) will fit IEEE double-column:
-
-```
-Fault Class  MSCA-VGG16 (Ours)  VGG16  ResNet18  EffNet-B0  ViT  MobV3-S  ConvNeXt-T
-BF007                0.889      0.898    0.915     0.872   0.869   0.911       0.892
-...
-Macro                0.894      0.897    0.894     0.887   0.890   0.897       0.895
-Micro                0.894      0.896    0.894     0.887   0.890   0.897       0.895
-```
-
-Made changes.
+Lower FPR is better — bolded values show best (lowest) per dataset×metric.
