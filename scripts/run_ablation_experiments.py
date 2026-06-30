@@ -7,7 +7,7 @@ Runs the complete 9‑experiment ablation study on the CWRU 12k DE dataset.
 Design
 ------
   **Fusion‑level ablation** (B0–B4):  standard VGG16 classifier.
-      B0 — Mel‑only                  (single representation)
+      B0 — STFT‑only                  (single representation)
       B1 — GADF‑only                 (single representation)
       B2 — Concat (pixel average)    (naive fusion)
       B3 — AW‑DPCNN  γ=1             (equal‑weight PCNN, no adaptivity)
@@ -37,6 +37,7 @@ Usage::
     python scripts/run_ablation_experiments.py --trial trial_seed456
 
     # Three independent trials with aggregation (mean ± std)
+    !!!!!!!! time-consuming, about 2 hours
     python scripts/run_ablation_experiments.py --num-trials 3
 
     # Custom trial seeds
@@ -71,15 +72,15 @@ warnings.filterwarnings("ignore")
 
 EXPERIMENTS: List[Dict] = [
     # ── Fusion‑level: VGG16 classifier ──
-    {"id": "B0", "dataset": "datasets/ablation/mel_only",
+    {"id": "B0", "dataset": "datasets/ablation/stft_only",
      "model": "vgg16", "ms": False, "ca": False, "eh": False,
-     "desc": "Mel-only"},
+     "desc": "STFT-only"},
     {"id": "B1", "dataset": "datasets/ablation/gadf_only",
      "model": "vgg16", "ms": False, "ca": False, "eh": False,
      "desc": "GADF-only"},
     {"id": "B2", "dataset": "datasets/ablation/concat",
      "model": "vgg16", "ms": False, "ca": False, "eh": False,
-     "desc": "Mel+GADF concat (pixel avg)"},
+     "desc": "STFT+GADF concat (pixel avg)"},
     {"id": "B3", "dataset": "datasets/ablation/awdpcnn_gamma1",
      "model": "vgg16", "ms": False, "ca": False, "eh": False,
      "desc": "AW-DPCNN γ=1 (equal weight)"},

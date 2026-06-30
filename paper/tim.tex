@@ -136,13 +136,13 @@ In this study, the Mel spectrogram is computed with the following parameter sett
 	\graphicspath{{representation/}}
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=\linewidth]{98_Normal_1_00000 copy}
+		\includegraphics[width=\linewidth]{STFT_98_Normal_1_00000}
 		\caption{Mel spectrogram}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.48\linewidth}
 		\centering
-		\includegraphics[width=\linewidth]{98_Normal_1_00000}
+		\includegraphics[width=\linewidth]{GADF_98_Normal_1_00000}
 		\caption{GADF}
 	\end{subfigure}
 	
@@ -507,7 +507,8 @@ Early stopping is employed to prevent overfitting, where training is terminated 
 \begin{figure}[!htbp]
 	\centering
 	\includegraphics[width=\linewidth]{equipment/CWRU_teststand}
-	\caption{Test stand of datasets. (a) CWRU bearing dataset. (b) Toya}
+	\includegraphics[width=\linewidth]{equipment/equipment}
+	\caption{Test stand of datasets. (a) CWRU bearing dataset. (b) Transformer acoustic dataset.}
 	\label{MSCA-VGG}
 \end{figure}
 
@@ -1022,19 +1023,19 @@ In future work, we aim to further optimize the proposed framework to improve rec
 	\centering
 	\begin{subfigure}{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{tsne_cwru_de_raw_input}
+		\includegraphics[width=\linewidth]{tsne_cwru_12k_de_raw_input}
 		\caption{Raw Input}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{tsne_vit}
+		\includegraphics[width=\linewidth]{tsne_vit_12k_de_trial_seed42}
 		\caption{ViT}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{tsne_convnext_tiny}
+		\includegraphics[width=\linewidth]{tsne_convnext_tiny_12k_de_trial_seed42}
 		\caption{ConvNeXt-Tiny}
 	\end{subfigure}
 
@@ -1042,19 +1043,19 @@ In future work, we aim to further optimize the proposed framework to improve rec
 
 	\begin{subfigure}{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{tsne_efficientnet_b0}
+		\includegraphics[width=\linewidth]{tsne_efficientnet_b0_12k_de_trial_seed42}
 		\caption{EfficientNet-B0}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{tsne_mobilenetv3_small}
+		\includegraphics[width=\linewidth]{tsne_mobilenetv3_small_12k_de_trial_seed42}
 		\caption{MobileNetV3-Small}
 	\end{subfigure}
 	\hfill
 	\begin{subfigure}{0.32\textwidth}
 		\centering
-		\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/ablation_results/B0/ablation_B0/trial_seed42/figures/tsne.png}
+		\includegraphics[width=\linewidth]{tsne_MSCA_VGG16_12k_de_trial_seed42}
 		\caption{MSCA-VGG16 (Ours)}
 	\end{subfigure}
 	\caption{t-SNE feature visualization of different backbone networks on the transformer acoustic test set. The proposed MSCA-VGG16 produces the most compact and well-separated clusters, indicating superior discriminative representation learning.}
@@ -1226,7 +1227,7 @@ To evaluate model robustness, we inject zero-mean additive Gaussian noise at SNR
 
 \begin{figure*}[!htbp] 
 \centering
-\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/paper/figures/model_comparison_grouped.png}
+\includegraphics[width=\linewidth]{figures/model_comparison/model_comparison_12k_de_trial_seed42.png}
 \caption{}
 \label{}
 \end{figure*}
@@ -1300,17 +1301,12 @@ To evaluate model robustness, we inject zero-mean additive Gaussian noise at SNR
 \vspace{4pt}
 \small
 \textit{Note:} Ball Fault (BF), Inner Race Fault (IF), Outer Race Fault (OF) with fault diameters 007, 014, 021\,mil. Train/Val/Test split: 60/20/20 at file level (seed 42). JS Divergence: TV = Train vs.\ Val; TT = Train vs.\ Test; VT = Val vs.\ Test. JS values $\leq 0.064$ indicate excellent distribution homogeneity across all datasets. For 12k FE, OF014 and OF021 have only 1 source file each; windows are drawn from non-overlapping time regions ($60\%/20\%/20\%$) to populate all splits. Normal recordings are $\sim$4$\times$ longer than fault recordings.
+
+\textit{Temporal Consistency Across Sampling Rates.}
+Although the CWRU 48k DE dataset uses larger window and hop lengths in sample counts (8192/4096 vs.\ 2048/1024 for the 12k datasets), the temporal durations are identical across all datasets: each window spans 170.7~ms of vibration signal regardless of the sampling rate ($2048/12{,}000 = 8192/48{,}000 \approx 0.171$~s), and the 50\% hop corresponds to 85.3~ms in all cases. This ensures that every fused image fed to the network represents the same physical duration of bearing operation, eliminating temporal-scale confounds from cross-dataset comparisons. The STFT parameters are scaled proportionally as well: $N_{\text{FFT}} = 1024$ at 12~kHz and $N_{\text{FFT}} = 4096$ at 48~kHz, yielding identical frequency resolution of 11.7~Hz/bin across datasets. The only deliberate difference is the upper frequency limit — $f_{\max}=6$~kHz for the 12k datasets (full Nyquist bandwidth at 12\,kHz sampling rate) versus $f_{\max}=20$~kHz for 48k DE — reflecting the richer high-frequency information available at the higher sampling rate, which constitutes the core challenge of the cross-sampling-rate generalization experiment. All datasets use the linear STFT spectrogram as the time--frequency representation (see Section~\ref{sec:rep_compare} for representation comparison).
 \end{table*}
 
-For the 12k FE dataset, fault classes OF014 and OF021 each contain a single recording. For these two classes, validation and test windows are drawn from non-overlapping temporal segments of the same recording ($60\%/20\%/20\%$ time-region split), while all other classes use independent file-level splits.
-
-\textit{Temporal Consistency Across Sampling Rates.}
-Although the CWRU 48k DE dataset uses larger window and hop lengths in sample counts (8192/4096 vs.\ 2048/1024 for the 12k datasets), all three datasets are designed to preserve identical temporal characteristics. Specifically, each window spans 170.7~ms of vibration signal regardless of the sampling rate ($2048/12{,}000 = 8192/48{,}000 \approx 0.171$~s), and the 50\% hop corresponds to 85.3~ms in all cases. This ensures that every fused image fed to the network represents the same physical duration of bearing operation, eliminating temporal-scale confounds from cross-dataset comparisons. The short-time Fourier transform (STFT) parameters are scaled proportionally as well: $N_{\text{FFT}} = 1024$ at 12~kHz and $N_{\text{FFT}} = 4096$ at 48~kHz, yielding identical frequency resolution of 11.7~Hz/bin across datasets. The only deliberate difference is the Mel frequency cutoff — $f_{\max}=6$~kHz for the 12k datasets (full Nyquist bandwidth) versus $f_{\max}=20$~kHz for 48k DE — reflecting the richer high-frequency information available at the higher sampling rate, which constitutes the core challenge of the cross-sampling-rate generalization experiment.
-
-\textit{Temporal Consistency Across Sampling Rates.}
-Although the 48k DE dataset uses 4$\times$ larger window and hop lengths in sample counts (8192/4096 vs.\ 2048/1024), the temporal durations are identical across all datasets: each window spans 170.7~ms ($2048/12{,}000 = 8192/48{,}000$) with 50\% overlap (85.3~ms hop). The STFT parameters are scaled proportionally ($N_{\text{FFT}}=1024$ at 12~kHz, $N_{\text{FFT}}=4096$ at 48~kHz), preserving a consistent frequency resolution of 11.7~Hz/bin. The only deliberate variation is the Mel bandwidth: $f_{\max}=6$~kHz (full Nyquist) for the 12k datasets versus $f_{\max}=20$~kHz for 48k DE, reflecting the richer high-frequency content that defines the cross-sampling-rate generalization challenge.
-
-\include{auto_tables/three_trial_summary.tex}
+\input{auto_tables/three_trial_summary.tex}
 
 % \input{auto_tables/noise_robustness_table.tex}
 

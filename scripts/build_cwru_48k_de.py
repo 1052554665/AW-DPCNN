@@ -82,6 +82,8 @@ from build_cwru_dataset import (  # noqa: E402
     aw_dpcnn_fusion_color,
     generate_gadf_image,
     generate_mel_image,
+    generate_stft_image,
+    TF_GENERATORS,
     process_one_window,
 )
 
@@ -238,6 +240,7 @@ def _build_tasks_and_metadata(
     gamma: float,
     sequence_length: int,
     overwrite: bool,
+    tf_method: str = "stft",
 ) -> tuple:
     tasks, metadata_rows = [], []
 
@@ -254,6 +257,7 @@ def _build_tasks_and_metadata(
                         signal, sr_val, out_path, img_size, n_iter,
                         n_fft, hop_length, n_mels, fmax, cmap,
                         gaf_method, False, gamma, sequence_length,
+                        tf_method,
                     ))
                     metadata_rows.append({
                         "filename": f"{stem}.png",
@@ -276,6 +280,7 @@ def _build_tasks_and_metadata(
                             window, sr_val, out_path, img_size, n_iter,
                             n_fft, hop_length, n_mels, fmax, cmap,
                             gaf_method, False, gamma, sequence_length,
+                            tf_method,
                         ))
                         metadata_rows.append({
                             "filename": fname,
@@ -334,6 +339,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--n-iter", type=int, default=20)
     p.add_argument("--gamma", type=float, default=10.0,
                    help="AW-DPCNN contrast amplification (paper: γ=10)")
+    p.add_argument("--tf-method", default="stft", choices=["mel", "stft"],
+                   help="Time‑frequency representation: mel or stft (default: stft)")
     p.add_argument("--file-split", type=str, default="60,20,20",
                    help="Train/val/test ratios")
     p.add_argument("--split-seed", type=int, default=42)
@@ -373,6 +380,7 @@ def main():
     print(f"  OR position    : {OR_POSITION}")
     print(f"  Window / Hop   : {args.win_len} / {args.hop_len}")
     print(f"  Mel params     : n_fft={args.n_fft}, n_mels={args.n_mels}, fmax={args.fmax}")
+    print(f"  TF method      : {args.tf_method}")
     print(f"  File split     : {args.file_split}  (seed={args.split_seed})")
     print(f"  Workers        : {args.workers}")
     print(f"  Dry run        : {args.dry_run}")
@@ -443,6 +451,7 @@ def main():
         gamma=args.gamma,
         sequence_length=args.sequence_length,
         overwrite=args.overwrite,
+        tf_method=args.tf_method,
     )
 
     print(f"\n[INFO] Total fusion tasks: {len(tasks)}")

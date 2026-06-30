@@ -69,6 +69,8 @@ from build_cwru_dataset import (  # noqa: E402
     aw_dpcnn_fusion_color,
     generate_gadf_image,
     generate_mel_image,
+    generate_stft_image,
+    TF_GENERATORS,
 )
 from src.models import build_model  # noqa: E402
 from src.utils.config import load_config, load_yaml  # noqa: E402
@@ -233,27 +235,34 @@ def _collect_cwru_test_windows(
 
 def _precompute_mel_gadf(windows: list, sr: int,
                           n_fft: int, hop_len: int, n_mels: int,
-                          fmax: int) -> list:
-    """Pre‑compute Mel + GADF BGR images for all windows (cached — independent of γ, N, α)."""
+                          fmax: int, tf_method: str = "stft") -> list:
+    """Pre‑compute TF + GADF BGR images for all windows (cached — independent of γ, N, α)."""
     import torchvision.transforms as T
     tf = T.Compose([
         T.ToTensor(),
         T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
     pairs = []
-    for win, _, _ in tqdm(windows, desc="  Pre‑computing Mel+GADF", ncols=80):
-        mel = generate_mel_image(
-            win, sr,
-            n_fft=n_fft, hop_length=hop_len,
-            n_mels=n_mels, fmax=fmax,
-            img_size=IMG_SIZE, cmap=cv2.COLORMAP_VIRIDIS,
-        )
+    desc = f"  Pre‑computing {tf_method.upper()}+GADF"
+    for win, _, _ in tqdm(windows, desc=desc, ncols=80):
+        if tf_method == "stft":
+            tf_img = generate_stft_image(
+                win, sr, n_fft=n_fft, hop_length=hop_len,
+                img_size=IMG_SIZE, cmap=cv2.COLORMAP_VIRIDIS,
+            )
+        else:
+            tf_img = generate_mel_image(
+                win, sr,
+                n_fft=n_fft, hop_length=hop_len,
+                n_mels=n_mels, fmax=fmax,
+                img_size=IMG_SIZE, cmap=cv2.COLORMAP_VIRIDIS,
+            )
         gadf = generate_gadf_image(win, img_size=IMG_SIZE,
                                    cmap=cv2.COLORMAP_VIRIDIS)
         # Store as float32 tensors (normalised) for faster re‑fusion
-        mel_t  = tf(mel)
+        tf_t  = tf(tf_img)
         gadf_t = tf(gadf)
-        pairs.append((mel_t, gadf_t))
+        pairs.append((tf_t, gadf_t))
     return pairs
 
 
@@ -495,6 +504,8 @@ def main():
                         help=f"Mel filter bank size (default: {CWRU_N_MELS})")
     parser.add_argument("--mel-fmax", type=int, default=CWRU_FMAX,
                         help=f"Mel max frequency (default: {CWRU_FMAX})")
+    parser.add_argument("--tf-method", default="stft", choices=["mel", "stft"],
+                        help="Time‑frequency representation: mel or stft (default: stft)")
     # Trial seed for checkpoint discovery
     parser.add_argument("--trial", default="trial_seed42",
                         help="Trial name for checkpoint selection (default: trial_seed42)")
@@ -618,14 +629,15 @@ def main():
     sampled_labels  = [labels[i] for i in indices]
     print(f"Using {n_sample} windows for sensitivity sweep")
 
-    # ── Pre‑compute Mel + GADF (once — independent of γ, N, α) ──
-    print(f"\nPre‑computing Mel and GADF images for all sampled windows ...")
-    print(f"  Mel params: n_fft={cwru_n_fft}, hop_len={cwru_hop_len}, "
+    # ── Pre‑compute TF + GADF (once — independent of γ, N, α) ──
+    print(f"\nPre‑computing TF ({args.tf_method}) and GADF images for all sampled windows ...")
+    print(f"  TF params: n_fft={cwru_n_fft}, hop_len={cwru_hop_len}, "
           f"n_mels={cwru_n_mels}, fmax={cwru_fmax}")
     mel_gadf_pairs = _precompute_mel_gadf(
         sampled_windows, cwru_sr,
         n_fft=cwru_n_fft, hop_len=cwru_hop_len,
         n_mels=cwru_n_mels, fmax=cwru_fmax,
+        tf_method=args.tf_method,
     )
     print(f"Cached {len(mel_gadf_pairs)} Mel+GADF pairs")
 

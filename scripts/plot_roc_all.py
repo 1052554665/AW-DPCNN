@@ -22,7 +22,7 @@ python scripts/plot_roc_all.py --dataset 48k_de
 python scripts/plot_roc_all.py --dataset 12k_de --trial trial_seed42
 
 # Full run: plots + table
-python scripts/plot_roc_all.py --dataset 48k_de --trial trial_seed456
+python scripts/plot_roc_all.py --dataset 48k_de --trial trial_seed42
 
 # Custom table output directory
 python scripts/plot_roc_all.py --dataset 12k_de --table-dir paper/auto_tables

@@ -203,14 +203,13 @@ def plot_noise_curves(
     colors = plt.cm.tab10(np.linspace(0, 1, max(len(all_results), 3)))
 
     for idx, (model_name, res) in enumerate(all_results.items()):
-        # Convert SNR labels to numeric for plotting
+        # Extract real SNR values only (skip "clean")
         snr_num = []
         acc_vals = []
         for snr_str, acc in zip(res["snr"], res["accuracy"]):
             if snr_str == "clean":
-                snr_num.append(25)  # plot clean at SNR=25 for visual separation
-            else:
-                snr_num.append(float(snr_str.replace(" dB", "")))
+                continue
+            snr_num.append(float(snr_str.replace(" dB", "")))
             acc_vals.append(acc)
 
         # Sort by SNR
@@ -226,20 +225,15 @@ def plot_noise_curves(
             label=model_name,
         )
 
-    # Format x-axis: show "Clean" label, then SNR values
-    all_snr_labels = sorted(set(
-        float(r.replace(" dB", "")) if r != "clean" else 99
-        for res in all_results.values() for r in res["snr"]
+    # Format x-axis: real SNR values only
+    all_real_snr = sorted(set(
+        float(r.replace(" dB", ""))
+        for res in all_results.values()
+        for r in res["snr"]
+        if r != "clean"
     ))
-    tick_positions = []
-    tick_labels = []
-    for s in all_snr_labels:
-        if s == 99:
-            tick_positions.append(25)
-            tick_labels.append("Clean")
-        else:
-            tick_positions.append(s)
-            tick_labels.append(f"{int(s)}")
+    tick_positions = list(all_real_snr)
+    tick_labels = [f"{int(s)}" for s in all_real_snr]
 
     ax.set_xticks(tick_positions)
     ax.set_xticklabels(tick_labels)

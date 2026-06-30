@@ -45,7 +45,7 @@ from src.utils.dataset_registry import DATASET_KEYS  # noqa: E402
 #  Paths & Constants
 # ═══════════════════════════════════════════════════════════════════════
 
-ABLATION_ROOT   = Path("experiments/experiment_result/ablation_results")
+ABLATION_ROOT   = Path("experiments/experiment_result/ablation")
 EXP1_ROOT       = Path("experiments/experiment_result/exp1")
 REP_COMPARE_ROOT = Path("experiments/experiment_result/rep_compare")
 HYPERPARAM_FILE  = Path("experiments/experiment_result/hyperparameter_sensitivity/sensitivity_summary.json")
@@ -407,15 +407,66 @@ def generate_backbone_table(trial_seeds: List[int],
 # ═══════════════════════════════════════════════════════════════════════
 
 def generate_rep_compare_table(trial_seeds: List[int]) -> str:
-    """Generate LaTeX for tab:rep_compare."""
+    """Generate LaTeX for tab:rep_compare.
+
+    The best value in each metric column (Acc, Prec, Rec, F1, G-mean,
+    Kappa) across all 12 combinations is automatically bolded.
+    """
     multi = len(trial_seeds) > 1
+
+    # ── First pass: collect all raw metric values to find per-column best ──
+    row_values: List[List[float]] = []   # [[acc, prec, rec, f1, gmean, kappa], ...]
+    row_has_data: List[bool] = []        # whether this row has valid data
+
+    for tf in REP_TF_METHODS:
+        for temporal in REP_TEMPORAL:
+            combo = f"{tf.lower()}_{temporal.lower()}"
+            base_dir = REP_COMPARE_ROOT / combo / f"rep_compare_{combo}"
+            trial_dirs = _get_trial_dirs(base_dir, trial_seeds)
+
+            if not trial_dirs:
+                row_values.append([float("-inf")] * 6)
+                row_has_data.append(False)
+            elif len(trial_dirs) >= 2 and multi:
+                agg = _aggregate(trial_dirs)
+                row_values.append([
+                    agg["test_acc"]["mean"],
+                    agg["test_precision"]["mean"],
+                    agg["test_recall"]["mean"],
+                    agg["test_f1"]["mean"],
+                    agg["test_gmean"]["mean"],
+                    agg["test_kappa"]["mean"],
+                ])
+                row_has_data.append(True)
+            else:
+                m = _load_trial_results(trial_dirs)[0]
+                row_values.append([
+                    m.get("test_acc", float("-inf")),
+                    m.get("test_precision", float("-inf")),
+                    m.get("test_recall", float("-inf")),
+                    m.get("test_f1", float("-inf")),
+                    m.get("test_gmean", float("-inf")),
+                    m.get("test_kappa", float("-inf")),
+                ])
+                row_has_data.append(True)
+
+    # Find best (max) per metric column among rows with data
+    metric_keys = ["test_acc", "test_precision", "test_recall",
+                   "test_f1", "test_gmean", "test_kappa"]
+    best_per_col = []
+    for col_idx in range(6):
+        vals = [row_values[r][col_idx] for r in range(len(row_values)) if row_has_data[r]]
+        best_per_col.append(max(vals) if vals else float("-inf"))
+
+    # ── Second pass: generate LaTeX ──
     lines = []
     lines.append("% ── Representation Comparison Table ──")
     lines.append("\\begin{table*}")
     lines.append("    \\centering")
     lines.append("    \\caption{Representation Comparison Across Time--Frequency and "
                  "Temporal Encoding Methods. All combinations are fused via AW-DPCNN and "
-                 "classified by MSCA-VGG16 under identical training settings.}")
+                 "classified by MSCA-VGG16 under identical training settings. "
+                 "Best values per metric are bolded.}")
     lines.append("    \\label{tab:rep_compare}")
     lines.append("    \\renewcommand{\\arraystretch}{1.15}")
     lines.append("    \\small")
@@ -426,6 +477,7 @@ def generate_rep_compare_table(trial_seeds: List[int]) -> str:
                  "& \\textbf{G-mean (\\%)} & \\textbf{Kappa (\\%)} \\\\")
     lines.append("        \\midrule")
 
+    row_idx = 0
     for i, tf in enumerate(REP_TF_METHODS):
         for j, temporal in enumerate(REP_TEMPORAL):
             combo = f"{tf.lower()}_{temporal.lower()}"
@@ -434,35 +486,48 @@ def generate_rep_compare_table(trial_seeds: List[int]) -> str:
 
             if not trial_dirs:
                 na = "xx.xx \\pm x.xx" if multi else "xx.xx"
-                vals = [f"${na}$"] * 6
+                vals_str = [na] * 6
             elif len(trial_dirs) >= 2 and multi:
                 agg = _aggregate(trial_dirs)
-                vals = [
-                    _fmt_mean_std(agg["test_acc"]["mean"], agg["test_acc"]["std"], "test_acc"),
-                    _fmt_mean_std(agg["test_precision"]["mean"], agg["test_precision"]["std"], "test_precision"),
-                    _fmt_mean_std(agg["test_recall"]["mean"], agg["test_recall"]["std"], "test_recall"),
-                    _fmt_mean_std(agg["test_f1"]["mean"], agg["test_f1"]["std"], "test_f1"),
-                    _fmt_mean_std(agg["test_gmean"]["mean"], agg["test_gmean"]["std"], "test_gmean"),
-                    _fmt_mean_std(agg["test_kappa"]["mean"], agg["test_kappa"]["std"], "test_kappa"),
+                raw = [
+                    ("test_acc", agg["test_acc"]["mean"], agg["test_acc"]["std"]),
+                    ("test_precision", agg["test_precision"]["mean"], agg["test_precision"]["std"]),
+                    ("test_recall", agg["test_recall"]["mean"], agg["test_recall"]["std"]),
+                    ("test_f1", agg["test_f1"]["mean"], agg["test_f1"]["std"]),
+                    ("test_gmean", agg["test_gmean"]["mean"], agg["test_gmean"]["std"]),
+                    ("test_kappa", agg["test_kappa"]["mean"], agg["test_kappa"]["std"]),
                 ]
+                vals_str = []
+                for col_idx, (key, mean, std) in enumerate(raw):
+                    s = _fmt_mean_std(mean, std, key)
+                    if row_has_data[row_idx] and row_values[row_idx][col_idx] == best_per_col[col_idx]:
+                        s = f"\\mathbf{{{s}}}"
+                    vals_str.append(s)
             else:
                 m = _load_trial_results(trial_dirs)[0]
-                vals = [
-                    _fmt_val(m.get("test_acc", float("nan")), "test_acc"),
-                    _fmt_val(m.get("test_precision", float("nan")), "test_precision"),
-                    _fmt_val(m.get("test_recall", float("nan")), "test_recall"),
-                    _fmt_val(m.get("test_f1", float("nan")), "test_f1"),
-                    _fmt_val(m.get("test_gmean", float("nan")), "test_gmean"),
-                    _fmt_val(m.get("test_kappa", float("nan")), "test_kappa"),
+                raw = [
+                    ("test_acc", m.get("test_acc", float("nan"))),
+                    ("test_precision", m.get("test_precision", float("nan"))),
+                    ("test_recall", m.get("test_recall", float("nan"))),
+                    ("test_f1", m.get("test_f1", float("nan"))),
+                    ("test_gmean", m.get("test_gmean", float("nan"))),
+                    ("test_kappa", m.get("test_kappa", float("nan"))),
                 ]
+                vals_str = []
+                for col_idx, (key, val) in enumerate(raw):
+                    s = _fmt_val(val, key)
+                    if row_has_data[row_idx] and row_values[row_idx][col_idx] == best_per_col[col_idx]:
+                        s = f"\\mathbf{{{s}}}"
+                    vals_str.append(s)
 
             if j == 0:
                 tf_cell = f"\\multirow{{4}}{{*}}{{{tf}}}"
             else:
                 tf_cell = ""
 
-            row = f"        {tf_cell} & {temporal} & " + " & ".join(f"${v}$" for v in vals)
+            row = f"        {tf_cell} & {temporal} & " + " & ".join(f"${v}$" for v in vals_str)
             lines.append(f"{row} \\\\")
+            row_idx += 1
 
         # Add cmidrule between TF methods (except after the last one)
         if i < len(REP_TF_METHODS) - 1:

@@ -1,8 +1,8 @@
-experiment_name: ablation_B0_mel_only
+experiment_name: ablation_B0_stft_only
 device: cuda
 
 dataset:
-  root_dir: ./datasets/ablation/mel_only
+  root_dir: ./datasets/ablation/stft_only
 
 model:
   name: vgg16
@@ -26,4 +26,4 @@ visualization:
   tsne: true
 
 output:
-  root_dir: ./experiments/experiment_result/ablation/B0_mel_only
+  root_dir: ./experiments/experiment_result/ablation/B0_stft_only

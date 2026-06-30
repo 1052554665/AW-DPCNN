@@ -18,6 +18,7 @@ Repeated independent trials (3 seeds, publication-ready)::
     python scripts/run_rep_compare.py --gen-only
 
     # Run a single combination with 3 trials
+    !!!!!! cost two and a half hours
     python scripts/run_rep_compare.py --combo mel_gadf --num-trials 3
 
     # Aggregate existing results without re-training

@@ -9,9 +9,9 @@ comparison.  Source: 12 kHz drive‑end CWRU bearing data (.mat files).
 
 Datasets built
 --------------
-  B0 — mel_only         Mel spectrogram only (pseudo‑colour, no fusion)
+  B0 — stft_only        STFT spectrogram only (pseudo‑colour, no fusion)
   B1 — gadf_only        GADF image only (pseudo‑colour, no fusion)
-  B2 — concat           Mel + GADF pixel‑wise average (naive fusion)
+  B2 — concat           STFT + GADF pixel‑wise average (naive fusion)
   B3 — awdpcnn_gamma1   AW‑DPCNN with γ=1 (equal‑weight PCNN fusion)
   B4 — awdpcnn_full     Full AW‑DPCNN with γ=10 (adaptive fusion, shared
                          by B5–B8 classifier‑level experiments)
@@ -19,7 +19,7 @@ Datasets built
 Output structure::
 
     datasets/ablation/
-        mel_only/         train/{BF007,...,Normal}/  val/  test/  metadata.csv
+        stft_only/        train/{BF007,...,Normal}/  val/  test/  metadata.csv
         gadf_only/        ...
         concat/           ...
         awdpcnn_gamma1/   ...
@@ -27,7 +27,7 @@ Output structure::
 
 Usage::
 
-    python scripts/build_ablation_datasets.py --workers 16
+    python scripts/build_ablation_datasets.py --workers 32
 """
 
 import argparse
@@ -52,6 +52,8 @@ from build_cwru_dataset import (  # noqa: E402
     aw_dpcnn_fusion_color,
     generate_gadf_image,
     generate_mel_image,
+    generate_stft_image,
+    TF_GENERATORS,
 )
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -140,31 +142,42 @@ def _file_level_split(
 #  Per‑variant image builders
 # ═══════════════════════════════════════════════════════════════════════
 
-def _make_mel(window: np.ndarray) -> np.ndarray:
+# Set via CLI; controls which time‑frequency representation is used
+# by the fusion and concat variants.
+TF_METHOD = "stft"  # default — overridden by --tf-method
+
+
+def _make_tf(window: np.ndarray) -> np.ndarray:
+    """Generate time‑frequency image using the selected method."""
+    if TF_METHOD == "stft":
+        return generate_stft_image(window, SR, n_fft=N_FFT,
+                                    hop_length=HOP_LEN, img_size=IMG_SIZE,
+                                    cmap=cv2.COLORMAP_VIRIDIS)
     return generate_mel_image(window, SR, n_fft=N_FFT, hop_length=HOP_LEN,
                                n_mels=N_MELS, fmax=FMAX, img_size=IMG_SIZE,
                                cmap=cv2.COLORMAP_VIRIDIS)
+
 
 def _make_gadf(window: np.ndarray) -> np.ndarray:
     return generate_gadf_image(window, img_size=IMG_SIZE,
                                 cmap=cv2.COLORMAP_VIRIDIS)
 
 def _make_concat(window: np.ndarray) -> np.ndarray:
-    mel = _make_mel(window).astype(np.float32)
+    tf_img = _make_tf(window).astype(np.float32)
     gadf = _make_gadf(window).astype(np.float32)
-    return ((mel + gadf) / 2).astype(np.uint8)
+    return ((tf_img + gadf) / 2).astype(np.uint8)
 
 def _make_awdpcnn(window: np.ndarray, gamma: float) -> np.ndarray:
-    mel = _make_mel(window)
+    tf_img = _make_tf(window)
     gadf = _make_gadf(window)
-    return aw_dpcnn_fusion_color(mel, gadf, n_iter=N_ITER, gamma=gamma)
+    return aw_dpcnn_fusion_color(tf_img, gadf, n_iter=N_ITER, gamma=gamma)
 
 VARIANTS = {
-    "mel_only":       ("B0  Mel-only",            _make_mel,        {}),
-    "gadf_only":      ("B1  GADF-only",           _make_gadf,       {}),
-    "concat":         ("B2  Concat (avg)",         _make_concat,     {}),
-    "awdpcnn_gamma1": ("B3  AW-DPCNN γ=1",         _make_awdpcnn,   {"gamma": 1.0}),
-    "awdpcnn_full":   ("B4  AW-DPCNN γ=10 (full)", _make_awdpcnn,   {"gamma": 10.0}),
+    "stft_only":      (f"B0  TF-only ({TF_METHOD})",      _make_tf,        {}),
+    "gadf_only":      ("B1  GADF-only",                    _make_gadf,       {}),
+    "concat":         (f"B2  Concat (avg, {TF_METHOD})",   _make_concat,     {}),
+    "awdpcnn_gamma1": ("B3  AW-DPCNN γ=1",                  _make_awdpcnn,   {"gamma": 1.0}),
+    "awdpcnn_full":   (f"B4  AW-DPCNN γ=10 ({TF_METHOD})", _make_awdpcnn,   {"gamma": 10.0}),
 }
 
 
@@ -193,7 +206,13 @@ def main():
     parser = argparse.ArgumentParser(description="Ablation dataset builder — CWRU 12k DE")
     parser.add_argument("--workers", type=int, default=os.cpu_count() or 4)
     parser.add_argument("--overwrite", action="store_true")
+    parser.add_argument("--tf-method", default="stft", choices=["mel", "stft"],
+                        help="Time‑frequency representation: mel or stft (default: stft)")
     args = parser.parse_args()
+
+    # ── Apply TF method globally (used by variant builders) ──
+    global TF_METHOD
+    TF_METHOD = args.tf_method
 
     # ── Collect & split ──
     files_by_class = _collect_mat_files()
@@ -202,6 +221,7 @@ def main():
         sys.exit(1)
     total = sum(len(v) for v in files_by_class.values())
     print(f"Source: {total} .mat files, {len(files_by_class)} classes")
+    print(f"TF method: {TF_METHOD}")
     for cls, paths in files_by_class.items():
         print(f"  {cls:8s}: {len(paths)} files")
 

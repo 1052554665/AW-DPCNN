@@ -11,16 +11,28 @@ Modes
   raw      t-SNE of raw input pixels (no model, PCA→50→t-SNE)
   all      both of the above
 
+Directory layout for model checkpoints::
+
+    experiments/experiment_result/exp1/
+        {model}/
+            {dataset}/           ← 12k_de | 12k_fe | 48k_de
+                exp1_{model}/
+                    trial_seed{xxx}/
+                        checkpoints/best.pt
+                        resolved_config.yaml
+
 Usage::
 
-    # Model t-SNE only
-    python scripts/plot_tsne_all.py --mode models --trial trial_seed123
+# Model t-SNE for each dataset
+python scripts/plot_tsne_all.py --mode models --dataset 12k_de --trial trial_seed42
+python scripts/plot_tsne_all.py --mode models --dataset 12k_fe --trial trial_seed42
+python scripts/plot_tsne_all.py --mode models --dataset 48k_de --trial trial_seed42
 
-    # Raw input t-SNE only
-    python scripts/plot_tsne_all.py --mode raw --data-dir ./datasets/cwru_de/test --max-samples 1500
+# Other trials
+python scripts/plot_tsne_all.py --mode models --dataset 12k_de --trial trial_seed123
 
-    # Both
-    python scripts/plot_tsne_all.py --mode all --data-dir ./datasets/cwru_de/test --trial trial_seed123
+# Raw input + model t-SNE
+python scripts/plot_tsne_all.py --mode all --dataset 12k_de --data-dir ./datasets/cwru_12k_de/test --trial trial_seed42
 
 Notes
 -----
@@ -50,6 +62,8 @@ from src.utils.tsne import extract_features, plot_tsne
 RESULT_ROOT = Path("experiments/experiment_result/exp1")
 OUTPUT_DIR  = Path("paper/tsne_models")
 DEFAULT_TRIAL = "trial_seed42"
+DEFAULT_DATASET = "12k_de"
+DATASET_CHOICES = ["12k_de", "12k_fe", "48k_de"]
 
 # t-SNE parameters — must match src/utils/tsne.py
 TSNE_PARAMS = dict(perplexity=30, learning_rate=200, max_iter=1000, init="pca")
@@ -61,29 +75,61 @@ OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 #  Model t-SNE
 # ═══════════════════════════════════════════════════════════════════════
 
-def find_model_runs(trial: str = DEFAULT_TRIAL) -> list:
+def find_model_runs(dataset: str = DEFAULT_DATASET,
+                    trial: str = DEFAULT_TRIAL) -> list:
+    """Discover trained model checkpoints under the new layout.
+
+    Directory structure::
+
+        RESULT_ROOT / {model} / {dataset} / exp1_{model} / {trial} /
+            checkpoints/best.pt
+            resolved_config.yaml
+
+    Parameters
+    ----------
+    dataset : str   One of ``DATASET_CHOICES`` (e.g. ``"12k_de"``).
+    trial   : str   Trial seed directory name (e.g. ``"trial_seed42"``).
+
+    Returns
+    -------
+    list of (model_name, config_path, checkpoint_path) tuples.
+    """
     runs = []
-    for exp_dir in sorted(RESULT_ROOT.glob("*")):
-        if not exp_dir.is_dir():
+    for model_dir in sorted(RESULT_ROOT.glob("*")):
+        if not model_dir.is_dir():
             continue
-        inner = sorted(exp_dir.glob("exp1_*"))
+        if model_dir.name.startswith(".") or model_dir.name.startswith("_"):
+            continue
+
+        dataset_dir = model_dir / dataset
+        if not dataset_dir.is_dir():
+            continue
+
+        inner = sorted(dataset_dir.glob("exp1_*"))
         if not inner:
             continue
+
         base = inner[0] / trial
         cfg = base / "resolved_config.yaml"
         ckpt = base / "checkpoints/best.pt"
         if cfg.exists() and ckpt.exists():
-            runs.append((exp_dir.name, cfg, ckpt))
+            runs.append((model_dir.name, cfg, ckpt))
+        else:
+            print(f"[SKIP] {model_dir.name}/{dataset}: missing config or checkpoint")
     return runs
 
 
-def generate_model_tsne(device: torch.device, max_samples: int, trial: str = DEFAULT_TRIAL):
-    runs = find_model_runs(trial)
+def generate_model_tsne(device: torch.device, max_samples: int,
+                       dataset: str = DEFAULT_DATASET,
+                       trial: str = DEFAULT_TRIAL):
+    runs = find_model_runs(dataset=dataset, trial=trial)
     if not runs:
-        print("[ERROR] No trained models found.")
+        print(f"[ERROR] No trained models found "
+              f"(dataset={dataset}, trial={trial}).")
         return
 
-    print(f"Found {len(runs)} trained models.\n")
+    print(f"Found {len(runs)} trained models "
+          f"(dataset={dataset}, trial={trial}).\n")
     for name, cfg_path, ckpt_path in runs:
         print(f"[{name}] Loading ...")
         cfg = json.loads(cfg_path.read_text()) if cfg_path.suffix == ".json" else None
@@ -105,10 +151,10 @@ def generate_model_tsne(device: torch.device, max_samples: int, trial: str = DEF
             idx = np.random.RandomState(42).choice(len(features), max_samples, replace=False)
             features, labels = features[idx], labels[idx]
 
-        out = OUTPUT_DIR / f"tsne_{name}.png"
+        out = OUTPUT_DIR / f"tsne_{name}_{dataset}_{trial}.png"
         print(f"  t-SNE → {out}")
         plot_tsne(features, labels, class_names,
-                  title=f"{name} — Feature t-SNE", save_path=str(out))
+                  title=f"{name} — {dataset} ({trial})", save_path=str(out))
         print("  Done.\n")
     print(f"Model t-SNE plots saved to {OUTPUT_DIR}/")
 
@@ -176,6 +222,8 @@ def generate_raw_tsne(data_dir: str, max_samples: int, img_size: int = 224,
 def main():
     p = argparse.ArgumentParser(description="Unified t-SNE: models + raw input")
     p.add_argument("--mode", default="models", choices=["models", "raw", "all"])
+    p.add_argument("--dataset", default=DEFAULT_DATASET, choices=DATASET_CHOICES,
+                   help=f"Dataset key for model t-SNE (default: {DEFAULT_DATASET})")
     p.add_argument("--data-dir", default="./datasets/cwru_de/test",
                    help="ImageFolder dir for raw-input t-SNE (--mode raw/all)")
     p.add_argument("--max-samples", type=int, default=1500)
@@ -187,7 +235,8 @@ def main():
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")
 
     if args.mode in ("models", "all"):
-        generate_model_tsne(device, args.max_samples, trial=args.trial)
+        generate_model_tsne(device, args.max_samples,
+                           dataset=args.dataset, trial=args.trial)
 
     if args.mode in ("raw", "all"):
         generate_raw_tsne(args.data_dir, args.max_samples)

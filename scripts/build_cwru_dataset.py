@@ -188,6 +188,54 @@ def generate_mel_image(signal: np.ndarray, sr: int,
 
 
 # ═══════════════════════════════════════════════════════════════════════
+#  STFT spectrogram
+# ═══════════════════════════════════════════════════════════════════════
+
+def generate_stft_image(signal: np.ndarray, sr: int,
+                        n_fft: int = 2048,
+                        hop_length: int = 256,
+                        img_size: int = 224,
+                        cmap: int = cv2.COLORMAP_VIRIDIS) -> np.ndarray:
+    """Compute linear STFT spectrogram in dB and return a BGR pseudo‑colour
+    image (H,W,3).
+
+    Unlike ``generate_mel_image``, this function bypasses the Mel filterbank
+    and uses the raw STFT magnitude spectrum — preserving linear frequency
+    resolution at the cost of reduced perceptual weighting.
+
+    Parameters
+    ----------
+    signal : ndarray     1‑d input waveform.
+    sr     : int         Sample rate (Hz).
+    n_fft  : int         FFT window size.
+    hop_length : int     Hop length between successive frames.
+    img_size   : int     Output square image size (default 224).
+    cmap   : int         OpenCV colormap constant.
+    """
+    import librosa
+
+    D = librosa.stft(signal, n_fft=n_fft, hop_length=hop_length)
+    D_db = librosa.amplitude_to_db(np.abs(D), ref=np.max)
+
+    D_norm = (D_db - D_db.min()) / (D_db.max() - D_db.min() + 1e-8)
+    D_uint8 = (D_norm * 255).astype(np.uint8)
+    D_uint8 = cv2.resize(D_uint8, (img_size, img_size))
+    return _gray_to_pseudo(D_uint8, cmap)
+
+
+# ═══════════════════════════════════════════════════════════════════════
+#  Time‑frequency generator dispatch
+# ═══════════════════════════════════════════════════════════════════════
+
+# Registry mapping CLI‑friendly names to generator callables.
+# Extend this dict when adding new time‑frequency representations.
+TF_GENERATORS = {
+    'mel':  generate_mel_image,
+    'stft': generate_stft_image,
+}
+
+
+# ═══════════════════════════════════════════════════════════════════════
 #  GADF image  (extracted from `GAF.py` logic)
 # ═══════════════════════════════════════════════════════════════════════
 
@@ -342,24 +390,41 @@ def _detect_input_format(input_dir: str) -> str:
     return 'wav'  # default fallback
 
 def process_one_window(args: tuple) -> int:
-    """Generate Mel + GADF from one signal window, fuse, and save.
+    """Generate TF image + GADF from one signal window, fuse, and save.
+
+    The time‑frequency method is selected by the ``tf_method`` field
+    (last element of the tuple).  Supported values: ``'mel'``, ``'stft'``.
 
     Returns 1 on success, 0 on failure.
     """
+    # ── Backward‑compatible unpacking (tf_method added as the 15th element) ──
     (signal, sr, out_path, img_size, n_iter, n_fft, hop_length,
      n_mels, fmax, cmap, gaf_method, save_intermediates, gamma,
-     sequence_length) = args
+     sequence_length) = args[:14]
+    tf_method = args[14] if len(args) > 14 else 'mel'
 
     try:
-        mel_img = generate_mel_image(
-            signal, sr, n_fft=n_fft, hop_length=hop_length,
-            n_mels=n_mels, fmax=fmax, img_size=img_size, cmap=cmap,
-        )
+        # Dispatch time‑frequency generator
+        tf_gen = TF_GENERATORS.get(tf_method, TF_GENERATORS['mel'])
+        # STFT doesn't use n_mels/fmax — pass only common kwargs
+        if tf_method == 'stft':
+            tf_img = tf_gen(
+                signal, sr, n_fft=n_fft, hop_length=hop_length,
+                img_size=img_size, cmap=cmap,
+            )
+            tf_label = 'stft'
+        else:
+            tf_img = tf_gen(
+                signal, sr, n_fft=n_fft, hop_length=hop_length,
+                n_mels=n_mels, fmax=fmax, img_size=img_size, cmap=cmap,
+            )
+            tf_label = 'mel'
+
         gadf_img = generate_gadf_image(
             signal, img_size=img_size, method=gaf_method, cmap=cmap,
             sequence_length=sequence_length,
         )
-        fused = aw_dpcnn_fusion_color(mel_img, gadf_img,
+        fused = aw_dpcnn_fusion_color(tf_img, gadf_img,
                                        n_iter=n_iter, gamma=gamma)
 
         os.makedirs(os.path.dirname(out_path), exist_ok=True)
@@ -367,7 +432,7 @@ def process_one_window(args: tuple) -> int:
 
         if save_intermediates:
             base, _ = os.path.splitext(out_path)
-            cv2.imwrite(base + '_mel.png', mel_img)
+            cv2.imwrite(f'{base}_{tf_label}.png', tf_img)
             cv2.imwrite(base + '_gadf.png', gadf_img)
 
         return 1
@@ -401,6 +466,7 @@ def _collect_tasks(
     split_seed: int = 42,
     gamma: float = 4.0,
     sequence_length: int = None,
+    tf_method: str = 'mel',
 ) -> tuple:
     """Walk the input directory and build a flat list of window tasks.
 
@@ -483,7 +549,7 @@ def _collect_tasks(
                         signal, sr_val, out_cls_dir, prefix, win_len, hop_len,
                         img_size, n_iter, n_fft, hop_length, n_mels, fmax,
                         cmap, gaf_method, save_intermediates, overwrite,
-                        gamma, tasks, sequence_length,
+                        gamma, tasks, sequence_length, tf_method,
                     )
                     # Metadata rows
                     if win_len > 0 and win_len < len(signal):
@@ -509,7 +575,7 @@ def _collect_tasks(
                     signal, sr_val, out_cls_dir, prefix, win_len, hop_len,
                     img_size, n_iter, n_fft, hop_length, n_mels, fmax,
                     cmap, gaf_method, save_intermediates, overwrite,
-                    gamma, tasks, sequence_length,
+                    gamma, tasks, sequence_length, tf_method,
                 )
 
     return tasks, metadata_rows
@@ -519,7 +585,7 @@ def _append_window_tasks(
     signal, sr, out_cls_dir, prefix, win_len, hop_len,
     img_size, n_iter, n_fft, hop_length, n_mels, fmax,
     cmap, gaf_method, save_intermediates, overwrite,
-    gamma, tasks, sequence_length=None,
+    gamma, tasks, sequence_length=None, tf_method='mel',
 ):
     """Create window tasks for a single signal and append to *tasks* list."""
     if win_len <= 0 or win_len >= len(signal):
@@ -530,7 +596,7 @@ def _append_window_tasks(
             signal, sr, out_path, img_size, n_iter,
             n_fft, hop_length, n_mels, fmax, cmap,
             gaf_method, save_intermediates, gamma,
-            sequence_length,
+            sequence_length, tf_method,
         ))
     else:
         idx = 0
@@ -544,7 +610,7 @@ def _append_window_tasks(
                 window, sr, out_path, img_size, n_iter,
                 n_fft, hop_length, n_mels, fmax, cmap,
                 gaf_method, save_intermediates, gamma,
-                sequence_length,
+                sequence_length, tf_method,
             ))
             idx += 1
 
@@ -603,6 +669,11 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument('--hop-length', type=int, default=256)
     p.add_argument('--n-mels', type=int, default=256)
     p.add_argument('--fmax', type=int, default=8000)
+
+    # --- Time‑frequency method ---
+    p.add_argument('--tf-method', default='stft', choices=['mel', 'stft'],
+                   help='Time‑frequency representation: mel (Mel spectrogram) '
+                        'or stft (linear STFT).  Default: stft.')
 
     # --- GADF parameters ---
     p.add_argument('--gaf-method', default='difference',
@@ -673,6 +744,7 @@ def main():
     print(f'  Window / Hop    : {args.win_len} / {args.hop_len}')
     print(f'  Image size      : {args.img_size}')
     print(f'  Colormap        : {args.cmap}')
+    print(f'  TF method       : {args.tf_method}')
     print(f'  PCNN iter / γ   : {args.n_iter} / {args.gamma}')
     print(f'  GAF seq len     : {args.sequence_length if args.sequence_length else "full signal"}')
     print(f'  File split      : {args.file_split if args.file_split else "none"}')
@@ -703,6 +775,7 @@ def main():
         split_seed=args.split_seed,
         gamma=args.gamma,
         sequence_length=args.sequence_length,
+        tf_method=args.tf_method,
     )
 
     print(f'\n[INFO] Total fusion tasks: {len(tasks)}')
