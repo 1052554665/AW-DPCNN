@@ -10,6 +10,166 @@
 
 \begin{document}
 
+\begin{table}[!t]
+\centering
+\caption{CWRU bearing datasets—Operating conditions, labels, and class-wise sample distribution (60/20/20 train/val/test split, seed 42). All datasets: $T_{\text{win}}=170.7$\,ms, $\Delta f=11.7$\,Hz/bin, Jensen--Shannon $D_{\text{JS}} \leq 0.064$. BF: Ball Fault; IF: Inner Race Fault; OF: Outer Race Fault @6$'$. Fault diameters: 007, 014, 021\,mil.}
+\label{tab:datasets_comprehensive}
+\small
+\renewcommand{\arraystretch}{1.0}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Dataset} & \textbf{Class} & \textbf{Train} & \textbf{Val} & \textbf{Test} \\
+\midrule
+CWRU 12k DE & BF007  & 234 & 117 & 118 \\
+ & BF014  & 236 & 117 & 118 \\
+ & BF021  & 235 & 118 & 118 \\
+ & IF007  & 236 & 117 & 119 \\
+ & IF014  & 234 & 117 & 117 \\
+ & IF021  & 235 & 117 & 118 \\
+ & OF007  & 236 & 118 & 117 \\
+ & OF014  & 234 & 118 & 118 \\
+ & OF021  & 236 & 118 & 118 \\
+ & Normal & 708 & 473 & 471 \\
+ & \textbf{Total} & \textbf{2824} & \textbf{1530} & \textbf{1532} \\
+\midrule
+CWRU 12k FE & BF007  & 233 & 117 & 117 \\
+ & BF014  & 235 & 118 & 117 \\
+ & BF021  & 233 & 117 & 117 \\
+ & IF007  & 234 & 117 & 117 \\
+ & IF014  & 234 & 117 & 117 \\
+ & IF021  & 234 & 117 & 117 \\
+ & OF007  & 235 & 117 & 117 \\
+ & OF014  & 69  & 22  & 22  \\
+ & OF021  & 69  & 22  & 22  \\
+ & Normal & 708 & 473 & 471 \\
+ & \textbf{Total} & \textbf{2484} & \textbf{1337} & \textbf{1334} \\
+\midrule
+CWRU 48k DE & BF007  & 234 & 118 & 58  \\
+ & BF014  & 234 & 59  & 117 \\
+ & BF021  & 234 & 117 & 58  \\
+ & IF007  & 234 & 58  & 117 \\
+ & IF014  & 236 & 117 & 14  \\
+ & IF021  & 235 & 118 & 58  \\
+ & OF007  & 235 & 58  & 117 \\
+ & OF014  & 175 & 117 & 118 \\
+ & OF021  & 236 & 59  & 118 \\
+ & Normal & 175 & 117 & 117 \\
+ & \textbf{Total} & \textbf{2228} & \textbf{938}  & \textbf{892}  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[!t]
+\centering
+\caption{Class-wise sample distribution of three CWRU bearing datasets (60/20/20 train/val/test split, seed 42). All datasets: $T_{\text{win}}=170.7$\,ms, $\Delta f=11.7$\,Hz/bin, Jensen--Shannon $D_{\text{JS}} \leq 0.064$. BF: Ball Fault; IF: Inner Race Fault; OF: Outer Race Fault @6$'$. Fault diameters: 007, 014, 021\,mil.}
+\label{tab:datasets_comprehensive}
+\small
+\renewcommand{\arraystretch}{1.0}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Dataset} & \textbf{Class} & \textbf{Train} & \textbf{Val} & \textbf{Test} \\
+\midrule
+\multirow{11}{*}{\textbf{CWRU 12k DE}} 
+& BF007  & 234 & 117 & 118 \\
+& BF014  & 236 & 117 & 118 \\
+& BF021  & 235 & 118 & 118 \\
+& IF007  & 236 & 117 & 119 \\
+& IF014  & 234 & 117 & 117 \\
+& IF021  & 235 & 117 & 118 \\
+& OF007  & 236 & 118 & 117 \\
+& OF014  & 234 & 118 & 118 \\
+& OF021  & 236 & 118 & 118 \\
+& Normal & 708 & 473 & 471 \\
+& \textbf{Total} & \textbf{2824} & \textbf{1530} & \textbf{1532} \\
+\midrule
+\multirow{11}{*}{\textbf{CWRU 12k FE}} 
+& BF007  & 233 & 117 & 117 \\
+& BF014  & 235 & 118 & 117 \\
+& BF021  & 233 & 117 & 117 \\
+& IF007  & 234 & 117 & 117 \\
+& IF014  & 234 & 117 & 117 \\
+& IF021  & 234 & 117 & 117 \\
+& OF007  & 235 & 117 & 117 \\
+& OF014  & 69  & 22  & 22  \\
+& OF021  & 69  & 22  & 22  \\
+& Normal & 708 & 473 & 471 \\
+& \textbf{Total} & \textbf{2484} & \textbf{1337} & \textbf{1334} \\
+\midrule
+\multirow{11}{*}{\textbf{CWRU 48k DE}} 
+& BF007  & 234 & 118 & 58  \\
+& BF014  & 234 & 59  & 117 \\
+& BF021  & 234 & 117 & 58  \\
+& IF007  & 234 & 58  & 117 \\
+& IF014  & 236 & 117 & 14  \\
+& IF021  & 235 & 118 & 58  \\
+& OF007  & 235 & 58  & 117 \\
+& OF014  & 175 & 117 & 118 \\
+& OF021  & 236 & 59  & 118 \\
+& Normal & 175 & 117 & 117 \\
+& \textbf{Total} & \textbf{2228} & \textbf{938}  & \textbf{892}  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{table}[!t]
+\centering
+\caption{Class-wise sample distribution of three CWRU bearing datasets (60/20/20 train/val/test split, seed 42). All datasets: $T_{\text{win}}=170.7$\,ms, $\Delta f=11.7$\,Hz/bin, Jensen--Shannon $D_{\text{JS}} \leq 0.064$. BF: Ball Fault; IF: Inner Race Fault; OF: Outer Race Fault @6$'$. Fault diameters: 007, 014, 021\,mil.}
+\label{tab:datasets_comprehensive}
+\small
+\renewcommand{\arraystretch}{1.0}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Dataset} & \textbf{Class} & \textbf{Train} & \textbf{Val} & \textbf{Test} \\
+\midrule
+CWRU 12k DE & BF007  & 234 & 117 & 118 \\
+ & BF014  & 236 & 117 & 118 \\
+ & BF021  & 235 & 118 & 118 \\
+ & IF007  & 236 & 117 & 119 \\
+ & IF014  & 234 & 117 & 117 \\
+ & IF021  & 235 & 117 & 118 \\
+ & OF007  & 236 & 118 & 117 \\
+ & OF014  & 234 & 118 & 118 \\
+ & OF021  & 236 & 118 & 118 \\
+ & Normal & 708 & 473 & 471 \\
+ & \textbf{Total} & \textbf{2824} & \textbf{1530} & \textbf{1532} \\
+\midrule
+CWRU 12k FE & BF007  & 233 & 117 & 117 \\
+ & BF014  & 235 & 118 & 117 \\
+ & BF021  & 233 & 117 & 117 \\
+ & IF007  & 234 & 117 & 117 \\
+ & IF014  & 234 & 117 & 117 \\
+ & IF021  & 234 & 117 & 117 \\
+ & OF007  & 235 & 117 & 117 \\
+ & OF014  & 69  & 22  & 22  \\
+ & OF021  & 69  & 22  & 22  \\
+ & Normal & 708 & 473 & 471 \\
+ & \textbf{Total} & \textbf{2484} & \textbf{1337} & \textbf{1334} \\
+\midrule
+CWRU 48k DE & BF007  & 234 & 118 & 58  \\
+ & BF014  & 234 & 59  & 117 \\
+ & BF021  & 234 & 117 & 58  \\
+ & IF007  & 234 & 58  & 117 \\
+ & IF014  & 236 & 117 & 14  \\
+ & IF021  & 235 & 118 & 58  \\
+ & OF007  & 235 & 58  & 117 \\
+ & OF014  & 175 & 117 & 118 \\
+ & OF021  & 236 & 59  & 118 \\
+ & Normal & 175 & 117 & 117 \\
+ & \textbf{Total} & \textbf{2228} & \textbf{938}  & \textbf{892}  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+
+
+
+
+
 % TABLE II: Closed-Set Performance
 \begin{table*}[!t]
 \centering

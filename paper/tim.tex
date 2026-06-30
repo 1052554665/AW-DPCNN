@@ -23,7 +23,7 @@
 
 % \title{AW-DPCNN Based Multi-Representation Supervised Learning for Mechanical Signal Fault Diagnosis}
 % \title{AW-DPCNN: Adaptive-Weighted Dual-PCNN Fusion of Time-Frequency Representations for Non-Stationary Fault Diagnosis}
-\title{Adaptive Dual-Branch PCNN Fusion Network for Non-Stationary Signal Fault Diagnosis}
+\title{Adaptive Dual-Branch PCNN Multi-Representation Fusion Network for Non-Stationary Signal Fault Diagnosis}
 
 \author{Chen Yang, Zonglong Bai, Zhiyuan Xie, Chenggang Liu, Junyan Zhang and Yihe Guo}
 
@@ -549,6 +549,61 @@ For the primary benchmark (12k DE), the normal class contains substantially more
 	\label{tab:operating_conditions}
 \end{table}
 
+
+\begin{table}[!t]
+\centering
+\caption{Class-wise sample distribution of three CWRU bearing datasets (60/20/20 train/val/test split, seed 42). All datasets: $T_{\text{win}}=170.7$\,ms, $\Delta f=11.7$\,Hz/bin, Jensen--Shannon $D_{\text{JS}} \leq 0.064$. BF: Ball Fault; IF: Inner Race Fault; OF: Outer Race Fault @6$'$. Fault diameters: 007, 014, 021\,mil.}
+\label{tab:datasets_comprehensive}
+\small
+\renewcommand{\arraystretch}{1.0}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Dataset} & \textbf{Class} & \textbf{Train} & \textbf{Val} & \textbf{Test} \\
+\midrule
+\multirow{11}{*}{\textbf{CWRU 12k DE}} 
+& BF007  & 234 & 117 & 118 \\
+& BF014  & 236 & 117 & 118 \\
+& BF021  & 235 & 118 & 118 \\
+& IF007  & 236 & 117 & 119 \\
+& IF014  & 234 & 117 & 117 \\
+& IF021  & 235 & 117 & 118 \\
+& OF007  & 236 & 118 & 117 \\
+& OF014  & 234 & 118 & 118 \\
+& OF021  & 236 & 118 & 118 \\
+& Normal & 708 & 473 & 471 \\
+& \textbf{Total} & \textbf{2824} & \textbf{1530} & \textbf{1532} \\
+\midrule
+\multirow{11}{*}{\textbf{CWRU 12k FE}} 
+& BF007  & 233 & 117 & 117 \\
+& BF014  & 235 & 118 & 117 \\
+& BF021  & 233 & 117 & 117 \\
+& IF007  & 234 & 117 & 117 \\
+& IF014  & 234 & 117 & 117 \\
+& IF021  & 234 & 117 & 117 \\
+& OF007  & 235 & 117 & 117 \\
+& OF014  & 69  & 22  & 22  \\
+& OF021  & 69  & 22  & 22  \\
+& Normal & 708 & 473 & 471 \\
+& \textbf{Total} & \textbf{2484} & \textbf{1337} & \textbf{1334} \\
+\midrule
+\multirow{11}{*}{\textbf{CWRU 48k DE}} 
+& BF007  & 234 & 118 & 58  \\
+& BF014  & 234 & 59  & 117 \\
+& BF021  & 234 & 117 & 58  \\
+& IF007  & 234 & 58  & 117 \\
+& IF014  & 236 & 117 & 14  \\
+& IF021  & 235 & 118 & 58  \\
+& OF007  & 235 & 58  & 117 \\
+& OF014  & 175 & 117 & 118 \\
+& OF021  & 236 & 59  & 118 \\
+& Normal & 175 & 117 & 117 \\
+& \textbf{Total} & \textbf{2228} & \textbf{938}  & \textbf{892}  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
 % \begin{table*}
 % 	\centering
 % 	\caption{Composition of the CWRU Bearing Dataset (12 kHz Drive‑End)}
@@ -579,7 +634,6 @@ For the primary benchmark (12k DE), the normal class contains substantially more
 
 As shown in Table~\ref{dataset}, each fault class consists of 4 source recordings, which are partitioned into training, validation, and test subsets at a ratio of approximately 2:1:1 at the file level. The Normal baseline condition contains substantially more windows than the fault categories because the normal-operation recordings in the CWRU dataset are approximately $4\times$ longer than the fault recordings (roughly 40~s versus 10~s per recording). This inherent class imbalance reflects the physical ground truth of the data acquisition protocol and is addressed through two complementary strategies: a class-weighted cross-entropy loss during training to prevent the model from being biased toward the majority class, and macro-averaged evaluation metrics to ensure that each class contributes equally to the reported performance regardless of sample count.
 
-
 Fig.~\ref{Fig: Fused images} illustrates the representations of different bearing conditions before and after adaptive fusion. The STFT spectrogram primarily reflects frequency-domain energy distributions, where different fault types exhibit distinct spectral patterns corresponding to their characteristic fault frequencies. In contrast, GADF images encode temporal correlations and periodic structures of the vibration signals, revealing complementary information that is not explicitly captured in the time--frequency domain.
 \begin{figure*}[!htbp]
 	\centering
@@ -588,23 +642,13 @@ Fig.~\ref{Fig: Fused images} illustrates the representations of different bearin
 	\label{Fig: Fused images}
 \end{figure*}
 
+
 After processing by the proposed AW-DPCNN, the fused feature maps exhibit enhanced structural clarity and improved discrimination among different fault types. Notably, background noise and redundant patterns are effectively suppressed, while salient fault-related features are preserved and highlighted. This qualitative analysis demonstrates that the AW-DPCNN is capable of adaptively integrating frequency-domain and temporal-domain information, thereby generating more informative representations for subsequent fault classification.
 
 \subsection{Implementation Details and Evaluation Metrics}
 The raw vibration signals are converted into STFT spectrograms and GADF images, which are subsequently fused using the proposed AW-DPCNN to generate pseudo-color RGB images of size $224 \times 224$. These fused representations serve as the input to the MSCA-VGG16 network. All experiments follow a unified training protocol. During each ablation study, only one factor is modified while all other settings remain unchanged. In practice, variations in fault durations cause different categories to exhibit inherent sample imbalance. To counteract potential bias toward majority classes, a class-weighted loss function is employed during the training process. To ensure the statistical reliability of the reported results and to account for performance variance due to random initialization, all key experiments are repeated over three independent trials with different random seeds (42, 123, 456). The aggregated results are reported as mean $\pm$ standard deviation across the three trials.
 
-The experiments in this study were conducted on a system equipped with an Intel i9-14900K CPU and an NVIDIA RTX 5090 GPU. The software environment was based on PyTorch 2.11 and CUDA 12.8. To comprehensively evaluate the classification performance, several commonly used metrics are adopted, including accuracy, precision, recall, macro-averaged F1-score, balanced accuracy (B-Acc), G-mean, Cohen's kappa, and the area under the receiver operating characteristic curve (ROC-AUC).
-
-For multi-class ROC-AUC computation, the One-vs-Rest (OvR) strategy is employed. Specifically, for each class $c \in \{1, \dots, C\}$, a binary classification problem is constructed by treating class $c$ as the positive class and all remaining classes as the negative class. The ROC curve for class $c$ is obtained by varying the decision threshold and plotting the true positive rate (TPR) against the false positive rate (FPR), defined as
-\begin{equation}
-\mathrm{TPR}_c = \frac{\mathrm{TP}_c}{\mathrm{TP}_c + \mathrm{FN}_c}, \quad
-\mathrm{FPR}_c = \frac{\mathrm{FP}_c}{\mathrm{FP}_c + \mathrm{TN}_c},
-\end{equation}
-where $\mathrm{TP}_c$, $\mathrm{FN}_c$, $\mathrm{FP}_c$, and $\mathrm{TN}_c$ denote the counts of true positives, false negatives, false positives, and true negatives for class $c$, respectively. The per-class AUC is then computed as the area under the corresponding ROC curve. The macro-averaged AUC, reported throughout this study, is the unweighted mean of the per-class AUC values:
-\begin{equation}
-\mathrm{AUC}_{\mathrm{macro}} = \frac{1}{C} \sum_{c=1}^{C} \mathrm{AUC}_c.
-\end{equation}
-The macro-averaging strategy ensures that each class contributes equally to the final AUC, regardless of class imbalance, thereby providing a balanced assessment of the model's discriminative capability across all fault categories.
+The experiments in this study were conducted on a system equipped with an Intel i9-14900K CPU and an NVIDIA RTX 5090 GPU. The software environment was based on PyTorch 2.11 and CUDA 12.8. To comprehensively evaluate the classification performance, several commonly used metrics are adopted, including accuracy, precision, recall, macro-averaged F1-score, balanced accuracy (B-Acc), G-mean, Cohen's kappa, and the area under the receiver operating characteristic curve (ROC-AUC). For multi-class ROC-AUC, the One-vs-Rest (OvR) strategy is employed and the macro-averaged AUC is reported, ensuring balanced assessment across all fault categories regardless of class imbalance.
 
 \begin{figure*}[!htbp]
 	\centering
@@ -689,6 +733,30 @@ The macro-averaging strategy ensures that each class contributes equally to the 
 		\caption{Confusion matrices of different network backbones trained using the AW-DPCNN fusion representations. The proposed MSCA-VGG16 achieves the most accurate classification performance with significantly reduced inter-class confusion.}
 		\label{fig:confusion_matrix}
 	\end{figure*}
+
+
+
+
+
+\subsection{Representation Comparison}
+\label{sec:rep_compare}
+
+The proposed AW-DPCNN framework adopts the STFT spectrogram as the time--frequency representation and the GADF as the temporal encoding method. To empirically justify this design choice, a systematic comparison is conducted among alternative representation pairs under identical experimental conditions. Specifically, three time--frequency representations — STFT spectrogram, Mel spectrogram, and Morlet CWT scalogram — and four temporal encoding methods — GADF, GASF, Markov Transition Field (MTF), and Recurrence Plot (RP) — are evaluated, resulting in twelve representation combinations. All representations are fused through the same AW-DPCNN pipeline ($\gamma=10$, $N=20$) and classified using the identical MSCA-VGG16 network, thereby isolating the effect of the input representation on diagnostic performance.
+
+The dataset construction follows the procedure described in Section~\ref{Dataset Construction and Preprocessing}. For each combination, the raw vibration signals are converted into the corresponding time--frequency and temporal representations, fused via AW-DPCNN into pseudo-color images of size $224\times 224$, and subsequently fed into the MSCA-VGG16 classifier. All training hyperparameters are kept consistent across runs.
+
+\input{auto_tables/rep_compare_table.tex}
+
+Table~\ref{tab:rep_compare} reports the test-set performance of all twelve combinations. Several important observations emerge:
+
+\textbf{1) Time--frequency representation comparison.} Among the three time--frequency methods, the STFT spectrogram consistently achieves the highest accuracy when paired with GADF (96.30\%), substantially outperforming the best Mel-based combination (Mel+RP, 94.56\%) and the best CWT-based combination (CWT+RP, 90.88\%). The uniform frequency resolution of the linear STFT spectrogram preserves fine-grained high-frequency fault signatures that are essential for distinguishing between different bearing fault severities, whereas the Mel-scale's nonlinear frequency compression and the CWT's variable resolution may obscure these discriminative spectral details.
+
+\textbf{2) Temporal encoding comparison.} Among the four temporal encoding methods, GADF achieves the best performance when paired with STFT (96.30\%), significantly outperforming GASF (91.23\%), MTF (90.16\%), and RP (90.12\%). The GADF's angular difference encoding captures more discriminative temporal transition patterns than the summation-based GASF, and the structured correlation matrix provides richer information than the quantized transition probabilities of MTF or the binary recurrence patterns of RP. Notably, GADF paired with STFT achieves a G-mean of 94.22\%, far exceeding the next best combination (Mel+RP, 90.93\%), confirming that the STFT+GADF pair provides the most balanced class-wise discrimination.
+
+\textbf{3) Optimal combination.} The STFT spectrogram paired with GADF achieves the best overall performance across all metrics, with 96.30\% accuracy, 95.02\% F1-score, and 94.22\% G-mean. This result empirically validates the choice of STFT+GADF as the input representation pair for the proposed AW-DPCNN framework. The STFT spectrogram provides uniform-resolution time--frequency energy distributions, while the GADF encodes complementary temporal correlation structures through angular differences, forming a jointly discriminative basis for bearing fault diagnosis. The representation comparison also reveals that some non-optimal pairs (e.g., Mel+RP at 94.56\%) can achieve competitive accuracy, suggesting that the AW-DPCNN fusion mechanism is sufficiently robust to extract discriminative features from suboptimal input representations, though the optimal STFT+GADF pair provides the best performance with the lowest variance.
+
+These results collectively demonstrate that the Mel and GADF combination provides the most effective input representation for the AW-DPCNN fusion framework, offering consistent advantages over alternative time--frequency and temporal encoding methods. The empirical evidence supports the representation design adopted in this work and further validates the robustness of the proposed diagnostic pipeline.
+
 
 \input{auto_tables/backbone_comparison_table.tex}
 
@@ -893,6 +961,14 @@ Overall, the sensitivity analysis confirms that the default hyperparameter confi
 
 \input{auto_tables/hyperparam_sensitivity_table.tex}
 
+
+\begin{figure}[!htbp] 
+\centering
+\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/noise_robustness/noise_robustness.png}
+\caption{Noise Robustness Evaluation}
+\label{fig:noise_robustness}
+\end{figure}
+
 \subsection{Raw Input Feature Visualization}
 \label{sec:raw_tsne}
 
@@ -965,88 +1041,11 @@ Collectively, these visualizations demonstrate that the proposed AW-DPCNN fusion
 \end{figure*}
 
 
-\subsection{Representation Comparison}
-\label{sec:rep_compare}
-
-The proposed AW-DPCNN framework adopts the STFT spectrogram as the time--frequency representation and the GADF as the temporal encoding method. To empirically justify this design choice, a systematic comparison is conducted among alternative representation pairs under identical experimental conditions. Specifically, three time--frequency representations — STFT spectrogram, Mel spectrogram, and Morlet CWT scalogram — and four temporal encoding methods — GADF, GASF, Markov Transition Field (MTF), and Recurrence Plot (RP) — are evaluated, resulting in twelve representation combinations. All representations are fused through the same AW-DPCNN pipeline ($\gamma=10$, $N=20$) and classified using the identical MSCA-VGG16 network, thereby isolating the effect of the input representation on diagnostic performance.
-
-The dataset construction follows the procedure described in Section~\ref{Dataset Construction and Preprocessing}. For each combination, the raw vibration signals are converted into the corresponding time--frequency and temporal representations, fused via AW-DPCNN into pseudo-color images of size $224\times 224$, and subsequently fed into the MSCA-VGG16 classifier. All training hyperparameters are kept consistent across runs.
-
-\input{auto_tables/rep_compare_table.tex}
-
-Table~\ref{tab:rep_compare} reports the test-set performance of all twelve combinations. Several important observations emerge:
-
-\textbf{1) Time--frequency representation comparison.} Among the three time--frequency methods, the STFT spectrogram consistently achieves the highest accuracy when paired with GADF (96.30\%), substantially outperforming the best Mel-based combination (Mel+RP, 94.56\%) and the best CWT-based combination (CWT+RP, 90.88\%). The uniform frequency resolution of the linear STFT spectrogram preserves fine-grained high-frequency fault signatures that are essential for distinguishing between different bearing fault severities, whereas the Mel-scale's nonlinear frequency compression and the CWT's variable resolution may obscure these discriminative spectral details.
-
-\textbf{2) Temporal encoding comparison.} Among the four temporal encoding methods, GADF achieves the best performance when paired with STFT (96.30\%), significantly outperforming GASF (91.23\%), MTF (90.16\%), and RP (90.12\%). The GADF's angular difference encoding captures more discriminative temporal transition patterns than the summation-based GASF, and the structured correlation matrix provides richer information than the quantized transition probabilities of MTF or the binary recurrence patterns of RP. Notably, GADF paired with STFT achieves a G-mean of 94.22\%, far exceeding the next best combination (Mel+RP, 90.93\%), confirming that the STFT+GADF pair provides the most balanced class-wise discrimination.
-
-\textbf{3) Optimal combination.} The STFT spectrogram paired with GADF achieves the best overall performance across all metrics, with 96.30\% accuracy, 95.02\% F1-score, and 94.22\% G-mean. This result empirically validates the choice of STFT+GADF as the input representation pair for the proposed AW-DPCNN framework. The STFT spectrogram provides uniform-resolution time--frequency energy distributions, while the GADF encodes complementary temporal correlation structures through angular differences, forming a jointly discriminative basis for bearing fault diagnosis. The representation comparison also reveals that some non-optimal pairs (e.g., Mel+RP at 94.56\%) can achieve competitive accuracy, suggesting that the AW-DPCNN fusion mechanism is sufficiently robust to extract discriminative features from suboptimal input representations, though the optimal STFT+GADF pair provides the best performance with the lowest variance.
-
-% \begin{table*}
-% 	\centering
-% 	\caption{Representation Comparison Across Time--Frequency and Temporal Encoding Methods. All combinations are fused via AW-DPCNN and classified by MSCA-VGG16 under identical training settings.}
-% 	\label{tab:rep_compare}
-% 	\renewcommand{\arraystretch}{1.15}
-% 	\small
-% 	\begin{tabular}{llcccccc}
-% 		\toprule
-% 		\textbf{TF Method} & \textbf{Temporal} & \textbf{Acc (\%)} & \textbf{Prec. (\%)} & \textbf{Rec. (\%)} & \textbf{F1 (\%)} & \textbf{G-mean (\%)} & \textbf{Kappa (\%)} \\
-% 		\midrule
-% 		\multirow{4}{*}{Mel} 
-% 		& GADF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-% 		& GASF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-% 		& MTF   & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-% 		& RP    & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-% 		\cmidrule(lr){2-8}
-% 		\multirow{4}{*}{STFT} 
-% 		& GADF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-% 		& GASF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-% 		& MTF   & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-% 		& RP    & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-% 		\cmidrule(lr){2-8}
-% 		\multirow{4}{*}{CWT} 
-% 		& GADF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-% 		& GASF  & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-% 		& MTF   & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-% 		& RP    & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx & xx.xx \\
-% 		\bottomrule
-% 	\end{tabular}
-% \end{table*}
-
-% \begin{table}
-% 	\centering
-% 	\caption{Average Accuracy by Time--Frequency and Temporal Encoding Method}
-% 	\label{tab:rep_compare_avg}
-% 	\renewcommand{\arraystretch}{1.15}
-% 	\small
-% 	\begin{tabular}{lcc}
-% 		\toprule
-% 		\textbf{Method} & \textbf{Avg. Acc (\%)} & \textbf{Best Partner} \\
-% 		\midrule
-% 		\multicolumn{3}{c}{\textit{Time--Frequency (averaged over 4 temporal methods)}} \\
-% 		Mel      & xx.xx & GADF \\
-% 		STFT     & xx.xx & GADF \\
-% 		CWT      & xx.xx & GADF \\
-% 		\midrule
-% 		\multicolumn{3}{c}{\textit{Temporal Encoding (averaged over 3 TF methods)}} \\
-% 		GADF     & xx.xx & Mel \\
-% 		GASF     & xx.xx & Mel \\
-% 		MTF      & xx.xx & Mel \\
-% 		RP       & xx.xx & Mel \\
-% 		\bottomrule
-% 	\end{tabular}
-% \end{table}
-
-These results collectively demonstrate that the Mel and GADF combination provides the most effective input representation for the AW-DPCNN fusion framework, offering consistent advantages over alternative time--frequency and temporal encoding methods. The empirical evidence supports the representation design adopted in this work and further validates the robustness of the proposed diagnostic pipeline.
 
 
 
-\begin{figure}[!htbp] 
-\centering
-\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/noise_robustness/noise_robustness.png}
-\caption{Noise Robustness Evaluation}
-\label{fig:noise_robustness}
-\end{figure}
+
+
 
 \subsection{Noise Robustness Evaluation}
 \label{sec:noise_robustness}
@@ -1231,74 +1230,6 @@ Future work will explore the extension of the AW-DPCNN framework to multi-sensor
 % 	\caption{Overall architecture of the proposed MSCA-VGG16 network. The fused AW-DPCNN image is processed by a convolutional backbone, followed by a multi-scale convolution module, squeeze-and-excitation channel attention, and a compact embedding head for fault classification.}
 % 	\label{MSCA-VGG}
 % \end{figure*}
-
-
-\begin{table*}[t]
-\centering
-\caption{Composition of the Three CWRU Bearing Datasets: Signal Processing Configuration, Class-Wise Sample Distribution, and Split Homogeneity}
-\label{tab:datasets_comprehensive}
-\renewcommand{\arraystretch}{1.12}
-\small
-\begin{tabular}{llrrrrrc}
-\toprule
-\textbf{Dataset} & \textbf{Fault Class} & \textbf{Files} & \textbf{Train} & \textbf{Val} & \textbf{Test} & \textbf{JS Divergence} \\
-\midrule
-\multirow{11}{*}{\textbf{CWRU 12k DE}}
-& BF007 & 4 & 234 & 117 & 118 & \multirow{11}{*}{\shortstack{TV: 0.0021 \\ TT: 0.0020 \\ VT: 0.0000}} \\
-& BF014 & 4 & 236 & 117 & 118 \\
-& BF021 & 4 & 235 & 118 & 118 \\
-& IF007 & 4 & 236 & 117 & 119 \\
-& IF014 & 4 & 234 & 117 & 117 \\
-& IF021 & 4 & 235 & 117 & 118 \\
-& OF007 & 4 & 236 & 118 & 117 \\
-& OF014 & 4 & 234 & 118 & 118 \\
-& OF021 & 4 & 236 & 118 & 118 \\
-& Normal & 4 & 708 & 473 & 471 \\
-\cmidrule{2-6}
-& \textbf{Total (10 cls)} & 40 & 2824 & 1530 & 1532 \\
-\midrule
-\multirow{11}{*}{\textbf{CWRU 12k FE}}
-& BF007 & 4 & 233 & 117 & 117 & \multirow{11}{*}{\shortstack{TV: 0.0037 \\ TT: 0.0037 \\ VT: 0.0000}} \\
-& BF014 & 4 & 235 & 118 & 117 \\
-& BF021 & 4 & 233 & 117 & 117 \\
-& IF007 & 4 & 234 & 117 & 117 \\
-& IF014 & 4 & 234 & 117 & 117 \\
-& IF021 & 4 & 234 & 117 & 117 \\
-& OF007 & 4 & 235 & 117 & 117 \\
-& OF014 & 1 & 69 & 22 & 22 \\
-& OF021 & 1 & 69 & 22 & 22 \\
-& Normal & 4 & 708 & 473 & 471 \\
-\cmidrule{2-6}
-& \textbf{Total (10 cls)} & 34 & 2484 & 1337 & 1334 \\
-\midrule
-\multirow{11}{*}{\textbf{CWRU 48k DE}}
-& BF007 & 4 & 234 & 118 & 58 & \multirow{11}{*}{\shortstack{TV: 0.0182 \\ TT: 0.0356 \\ VT: 0.0640}} \\
-& BF014 & 4 & 234 & 59 & 117 \\
-& BF021 & 4 & 234 & 117 & 58 \\
-& IF007 & 4 & 234 & 58 & 117 \\
-& IF014 & 4 & 236 & 117 & 14 \\
-& IF021 & 4 & 235 & 118 & 58 \\
-& OF007 & 4 & 235 & 58 & 117 \\
-& OF014 & 4 & 175 & 117 & 118 \\
-& OF021 & 4 & 236 & 59 & 118 \\
-& Normal & 4 & 175 & 117 & 117 \\
-\cmidrule{2-6}
-& \textbf{Total (10 cls)} & 40 & 2228 & 938 & 892 \\
-\bottomrule
-\multicolumn{7}{c}{\textbf{Signal Processing Configuration}} \\
-\midrule
-\textbf{Dataset} & \textbf{$f_s$ (kHz)} & \textbf{Win / Hop} & \textbf{$N_{\text{FFT}}$} & \textbf{$\Delta f$ (Hz/bin)} & \textbf{$T_{\text{win}}$ (ms)} & \textbf{$f_{\max}$ (kHz)} \\
-\midrule
-CWRU 12k DE  & 12 & 2048 / 1024 & 1024 & 11.7 & 170.7 & 6 \\
-CWRU 12k FE  & 12 & 2048 / 1024 & 1024 & 11.7 & 170.7 & 6 \\
-CWRU 48k DE  & 48 & 8192 / 4096 & 4096 & 11.7 & 170.7 & 24 \\
-\bottomrule
-\end{tabular}
-
-\vspace{4pt}
-\small
-\textit{Note:} Ball Fault (BF), Inner Race Fault (IF), Outer Race Fault (OF) with fault diameters 007, 014, 021\,mil. Train/Val/Test split: 60/20/20 at file level (seed 42). JS Divergence: TV = Train vs.\ Val; TT = Train vs.\ Test; VT = Val vs.\ Test; values $\leq 0.064$ indicate excellent distribution homogeneity. For 12k FE, OF014 and OF021 have only 1 source file; windows are drawn from non-overlapping time regions to populate all splits. Normal recordings are $\sim$4$\times$ longer than fault recordings. All datasets share identical temporal window duration ($T_{\text{win}}=170.7$\,ms) and frequency resolution ($\Delta f=11.7$\,Hz/bin), ensuring every fused image represents the same physical duration of bearing operation regardless of sampling rate. The STFT spectrogram is used as the time--frequency representation for all datasets (see Section~\ref{sec:rep_compare}).
-\end{table*}
 
 
 \bibliographystyle{IEEEtran}
