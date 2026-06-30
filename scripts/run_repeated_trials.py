@@ -16,6 +16,7 @@ Usage::
         --config configs/default.yaml \\
         --exp-config experiments/exp1/vgg16.yaml
 
+
     # 5 independent runs with custom seeds
     python scripts/run_repeated_trials.py \
         --config configs/default.yaml \
@@ -23,10 +24,12 @@ Usage::
         --num-runs 5
 
     # Batch: run repeated trials for all configs in an exp directory
+    !!!!!! Time-comsuming: ~2.5 hours per run
     python scripts/run_repeated_trials.py \
         --config configs/default.yaml \
         --exp-dir experiments/exp1 \
         --num-runs 3
+
 
     # Dry-run: print commands without executing
     python scripts/run_repeated_trials.py \\
@@ -87,11 +90,11 @@ def parse_args() -> argparse.Namespace:
         help="Directory containing multiple experiment YAML files (batch mode)",
     )
     parser.add_argument(
-           "--datasets", nargs="+", default=["12k_de"], choices=DATASET_KEYS,
+        "--dataset", "--datasets", dest="datasets", nargs="+", default=["12k_de"], choices=DATASET_KEYS,
         help=f"Dataset(s) {{{','.join(DATASET_KEYS)}}} (default: 12k_de)",
     )
     parser.add_argument(
-        "--output-root", default="",
+        "--output", "--output-root", dest="output_root", default="",
         help="Override output.root_dir (default: use config)",
     )
     parser.add_argument(

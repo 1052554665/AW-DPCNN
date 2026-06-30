@@ -13,6 +13,11 @@ Usage::
     cfg = get_dataset_config("12k_de")
     print(cfg["root_dir"])   # "datasets/cwru_de"
     print(cfg["sr"])         # 12000
+
+python scripts/build_mimii.py --noise-level 0_dB  --output-dir datasets/mimii_0dB
+python scripts/build_mimii.py --noise-level 6_dB  --output-dir datasets/mimii_6dB
+python scripts/build_mimii.py --noise-level='-6_dB' --output-dir datasets/mimii_-6dB
+
 """
 
 from collections import OrderedDict
@@ -57,6 +62,50 @@ DATASET_CONFIGS = {
         "fmax": 24000,
         "n_fft": 4096,
         "hop_len": 512,
+        "win_len": 8192,
+        "seg_hop": 4096,
+        "n_mels": 128,
+    },
+    "MIMII": {
+        "name": "MIMII Acoustic Fault (8-class: 4 machines × normal/abnormal)",
+        "root_dir": "datasets/MIMII",
+        "sr": 16000,
+        "fmax": 8000,
+        "n_fft": 1024,
+        "hop_len": 256,
+        "win_len": 8192,
+        "seg_hop": 4096,
+        "n_mels": 128,
+    },
+    "mimii_0dB": {
+        "name": "MIMII 0dB (2-class: normal/abnormal)",
+        "root_dir": "datasets/mimii_0dB",
+        "sr": 16000,
+        "fmax": 8000,
+        "n_fft": 1024,
+        "hop_len": 256,
+        "win_len": 8192,
+        "seg_hop": 4096,
+        "n_mels": 128,
+    },
+    "mimii_6dB": {
+        "name": "MIMII 6dB (2-class: normal/abnormal)",
+        "root_dir": "datasets/mimii_6dB",
+        "sr": 16000,
+        "fmax": 8000,
+        "n_fft": 1024,
+        "hop_len": 256,
+        "win_len": 8192,
+        "seg_hop": 4096,
+        "n_mels": 128,
+    },
+    "mimii_-6dB": {
+        "name": "MIMII -6dB (2-class: normal/abnormal)",
+        "root_dir": "datasets/mimii_-6dB",
+        "sr": 16000,
+        "fmax": 8000,
+        "n_fft": 1024,
+        "hop_len": 256,
         "win_len": 8192,
         "seg_hop": 4096,
         "n_mels": 128,

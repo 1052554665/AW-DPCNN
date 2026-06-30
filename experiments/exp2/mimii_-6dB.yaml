@@ -1,0 +1,45 @@
+# python scripts/train.py \
+#     --config configs/default.yaml \
+#     --exp-config experiments/exp2/mimii_-6dB.yaml \
+#     --dataset mimii_-6dB \
+#     --output-root experiments/experiment_result/exp2
+#
+# MIMII -6dB — Binary Normal/Abnormal Classification
+# Lowest SNR — tests AW-DPCNN robustness to heavy background noise.
+
+experiment_name: exp2_mimii_-6dB
+device: cuda
+
+model:
+  name: msca-vgg16
+  num_classes: 2             # normal, abnormal
+  pretrained: false
+  use_ms: true
+  use_ca: true
+  use_eh: true
+
+train:
+  epochs: 35                  # more epochs for low-SNR convergence
+  lr: 1e-3
+  optimizer: adamw
+  weight_decay: 5e-3          # stronger regularization against noise
+  class_weighting: true
+  early_stopping:
+    enabled: true
+    patience: 18               # allow more plateauing at low SNR
+    metric: val_f1
+
+scheduler:
+  type: plateau
+  mode: max
+  factor: 0.5
+  patience: 6
+  min_lr: 0.000001
+
+dropout:
+  rate: 0.6                    # higher dropout — noisy features less redundant
+
+visualization:
+  tsne: true
+  confusion_matrix: true
+  roc_curve: true

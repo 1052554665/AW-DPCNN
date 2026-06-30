@@ -1,0 +1,46 @@
+# python scripts/train.py \
+#     --config configs/default.yaml \
+#     --exp-config experiments/exp2/mimii_0dB.yaml \
+#     --dataset mimii_0dB \
+#     --output-root experiments/experiment_result/exp2
+#
+# MIMII 0dB — Binary Normal/Abnormal Classification
+# 2-class: "healthy vs faulty" across all 4 machine types
+# This is the baseline noise level for in-domain evaluation.
+
+experiment_name: exp2_mimii_0dB
+device: cuda
+
+model:
+  name: msca-vgg16
+  num_classes: 2             # normal, abnormal
+  pretrained: false
+  use_ms: true
+  use_ca: true
+  use_eh: true
+
+train:
+  epochs: 30
+  lr: 1e-3
+  optimizer: adamw
+  weight_decay: 3e-3
+  class_weighting: true       # compensate for normal >> abnormal imbalance
+  early_stopping:
+    enabled: true
+    patience: 15
+    metric: val_f1
+
+scheduler:
+  type: plateau
+  mode: max
+  factor: 0.5
+  patience: 5
+  min_lr: 0.000001
+
+dropout:
+  rate: 0.5
+
+visualization:
+  tsne: true
+  confusion_matrix: true
+  roc_curve: true
