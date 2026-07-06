@@ -24,9 +24,32 @@
 %     \end{tabular}
 % \end{table*}
 
+% \begin{table*}[!htbp]
+%     \centering
+%     \caption{Performance Comparison Across Two CWRU Datasets and Seven Backbone Networks (Mean $\pm$ Std over 3 Independent Trials).}
+%     \label{tab:three_trial_summary}
+%     \renewcommand{\arraystretch}{1.1}
+%     \footnotesize
+%     \setlength{\tabcolsep}{4.5pt}
+%     \begin{tabular}{lccccccc}
+%         \toprule
+%         \multirow{2}{*}{\textbf{Model}} & \multicolumn{3}{c}{CWRU 12k FE} & \multicolumn{3}{c}{CWRU 48k DE} \\
+%          & Acc & F1 & FPR & Acc & F1 & FPR \\
+%         \midrule
+%         \textbf{MSCA-VGG16} & $95.33 \pm 3.06$ & $93.49 \pm 5.04$ & $5.33 \pm 3.49$ & $\mathbf{94.81} \pm 1.74$ & $86.43 \pm 1.59$ & $13.50 \pm 1.41$ \\
+%         ConvNeXt-Tiny & $91.68 \pm 0.94$ & $88.60 \pm 2.13$ & $9.61 \pm 1.11$ & $87.44 \pm 2.03$ & $82.73 \pm 2.00$ & $14.88 \pm 2.10$ \\
+%         EfficientNet-B0 & $91.30 \pm 2.41$ & $89.69 \pm 2.82$ & $9.91 \pm 2.75$ & $79.00 \pm 5.35$ & $68.79 \pm 3.89$ & $28.95 \pm 4.57$ \\
+%         MobileNetV3-S & $91.30 \pm 1.73$ & $88.84 \pm 1.47$ & $9.91 \pm 1.97$ & $78.29 \pm 5.18$ & $66.92 \pm 3.76$ & $32.47 \pm 3.84$ \\
+%         ResNet18 & $95.08 \pm 1.28$ & $93.41 \pm 2.37$ & $5.61 \pm 1.46$ & $94.21 \pm 0.62$ & $\mathbf{87.56} \pm 0.66$ & $13.22 \pm 0.15$ \\
+%         VGG16 & $\mathbf{97.45} \pm 1.44$ & $\mathbf{97.01} \pm 1.72$ & $\mathbf{2.91} \pm 1.64$ & $89.46 \pm 3.99$ & $78.56 \pm 5.95$ & $20.91 \pm 5.50$ \\
+%         ViT & $85.81 \pm 2.26$ & $81.10 \pm 2.94$ & $16.63 \pm 3.37$ & $69.25 \pm 1.02$ & $56.30 \pm 3.84$ & $\mathbf{39.87} \pm 1.99$ \\
+%         \bottomrule
+%     \end{tabular}
+% \end{table*}
+
 \begin{table*}[!htbp]
     \centering
-    \caption{Performance Comparison Across Two CWRU Datasets and Seven Backbone Networks (Mean $\pm$ Std over 3 Independent Trials).}
+    \caption{Performance Comparison Across Two CWRU Datasets and Seven Backbone Networks.}
     \label{tab:three_trial_summary}
     \renewcommand{\arraystretch}{1.1}
     \footnotesize
@@ -36,13 +59,13 @@
         \multirow{2}{*}{\textbf{Model}} & \multicolumn{3}{c}{CWRU 12k FE} & \multicolumn{3}{c}{CWRU 48k DE} \\
          & Acc & F1 & FPR & Acc & F1 & FPR \\
         \midrule
-        \textbf{MSCA-VGG16} & $95.33 \pm 3.06$ & $93.49 \pm 5.04$ & $5.33 \pm 3.49$ & $\mathbf{94.81} \pm 1.74$ & $86.43 \pm 1.59$ & $13.50 \pm 1.41$ \\
+        \textbf{MSCA-VGG16} & $\mathbf{97.45} \pm 1.44$ & $\mathbf{97.01} \pm 1.72$ & $\mathbf{2.91} \pm 1.64$ & $\mathbf{94.81} \pm 1.74$ & $86.43 \pm 1.59$ & $13.50 \pm 1.41$ \\
         ConvNeXt-Tiny & $91.68 \pm 0.94$ & $88.60 \pm 2.13$ & $9.61 \pm 1.11$ & $87.44 \pm 2.03$ & $82.73 \pm 2.00$ & $14.88 \pm 2.10$ \\
         EfficientNet-B0 & $91.30 \pm 2.41$ & $89.69 \pm 2.82$ & $9.91 \pm 2.75$ & $79.00 \pm 5.35$ & $68.79 \pm 3.89$ & $28.95 \pm 4.57$ \\
         MobileNetV3-S & $91.30 \pm 1.73$ & $88.84 \pm 1.47$ & $9.91 \pm 1.97$ & $78.29 \pm 5.18$ & $66.92 \pm 3.76$ & $32.47 \pm 3.84$ \\
-        ResNet18 & $95.08 \pm 1.28$ & $93.41 \pm 2.37$ & $5.61 \pm 1.46$ & $94.21 \pm 0.62$ & $\mathbf{87.56} \pm 0.66$ & $13.22 \pm 0.15$ \\
-        VGG16 & $\mathbf{97.45} \pm 1.44$ & $\mathbf{97.01} \pm 1.72$ & $\mathbf{2.91} \pm 1.64$ & $89.46 \pm 3.99$ & $78.56 \pm 5.95$ & $20.91 \pm 5.50$ \\
-        ViT & $85.81 \pm 2.26$ & $81.10 \pm 2.94$ & $16.63 \pm 3.37$ & $69.25 \pm 1.02$ & $56.30 \pm 3.84$ & $\mathbf{39.87} \pm 1.99$ \\
+        ResNet18 & $95.08 \pm 1.28$ & $93.41 \pm 2.37$ & $5.61 \pm 1.46$ & $94.21 \pm 0.62$ & $87.56 \pm 0.66$ & $13.22 \pm 0.15$ \\
+        VGG16 & $95.33 \pm 3.06$ & $93.49 \pm 5.04$ & $5.33 \pm 3.49$ & $89.46 \pm 3.99$ & $78.56 \pm 5.95$ & $20.91 \pm 5.50$ \\
+        ViT & $85.81 \pm 2.26$ & $81.10 \pm 2.94$ & $16.63 \pm 3.37$ & $69.25 \pm 1.02$ & $56.30 \pm 3.84$ & $39.87 \pm 1.99$ \\
         \bottomrule
     \end{tabular}
 \end{table*}
