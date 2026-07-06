@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.6.25)  3 JUL 2026 10:37
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.7.3)  6 JUL 2026 09:02
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -349,11 +349,7 @@ Package: array 2021/10/04 v2.5f Tabular extension package (FMi)
 \ar@cellbox=\box66
 ))
 Package translations Info: No language package found. I am going to use `english' as default language. on input line 22.
- (./manuscript.aux
-
-LaTeX Warning: Label `fig:tsne_backbones' multiply defined.
-
-)
+ (./manuscript.aux)
 \openout1 = `manuscript.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 22.
@@ -435,232 +431,236 @@ LaTeX Font Info:    Trying to load font information for U+msb on input line 55.
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) (/usr/share/texlive/texmf-dist/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
-) [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
-
-
-]
+)
 Underfull \hbox (badness 5832) in paragraph at lines 55--56
 \OT1/ptm/m/n/10 (+20) spec-tro-gram) and temporal-encoded rep-re-sen-ta-tions
  []
 
 
+Underfull \vbox (badness 1024) has occurred while \output is active []
+
+ [1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+
+
+]
 
 pdfTeX warning: pdflatex (file ./framework/framework1.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<framework/framework1.pdf, id=9, 2028.61882pt x 421.575pt>
+<framework/framework1.pdf, id=10, 2028.61882pt x 421.575pt>
 File: framework/framework1.pdf Graphic file (type pdf)
 <use framework/framework1.pdf>
-Package pdftex.def Info: framework/framework1.pdf  used on input line 68.
+Package pdftex.def Info: framework/framework1.pdf  used on input line 66.
 (pdftex.def)             Requested size: 516.0pt x 107.23323pt.
 [2] [3 <./framework/framework1.pdf>]
 <representation//STFT_98_Normal_1_00000.png, id=40, 224.84pt x 224.84pt>
 File: representation//STFT_98_Normal_1_00000.png Graphic file (type png)
 <use representation//STFT_98_Normal_1_00000.png>
-Package pdftex.def Info: representation//STFT_98_Normal_1_00000.png  used on input line 167.
+Package pdftex.def Info: representation//STFT_98_Normal_1_00000.png  used on input line 165.
 (pdftex.def)             Requested size: 120.95892pt x 120.95892pt.
 <representation//GADF_98_Normal_1_00000.png, id=41, 224.84pt x 224.84pt>
 File: representation//GADF_98_Normal_1_00000.png Graphic file (type png)
 <use representation//GADF_98_Normal_1_00000.png>
-Package pdftex.def Info: representation//GADF_98_Normal_1_00000.png  used on input line 173.
+Package pdftex.def Info: representation//GADF_98_Normal_1_00000.png  used on input line 171.
 (pdftex.def)             Requested size: 120.95892pt x 120.95892pt.
+
+Underfull \vbox (badness 2903) has occurred while \output is active []
+
  [4 <./representation//STFT_98_Normal_1_00000.png (PNG copy)> <./representation//GADF_98_Normal_1_00000.png (PNG copy)>]
-Underfull \hbox (badness 2005) in paragraph at lines 261--262
+Underfull \hbox (badness 2005) in paragraph at lines 281--282
  \OT1/ptm/m/it/10 (+20) 3) Dual-Channel PCNN: [][] \OT1/ptm/m/n/10 (+20) Let $[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 i; j\OT1/cmr/m/n/10 )$\OT1/ptm/m/n/10 (+20) , $[][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 i; j\OT1/cmr/m/n/10 )$\OT1/ptm/m/n/10 (+20) , and
  []
 
 
-Overfull \hbox (5.95741pt too wide) detected at line 292
+Overfull \hbox (5.95741pt too wide) detected at line 312
 [][][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 i; j\OT1/cmr/m/n/10 ) = []1 + [][](\OML/cmm/m/it/10 i; j\OT1/cmr/m/n/10 )[][]1 + \OML/cmm/m/it/10 ^^L[][][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 i; j\OT1/cmr/m/n/10 )[][]1 + \OML/cmm/m/it/10 ^^L[][][]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 i; j\OT1/cmr/m/n/10 )[] + \OML/cmm/m/it/10 ^^[;
  []
 
 
 
 pdfTeX warning: pdflatex (file ./AW-DPCNN/AW-DPCNN.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<AW-DPCNN/AW-DPCNN.pdf, id=49, 1290.74213pt x 489.74968pt>
+<AW-DPCNN/AW-DPCNN.pdf, id=55, 1290.74213pt x 489.74968pt>
 File: AW-DPCNN/AW-DPCNN.pdf Graphic file (type pdf)
 <use AW-DPCNN/AW-DPCNN.pdf>
-Package pdftex.def Info: AW-DPCNN/AW-DPCNN.pdf  used on input line 327.
+Package pdftex.def Info: AW-DPCNN/AW-DPCNN.pdf  used on input line 347.
 (pdftex.def)             Requested size: 252.0pt x 95.61662pt.
 
 
 pdfTeX warning: pdflatex (file ./MSCA-VGG16/MSCA-VGG162.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<MSCA-VGG16/MSCA-VGG162.pdf, id=50, 1110.06712pt x 649.46638pt>
+<MSCA-VGG16/MSCA-VGG162.pdf, id=56, 1110.06712pt x 649.46638pt>
 File: MSCA-VGG16/MSCA-VGG162.pdf Graphic file (type pdf)
 <use MSCA-VGG16/MSCA-VGG162.pdf>
-Package pdftex.def Info: MSCA-VGG16/MSCA-VGG162.pdf  used on input line 335.
+Package pdftex.def Info: MSCA-VGG16/MSCA-VGG162.pdf  used on input line 355.
 (pdftex.def)             Requested size: 516.0pt x 301.88974pt.
 [5 <./AW-DPCNN/AW-DPCNN.pdf>] [6 <./MSCA-VGG16/MSCA-VGG162.pdf>]
 
 pdfTeX warning: pdflatex (file ./equipment/cwru1.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<equipment/cwru1.pdf, id=111, 866.27638pt x 257.04028pt>
+<equipment/cwru1.pdf, id=118, 876.1533pt x 253.90858pt>
 File: equipment/cwru1.pdf Graphic file (type pdf)
 <use equipment/cwru1.pdf>
-Package pdftex.def Info: equipment/cwru1.pdf  used on input line 480.
-(pdftex.def)             Requested size: 252.0pt x 74.77118pt.
+Package pdftex.def Info: equipment/cwru1.pdf  used on input line 492.
+(pdftex.def)             Requested size: 252.0pt x 73.0272pt.
 [7 <./equipment/cwru1.pdf>]
 
-LaTeX Warning: Reference `dataset' on page 8 undefined on input line 606.
-
-
-
 pdfTeX warning: pdflatex (file ./Fused images/Fused images.pdf): PDF inclusion: found PDF version <1.7>, but at most version <1.5> allowed
-<Fused images/Fused images.pdf, id=133, 1219.6767pt x 457.71pt>
+<Fused images/Fused images.pdf, id=145, 1219.6767pt x 457.71pt>
 File: Fused images/Fused images.pdf Graphic file (type pdf)
 <use Fused images/Fused images.pdf>
-Package pdftex.def Info: Fused images/Fused images.pdf  used on input line 611.
+Package pdftex.def Info: Fused images/Fused images.pdf  used on input line 601.
 (pdftex.def)             Requested size: 516.0pt x 193.64767pt.
 [8]
-<confusion_matrix//confusion_matrix_48k_de_convnext_tiny_exp1_convnext_tiny_trial_seed123.png, id=141, 419.166pt x 419.8887pt>
+<confusion_matrix//confusion_matrix_48k_de_convnext_tiny_exp1_convnext_tiny_trial_seed123.png, id=149, 419.166pt x 419.8887pt>
 File: confusion_matrix//confusion_matrix_48k_de_convnext_tiny_exp1_convnext_tiny_trial_seed123.png Graphic file (type png)
 <use confusion_matrix//confusion_matrix_48k_de_convnext_tiny_exp1_convnext_tiny_trial_seed123.png>
-Package pdftex.def Info: confusion_matrix//confusion_matrix_48k_de_convnext_tiny_exp1_convnext_tiny_trial_seed123.png  used on input line 644.
+Package pdftex.def Info: confusion_matrix//confusion_matrix_48k_de_convnext_tiny_exp1_convnext_tiny_trial_seed123.png  used on input line 634.
 (pdftex.def)             Requested size: 216.71906pt x 217.09402pt.
-<confusion_matrix//confusion_matrix_48k_de_efficientnet_b0_exp1_efficientnet_b0_trial_seed456.png, id=143, 419.166pt x 419.8887pt>
+<confusion_matrix//confusion_matrix_48k_de_efficientnet_b0_exp1_efficientnet_b0_trial_seed456.png, id=151, 419.166pt x 419.8887pt>
 File: confusion_matrix//confusion_matrix_48k_de_efficientnet_b0_exp1_efficientnet_b0_trial_seed456.png Graphic file (type png)
 <use confusion_matrix//confusion_matrix_48k_de_efficientnet_b0_exp1_efficientnet_b0_trial_seed456.png>
-Package pdftex.def Info: confusion_matrix//confusion_matrix_48k_de_efficientnet_b0_exp1_efficientnet_b0_trial_seed456.png  used on input line 650.
+Package pdftex.def Info: confusion_matrix//confusion_matrix_48k_de_efficientnet_b0_exp1_efficientnet_b0_trial_seed456.png  used on input line 640.
 (pdftex.def)             Requested size: 216.71906pt x 217.09402pt.
-<confusion_matrix//confusion_matrix_48k_de_vit_exp1_vit_trial_seed42.png, id=144, 419.166pt x 419.8887pt>
+<confusion_matrix//confusion_matrix_48k_de_vit_exp1_vit_trial_seed42.png, id=152, 419.166pt x 419.8887pt>
 File: confusion_matrix//confusion_matrix_48k_de_vit_exp1_vit_trial_seed42.png Graphic file (type png)
 <use confusion_matrix//confusion_matrix_48k_de_vit_exp1_vit_trial_seed42.png>
-Package pdftex.def Info: confusion_matrix//confusion_matrix_48k_de_vit_exp1_vit_trial_seed42.png  used on input line 656.
+Package pdftex.def Info: confusion_matrix//confusion_matrix_48k_de_vit_exp1_vit_trial_seed42.png  used on input line 646.
 (pdftex.def)             Requested size: 216.71906pt x 217.09402pt.
-<confusion_matrix//confusion_matrix_48k_de_mobilenetv3_small_exp1_mobilenetv3_small_trial_seed42.png, id=145, 419.166pt x 419.8887pt>
+<confusion_matrix//confusion_matrix_48k_de_mobilenetv3_small_exp1_mobilenetv3_small_trial_seed42.png, id=153, 419.166pt x 419.8887pt>
 File: confusion_matrix//confusion_matrix_48k_de_mobilenetv3_small_exp1_mobilenetv3_small_trial_seed42.png Graphic file (type png)
 <use confusion_matrix//confusion_matrix_48k_de_mobilenetv3_small_exp1_mobilenetv3_small_trial_seed42.png>
-Package pdftex.def Info: confusion_matrix//confusion_matrix_48k_de_mobilenetv3_small_exp1_mobilenetv3_small_trial_seed42.png  used on input line 662.
+Package pdftex.def Info: confusion_matrix//confusion_matrix_48k_de_mobilenetv3_small_exp1_mobilenetv3_small_trial_seed42.png  used on input line 652.
 (pdftex.def)             Requested size: 216.71906pt x 217.09402pt.
-<confusion_matrix//confusion_matrix_48k_de_vgg16_exp1_vgg16_trial_seed123.png, id=146, 419.166pt x 419.8887pt>
+<confusion_matrix//confusion_matrix_48k_de_vgg16_exp1_vgg16_trial_seed123.png, id=154, 419.166pt x 419.8887pt>
 File: confusion_matrix//confusion_matrix_48k_de_vgg16_exp1_vgg16_trial_seed123.png Graphic file (type png)
 <use confusion_matrix//confusion_matrix_48k_de_vgg16_exp1_vgg16_trial_seed123.png>
-Package pdftex.def Info: confusion_matrix//confusion_matrix_48k_de_vgg16_exp1_vgg16_trial_seed123.png  used on input line 668.
+Package pdftex.def Info: confusion_matrix//confusion_matrix_48k_de_vgg16_exp1_vgg16_trial_seed123.png  used on input line 658.
 (pdftex.def)             Requested size: 216.71906pt x 217.09402pt.
-<confusion_matrix//confusion_matrix_12k_de_MSCA_VGG16_exp1_MSCA_VGG16_trial_seed123.png, id=147, 419.166pt x 419.8887pt>
+<confusion_matrix//confusion_matrix_12k_de_MSCA_VGG16_exp1_MSCA_VGG16_trial_seed123.png, id=155, 419.166pt x 419.8887pt>
 File: confusion_matrix//confusion_matrix_12k_de_MSCA_VGG16_exp1_MSCA_VGG16_trial_seed123.png Graphic file (type png)
 <use confusion_matrix//confusion_matrix_12k_de_MSCA_VGG16_exp1_MSCA_VGG16_trial_seed123.png>
-Package pdftex.def Info: confusion_matrix//confusion_matrix_12k_de_MSCA_VGG16_exp1_MSCA_VGG16_trial_seed123.png  used on input line 674.
+Package pdftex.def Info: confusion_matrix//confusion_matrix_12k_de_MSCA_VGG16_exp1_MSCA_VGG16_trial_seed123.png  used on input line 664.
 (pdftex.def)             Requested size: 216.71906pt x 217.09402pt.
 
 
-LaTeX Warning: Float too large for page by 41.26318pt on input line 679.
+LaTeX Warning: Float too large for page by 41.26318pt on input line 669.
 
-[9 <./Fused images/Fused images.pdf>] [10 <./confusion_matrix//confusion_matrix_48k_de_convnext_tiny_exp1_convnext_tiny_trial_seed123.png> <./confusion_matrix//confusion_matrix_48k_de_efficientnet_b0_exp1_efficientnet_b0_trial_seed456.png> <./confusion_matrix//confusion_matrix_48k_de_vit_exp1_vit_trial_seed42.png> <./confusion_matrix//confusion_matrix_48k_de_mobilenetv3_small_exp1_mobilenetv3_small_trial_seed42.png> <./confusion_matrix//confusion_matrix_48k_de_vgg16_exp1_vgg16_trial_seed123.png> <./confusion_matrix//confusion_matrix_12k_de_MSCA_VGG16_exp1_MSCA_VGG16_trial_seed123.png>] (./auto_tables/rep_compare_table.tex) (./auto_tables/backbone_comparison_table.tex)
-
-LaTeX Warning: Reference `fig:roc_curves' on page 11 undefined on input line 762.
-
-<figures/roc/convnext-tiny_roc.png, id=203, 461.8053pt x 424.7067pt>
+(./auto_tables/rep_compare_table.tex) [9 <./Fused images/Fused images.pdf>] [10 <./confusion_matrix//confusion_matrix_48k_de_convnext_tiny_exp1_convnext_tiny_trial_seed123.png> <./confusion_matrix//confusion_matrix_48k_de_efficientnet_b0_exp1_efficientnet_b0_trial_seed456.png> <./confusion_matrix//confusion_matrix_48k_de_vit_exp1_vit_trial_seed42.png> <./confusion_matrix//confusion_matrix_48k_de_mobilenetv3_small_exp1_mobilenetv3_small_trial_seed42.png> <./confusion_matrix//confusion_matrix_48k_de_vgg16_exp1_vgg16_trial_seed123.png> <./confusion_matrix//confusion_matrix_12k_de_MSCA_VGG16_exp1_MSCA_VGG16_trial_seed123.png>] (./auto_tables/backbone_comparison_table.tex)
+<figures/roc/convnext-tiny_roc.png, id=211, 461.8053pt x 424.7067pt>
 File: figures/roc/convnext-tiny_roc.png Graphic file (type png)
 <use figures/roc/convnext-tiny_roc.png>
-Package pdftex.def Info: figures/roc/convnext-tiny_roc.png  used on input line 768.
+Package pdftex.def Info: figures/roc/convnext-tiny_roc.png  used on input line 707.
 (pdftex.def)             Requested size: 165.12378pt x 151.8574pt.
-<figures/roc/vit_roc.png, id=204, 461.8053pt x 424.7067pt>
+<figures/roc/vit_roc.png, id=212, 461.8053pt x 424.7067pt>
 File: figures/roc/vit_roc.png Graphic file (type png)
 <use figures/roc/vit_roc.png>
-Package pdftex.def Info: figures/roc/vit_roc.png  used on input line 774.
+Package pdftex.def Info: figures/roc/vit_roc.png  used on input line 713.
 (pdftex.def)             Requested size: 165.12378pt x 151.8574pt.
-<figures/roc/vgg16_roc.png, id=205, 461.8053pt x 424.7067pt>
+<figures/roc/vgg16_roc.png, id=213, 461.8053pt x 424.7067pt>
 File: figures/roc/vgg16_roc.png Graphic file (type png)
 <use figures/roc/vgg16_roc.png>
-Package pdftex.def Info: figures/roc/vgg16_roc.png  used on input line 780.
+Package pdftex.def Info: figures/roc/vgg16_roc.png  used on input line 719.
 (pdftex.def)             Requested size: 165.12378pt x 151.8574pt.
-<figures/roc/efficientnet-b0_roc.png, id=206, 461.8053pt x 424.7067pt>
+<figures/roc/efficientnet-b0_roc.png, id=214, 461.8053pt x 424.7067pt>
 File: figures/roc/efficientnet-b0_roc.png Graphic file (type png)
 <use figures/roc/efficientnet-b0_roc.png>
-Package pdftex.def Info: figures/roc/efficientnet-b0_roc.png  used on input line 788.
+Package pdftex.def Info: figures/roc/efficientnet-b0_roc.png  used on input line 727.
 (pdftex.def)             Requested size: 165.12378pt x 151.8574pt.
-<figures/roc/mobilenetv3_small_roc.png, id=207, 461.8053pt x 424.7067pt>
+<figures/roc/mobilenetv3_small_roc.png, id=215, 461.8053pt x 424.7067pt>
 File: figures/roc/mobilenetv3_small_roc.png Graphic file (type png)
 <use figures/roc/mobilenetv3_small_roc.png>
-Package pdftex.def Info: figures/roc/mobilenetv3_small_roc.png  used on input line 794.
+Package pdftex.def Info: figures/roc/mobilenetv3_small_roc.png  used on input line 733.
 (pdftex.def)             Requested size: 165.12378pt x 151.8574pt.
-<figures/roc/msca-vgg16_roc.png, id=208, 461.8053pt x 424.7067pt>
+<figures/roc/msca-vgg16_roc.png, id=216, 461.8053pt x 424.7067pt>
 File: figures/roc/msca-vgg16_roc.png Graphic file (type png)
 <use figures/roc/msca-vgg16_roc.png>
-Package pdftex.def Info: figures/roc/msca-vgg16_roc.png  used on input line 800.
+Package pdftex.def Info: figures/roc/msca-vgg16_roc.png  used on input line 739.
 (pdftex.def)             Requested size: 165.12378pt x 151.8574pt.
-[11] (./auto_tables/ablation_table.tex) [12]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-
-LaTeX Warning: Reference `Fig:tsne' on page 13 undefined on input line 834.
-
-<tsne_models//tsne_cwru_12k_de_raw_input.png, id=223, 492.1587pt x 419.8887pt>
+<tsne_models//tsne_cwru_12k_de_raw_input.png, id=217, 492.1587pt x 419.8887pt>
 File: tsne_models//tsne_cwru_12k_de_raw_input.png Graphic file (type png)
 <use tsne_models//tsne_cwru_12k_de_raw_input.png>
-Package pdftex.def Info: tsne_models//tsne_cwru_12k_de_raw_input.png  used on input line 839.
+Package pdftex.def Info: tsne_models//tsne_cwru_12k_de_raw_input.png  used on input line 750.
 (pdftex.def)             Requested size: 165.12378pt x 140.87662pt.
-<tsne_models//tsne_vit_12k_de_trial_seed42.png, id=224, 492.1587pt x 419.8887pt>
+<tsne_models//tsne_vit_12k_de_trial_seed42.png, id=218, 492.1587pt x 419.8887pt>
 File: tsne_models//tsne_vit_12k_de_trial_seed42.png Graphic file (type png)
 <use tsne_models//tsne_vit_12k_de_trial_seed42.png>
-Package pdftex.def Info: tsne_models//tsne_vit_12k_de_trial_seed42.png  used on input line 845.
+Package pdftex.def Info: tsne_models//tsne_vit_12k_de_trial_seed42.png  used on input line 756.
 (pdftex.def)             Requested size: 165.12378pt x 140.87662pt.
-<tsne_models//tsne_convnext_tiny_12k_de_trial_seed42.png, id=225, 492.1587pt x 419.8887pt>
+<tsne_models//tsne_convnext_tiny_12k_de_trial_seed42.png, id=219, 492.1587pt x 419.8887pt>
 File: tsne_models//tsne_convnext_tiny_12k_de_trial_seed42.png Graphic file (type png)
 <use tsne_models//tsne_convnext_tiny_12k_de_trial_seed42.png>
-Package pdftex.def Info: tsne_models//tsne_convnext_tiny_12k_de_trial_seed42.png  used on input line 851.
+Package pdftex.def Info: tsne_models//tsne_convnext_tiny_12k_de_trial_seed42.png  used on input line 762.
 (pdftex.def)             Requested size: 165.12378pt x 140.87662pt.
-<tsne_models//tsne_efficientnet_b0_12k_de_trial_seed42.png, id=226, 492.1587pt x 419.8887pt>
+<tsne_models//tsne_efficientnet_b0_12k_de_trial_seed42.png, id=220, 492.1587pt x 419.8887pt>
 File: tsne_models//tsne_efficientnet_b0_12k_de_trial_seed42.png Graphic file (type png)
 <use tsne_models//tsne_efficientnet_b0_12k_de_trial_seed42.png>
-Package pdftex.def Info: tsne_models//tsne_efficientnet_b0_12k_de_trial_seed42.png  used on input line 859.
+Package pdftex.def Info: tsne_models//tsne_efficientnet_b0_12k_de_trial_seed42.png  used on input line 770.
 (pdftex.def)             Requested size: 165.12378pt x 140.87662pt.
-<tsne_models//tsne_mobilenetv3_small_12k_de_trial_seed42.png, id=227, 491.1951pt x 419.8887pt>
+<tsne_models//tsne_mobilenetv3_small_12k_de_trial_seed42.png, id=221, 491.1951pt x 419.8887pt>
 File: tsne_models//tsne_mobilenetv3_small_12k_de_trial_seed42.png Graphic file (type png)
 <use tsne_models//tsne_mobilenetv3_small_12k_de_trial_seed42.png>
-Package pdftex.def Info: tsne_models//tsne_mobilenetv3_small_12k_de_trial_seed42.png  used on input line 865.
+Package pdftex.def Info: tsne_models//tsne_mobilenetv3_small_12k_de_trial_seed42.png  used on input line 776.
 (pdftex.def)             Requested size: 165.12378pt x 141.15211pt.
-<tsne_models//tsne_MSCA_VGG16_12k_de_trial_seed42.png, id=228, 492.1587pt x 419.8887pt>
+<tsne_models//tsne_MSCA_VGG16_12k_de_trial_seed42.png, id=222, 492.1587pt x 419.8887pt>
 File: tsne_models//tsne_MSCA_VGG16_12k_de_trial_seed42.png Graphic file (type png)
 <use tsne_models//tsne_MSCA_VGG16_12k_de_trial_seed42.png>
-Package pdftex.def Info: tsne_models//tsne_MSCA_VGG16_12k_de_trial_seed42.png  used on input line 871.
+Package pdftex.def Info: tsne_models//tsne_MSCA_VGG16_12k_de_trial_seed42.png  used on input line 782.
 (pdftex.def)             Requested size: 165.12378pt x 140.87662pt.
-[13 <./figures/roc/convnext-tiny_roc.png> <./figures/roc/vit_roc.png> <./figures/roc/vgg16_roc.png> <./figures/roc/efficientnet-b0_roc.png> <./figures/roc/mobilenetv3_small_roc.png> <./figures/roc/msca-vgg16_roc.png>]
+ (./auto_tables/ablation_table.tex) [11]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [12 <./figures/roc/convnext-tiny_roc.png> <./figures/roc/vit_roc.png> <./figures/roc/vgg16_roc.png> <./figures/roc/efficientnet-b0_roc.png> <./figures/roc/mobilenetv3_small_roc.png> <./figures/roc/msca-vgg16_roc.png>]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 7291) has occurred while \output is active []
 
- [14 <./tsne_models//tsne_cwru_12k_de_raw_input.png> <./tsne_models//tsne_vit_12k_de_trial_seed42.png> <./tsne_models//tsne_convnext_tiny_12k_de_trial_seed42.png> <./tsne_models//tsne_efficientnet_b0_12k_de_trial_seed42.png> <./tsne_models//tsne_mobilenetv3_small_12k_de_trial_seed42.png> <./tsne_models//tsne_MSCA_VGG16_12k_de_trial_seed42.png>] (./auto_tables/hyperparam_sensitivity_table.tex)
-</home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/noise_robustness/noise_robustness.png, id=249, 566.5968pt x 385.9218pt>
+ [13 <./tsne_models//tsne_cwru_12k_de_raw_input.png> <./tsne_models//tsne_vit_12k_de_trial_seed42.png> <./tsne_models//tsne_convnext_tiny_12k_de_trial_seed42.png> <./tsne_models//tsne_efficientnet_b0_12k_de_trial_seed42.png> <./tsne_models//tsne_mobilenetv3_small_12k_de_trial_seed42.png> <./tsne_models//tsne_MSCA_VGG16_12k_de_trial_seed42.png>] (./auto_tables/hyperparam_sensitivity_table.tex)
+</home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/noise_robustness/noise_robustness.png, id=250, 566.5968pt x 385.9218pt>
 File: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/noise_robustness/noise_robustness.png Graphic file (type png)
 <use /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/noise_robustness/noise_robustness.png>
-Package pdftex.def Info: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/noise_robustness/noise_robustness.png  used on input line 909.
+Package pdftex.def Info: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/noise_robustness/noise_robustness.png  used on input line 836.
 (pdftex.def)             Requested size: 252.0pt x 171.6375pt.
 
 
-LaTeX Warning: Reference `tab:noise_robustness' on page 15 undefined on input line 923.
+LaTeX Warning: Reference `tab:noise_robustness' on page 14 undefined on input line 850.
 
-[15] (./auto_tables/three_trial_summary.tex)
-Underfull \hbox (badness 2932) in paragraph at lines 947--948
+[14 </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/noise_robustness/noise_robustness.png>] (./auto_tables/three_trial_summary.tex)
+Underfull \hbox (badness 2932) in paragraph at lines 874--875
 []\OT1/ptm/m/n/10 (+20) This pa-per has pre-sented AW-DPCNN, an adap-tive
  []
 
-[16 </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/noise_robustness/noise_robustness.png>] (./manuscript.bbl
+[15] (./manuscript.bbl
 Overfull \hbox (0.53317pt too wide) in paragraph at lines 122--126
 \OT1/ptm/m/n/8 (-20) network for feature learning of vibration signals in bearing fault diagnosis,''
  []
 
-[17]) [18] (./manuscript.aux)
+[16]
+Underfull \hbox (badness 10000) in paragraph at lines 265--268
+[]\OT1/ptm/m/n/8 (+20) Case West-ern Re-serve Uni-ver-sity Bear-ing Data Cen-ter,
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 265--268
+\OT1/ptm/m/n/8 (+20) ``Case west-ern re-serve uni-ver-sity bear-ing data cen-ter,''
+ []
+
+) [17
+
+] (./manuscript.aux)
 
 LaTeX Warning: There were undefined references.
 
-
-LaTeX Warning: There were multiply-defined labels.
-
  ) 
 Here is how much of TeX's memory you used:
- 12480 strings out of 480171
- 264472 string characters out of 5894489
- 570975 words of memory out of 5000000
- 29788 multiletter control sequences out of 15000+600000
- 534908 words of font info for 400 fonts, out of 8000000 for 9000
- 63 hyphenation exceptions out of 8191
- 71i,15n,79p,2287b,531s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on manuscript.pdf (18 pages, 10885412 bytes).
+ 12464 strings out of 479654
+ 264335 string characters out of 5883417
+ 565548 words of memory out of 5000000
+ 29936 multiletter control sequences out of 15000+600000
+ 533344 words of font info for 391 fonts, out of 8000000 for 9000
+ 313 hyphenation exceptions out of 8191
+ 71i,15n,79p,1930b,531s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on manuscript.pdf (17 pages, 10883040 bytes).
 PDF statistics:
- 393 PDF objects out of 1000 (max. 8388607)
- 206 compressed objects within 3 object streams
+ 390 PDF objects out of 1000 (max. 8388607)
+ 204 compressed objects within 3 object streams
  0 named destinations out of 1000 (max. 500000)
- 67715 words of extra memory for PDF output out of 74296 (max. 10000000)
+ 65667 words of extra memory for PDF output out of 74296 (max. 10000000)
 
