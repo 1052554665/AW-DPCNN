@@ -14,6 +14,7 @@
 \usepackage{algpseudocode}
 \usepackage{siunitx}
 \captionsetup{font=small,labelfont=bf}
+\captionsetup[table]{labelsep=colon, textfont=normalfont, labelfont=sc, font=footnotesize}
 
 \graphicspath{{framework/}{representation/}{AW-DPCNN/}{MSCA-VGG16/}{Fused images/}{equipment/}{confusion_matrix/}{tsne/}{tsne_cwru/}{raw_tsne/}{tsne_models/}{figures/}}
 
@@ -222,9 +223,8 @@ Both representations are subsequently converted to pseudo-color RGB images of sp
 Owing to their distinct statistical properties and structural characteristics, directly combining the STFT spectrogram and GADF image using conventional pixel-wise averaging or simple feature concatenation may introduce destructive interference rather than constructive complementarity, as demonstrated in the ablation study (Section~\ref{section4}). To address this issue, the proposed AW-DPCNN introduces a PCNN-inspired fusion mechanism with three key innovations: (i) dual-channel external stimuli that independently process STFT and GADF representations through representation-specific convolutional kernels; (ii) a contrast-guided adaptive weighting scheme that dynamically adjusts the relative contribution of each representation based on local saliency; and (iii) iterative pulse-coupled dynamics that propagate and reinforce structurally consistent features across multiple iterations while suppressing spurious activations. The key hyperparameters of the AW-DPCNN are summarized in Table~\ref{tab:awdpcnn_params}, and the detailed formulation of each component is presented below.
 
 \begin{table}[!t]
+	\caption{Key Hyperparameters of AW-DPCNN, where $\text{I}$ Denotes the Identity Matrix\label{tab:awdpcnn_params}}
 	\centering
-	\caption{Key Hyperparameters of AW-DPCNN, where $\text{I}$ denotes the identity matrix.}
-	\label{tab:awdpcnn_params}
 	\begin{tabular}{ccc}
 		\hline
 		\textbf{Parameter} & \textbf{Symbol} & \textbf{Value} \\
@@ -517,14 +517,14 @@ For the primary benchmark (12k DE), the normal class contains substantially more
 
 
 \begin{table}[!t]
-	\caption{Operating Conditions and Corresponding Labels of CWRU Bearing Dataset}
+	\caption{Operating Conditions and Corresponding Labels of the CWRU Bearing Dataset\label{tab:operating_conditions}}
 	\centering
 	\begin{tabular}{ll}
 		\toprule
 		Label & Description \\
 		\midrule
 		Normal & Healthy Baseline \\
-		BF007 & Ball Fault (0.007'') \\
+		BF007 & Ball Fault (0.007'') \\ 
 		BF014 & Ball Fault (0.014'') \\
 		BF021 & Ball Fault (0.021'') \\
 		IF007 & Inner Race Fault (0.007'') \\
@@ -536,16 +536,12 @@ For the primary benchmark (12k DE), the normal class contains substantially more
 		
 		\bottomrule
 	\end{tabular}
-	\label{tab:operating_conditions}
 \end{table}
 
 
 \begin{table}[!t]
+\caption{Class-Wise Sample Distribution of Three CWRU Bearing Datasets\label{tab:datasets_comprehensive}}
 \centering
-% \caption{Class-wise sample distribution of three CWRU bearing datasets (60/20/20 train/val/test split, seed 42). All datasets: $T_{\text{win}}=170.7$\,ms, $\Delta f=11.7$\,Hz/bin, Jensen--Shannon $D_{\text{JS}} \leq 0.064$. BF: Ball Fault; IF: Inner Race Fault; OF: Outer Race Fault @6$'$. Fault diameters: 007, 014, 021\,mil.}
-\caption{Class-wise sample distribution of three CWRU bearing datasets}
-\label{tab:datasets_comprehensive}
-\small
 \renewcommand{\arraystretch}{1.0}
 \setlength{\tabcolsep}{5pt}
 \begin{tabular}{lcccc}
