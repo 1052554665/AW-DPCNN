@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.7.3)  9 JUL 2026 10:06
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.7.3)  9 JUL 2026 10:45
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -511,10 +511,10 @@ File: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/convn
 <use /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/convnext_tiny/12k_de/exp1_convnext_tiny/trial_seed42/figures/confusion_matrix.png>
 Package pdftex.def Info: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/convnext_tiny/12k_de/exp1_convnext_tiny/trial_seed42/figures/confusion_matrix.png  used on input line 685.
 (pdftex.def)             Requested size: 165.12378pt x 165.40894pt.
-</home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/12k_de/exp1_efficientnet_b0/trial_seed42/figures/confusion_matrix.png, id=206, 419.166pt x 419.8887pt>
-File: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/12k_de/exp1_efficientnet_b0/trial_seed42/figures/confusion_matrix.png Graphic file (type png)
-<use /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/12k_de/exp1_efficientnet_b0/trial_seed42/figures/confusion_matrix.png>
-Package pdftex.def Info: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/12k_de/exp1_efficientnet_b0/trial_seed42/figures/confusion_matrix.png  used on input line 692.
+</home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/12k_de/exp1_efficientnet_b0/trial_seed456/figures/confusion_matrix.png, id=206, 419.166pt x 419.8887pt>
+File: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/12k_de/exp1_efficientnet_b0/trial_seed456/figures/confusion_matrix.png Graphic file (type png)
+<use /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/12k_de/exp1_efficientnet_b0/trial_seed456/figures/confusion_matrix.png>
+Package pdftex.def Info: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/12k_de/exp1_efficientnet_b0/trial_seed456/figures/confusion_matrix.png  used on input line 692.
 (pdftex.def)             Requested size: 165.12378pt x 165.40894pt.
 </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vit/12k_de/exp1_vit/trial_seed42/figures/confusion_matrix.png, id=207, 419.166pt x 419.8887pt>
 File: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vit/12k_de/exp1_vit/trial_seed42/figures/confusion_matrix.png Graphic file (type png)
@@ -526,10 +526,10 @@ File: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/mobil
 <use /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/mobilenetv3_small/12k_de/exp1_mobilenetv3_small/trial_seed42/figures/confusion_matrix.png>
 Package pdftex.def Info: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/mobilenetv3_small/12k_de/exp1_mobilenetv3_small/trial_seed42/figures/confusion_matrix.png  used on input line 707.
 (pdftex.def)             Requested size: 165.12378pt x 165.40894pt.
-</home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/12k_de/exp1_vgg16/trial_seed42/figures/confusion_matrix.png, id=209, 419.166pt x 419.8887pt>
-File: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/12k_de/exp1_vgg16/trial_seed42/figures/confusion_matrix.png Graphic file (type png)
-<use /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/12k_de/exp1_vgg16/trial_seed42/figures/confusion_matrix.png>
-Package pdftex.def Info: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/12k_de/exp1_vgg16/trial_seed42/figures/confusion_matrix.png  used on input line 713.
+</home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/12k_fe/exp1_vgg16/trial_seed123/figures/confusion_matrix.png, id=209, 419.166pt x 419.8887pt>
+File: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/12k_fe/exp1_vgg16/trial_seed123/figures/confusion_matrix.png Graphic file (type png)
+<use /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/12k_fe/exp1_vgg16/trial_seed123/figures/confusion_matrix.png>
+Package pdftex.def Info: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/12k_fe/exp1_vgg16/trial_seed123/figures/confusion_matrix.png  used on input line 713.
 (pdftex.def)             Requested size: 165.12378pt x 165.40894pt.
 </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/MSCA_VGG16/12k_de/exp1_MSCA_VGG16/trial_seed42/figures/confusion_matrix.png, id=210, 419.166pt x 419.8887pt>
 File: /home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/MSCA_VGG16/12k_de/exp1_MSCA_VGG16/trial_seed42/figures/confusion_matrix.png Graphic file (type png)
@@ -598,22 +598,23 @@ File: figures/roc/msca-vgg16_roc.png Graphic file (type png)
 Package pdftex.def Info: figures/roc/msca-vgg16_roc.png  used on input line 817.
 (pdftex.def)             Requested size: 165.12378pt x 151.8574pt.
  (./auto_tables/ablation_table.tex) [10]
-</home/yangchen/git_clone/AW-DPCNN/data-optimization/noise_robustness/noise_robustness_multi_panel.pdf, id=226, 1291.5704pt x 380.23228pt>
+</home/yangchen/git_clone/AW-DPCNN/data-optimization/noise_robustness/noise_robustness_multi_panel.pdf, id=226, 1293.46678pt x 380.23228pt>
 File: /home/yangchen/git_clone/AW-DPCNN/data-optimization/noise_robustness/noise_robustness_multi_panel.pdf Graphic file (type pdf)
 <use /home/yangchen/git_clone/AW-DPCNN/data-optimization/noise_robustness/noise_robustness_multi_panel.pdf>
 Package pdftex.def Info: /home/yangchen/git_clone/AW-DPCNN/data-optimization/noise_robustness/noise_robustness_multi_panel.pdf  used on input line 877.
-(pdftex.def)             Requested size: 516.0pt x 151.90456pt.
+(pdftex.def)             Requested size: 516.0pt x 151.68408pt.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [11 </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/convnext_tiny/12k_de/exp1_convnext_tiny/trial_seed42/figures/confusion_matrix.png> </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/12k_de/exp1_efficientnet_b0/trial_seed42/figures/confusion_matrix.png> </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vit/12k_de/exp1_vit/trial_seed42/figures/confusion_matrix.png> </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/mobilenetv3_small/12k_de/exp1_mobilenetv3_small/trial_seed42/figures/confusion_matrix.png> </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/12k_de/exp1_vgg16/trial_seed42/figures/confusion_matrix.png> </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/MSCA_VGG16/12k_de/exp1_MSCA_VGG16/trial_seed42/figures/confusion_matrix.png>]
-Underfull \vbox (badness 5431) has occurred while \output is active []
-
+ [11 </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/convnext_tiny/12k_de/exp1_convnext_tiny/trial_seed42/figures/confusion_matrix.png> </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/12k_de/exp1_efficientnet_b0/trial_seed456/figures/confusion_matrix.png> </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vit/12k_de/exp1_vit/trial_seed42/figures/confusion_matrix.png> </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/mobilenetv3_small/12k_de/exp1_mobilenetv3_small/trial_seed42/figures/confusion_matrix.png> </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/12k_fe/exp1_vgg16/trial_seed123/figures/confusion_matrix.png> </home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/MSCA_VGG16/12k_de/exp1_MSCA_VGG16/trial_seed42/figures/confusion_matrix.png>]
 </home/yangchen/git_clone/AW-DPCNN/paper/figures/generalization/generalization_trial_seed42.pdf, id=236, 933.2648pt x 309.69643pt>
 File: /home/yangchen/git_clone/AW-DPCNN/paper/figures/generalization/generalization_trial_seed42.pdf Graphic file (type pdf)
 <use /home/yangchen/git_clone/AW-DPCNN/paper/figures/generalization/generalization_trial_seed42.pdf>
 Package pdftex.def Info: /home/yangchen/git_clone/AW-DPCNN/paper/figures/generalization/generalization_trial_seed42.pdf  used on input line 898.
 (pdftex.def)             Requested size: 516.0pt x 171.23141pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
  [12 <./tsne_models//tsne_cwru_12k_de_raw_input.png> <./tsne_models//tsne_vit_12k_de_trial_seed42.png> <./tsne_models//tsne_convnext_tiny_12k_de_trial_seed42.png> <./tsne_models//tsne_efficientnet_b0_12k_de_trial_seed42.png> <./tsne_models//tsne_mobilenetv3_small_12k_de_trial_seed42.png> <./tsne_models//tsne_MSCA_VGG16_12k_de_trial_seed42.png>] [13 <./figures/roc/convnext-tiny_roc.png> <./figures/roc/vit_roc.png> <./figures/roc/vgg16_roc.png> <./figures/roc/efficientnet-b0_roc.png> <./figures/roc/mobilenetv3_small_roc.png> <./figures/roc/msca-vgg16_roc.png> </home/yangchen/git_clone/AW-DPCNN/data-optimization/noise_robustness/noise_robustness_multi_panel.pdf>] (./manuscript.bbl [14 </home/yangchen/git_clone/AW-DPCNN/paper/figures/generalization/generalization_trial_seed42.pdf>]
 Overfull \hbox (0.53317pt too wide) in paragraph at lines 122--126
 \OT1/ptm/m/n/8 (-20) network for feature learning of vibration signals in bearing fault diagnosis,''
@@ -631,15 +632,15 @@ Underfull \hbox (badness 10000) in paragraph at lines 265--268
 
 ) [15] (./manuscript.aux) ) 
 Here is how much of TeX's memory you used:
- 12444 strings out of 479654
- 267310 string characters out of 5883417
+ 12438 strings out of 479654
+ 267270 string characters out of 5883417
  563976 words of memory out of 5000000
  29920 multiletter control sequences out of 15000+600000
- 533415 words of font info for 388 fonts, out of 8000000 for 9000
+ 533177 words of font info for 384 fonts, out of 8000000 for 9000
  313 hyphenation exceptions out of 8191
  71i,15n,79p,1919b,531s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/share/texlive/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmbi8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on manuscript.pdf (15 pages, 11081999 bytes).
+Output written on manuscript.pdf (15 pages, 11086972 bytes).
 PDF statistics:
  500 PDF objects out of 1000 (max. 8388607)
  220 compressed objects within 3 object streams

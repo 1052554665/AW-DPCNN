@@ -43,7 +43,7 @@ FONT = {
 
 # ── Paths ─────────────────────────────────────────────────────────────
 # External CSV data file (project-relative path)
-CSV_PATH = Path("experiments/experiment_result/noise_robustness/noise_robustness.csv")
+CSV_PATH = Path("/home/yangchen/git_clone/AW-DPCNN/data-optimization/noise_robustness/noise_robustness.csv")
 
 # ── Configuration ──────────────────────────────────────────────────────
 OUTPUT_DIR = Path("data-optimization/noise_robustness")
@@ -96,15 +96,13 @@ MARKERS: Dict[str, str] = {
 # ── Data loading ───────────────────────────────────────────────────────
 def load_data() -> pd.DataFrame:
     """Load the external CSV and return a tidy DataFrame with a numeric
-    ``snr_val`` column (``-1`` for clean)."""
+    ``snr_val`` column."""
     if not CSV_PATH.exists():
         raise FileNotFoundError(f"CSV not found: {CSV_PATH.resolve()}")
     df = pd.read_csv(CSV_PATH)
 
     def _snr_to_float(snr_str: str) -> float:
-        if snr_str.strip().lower() == "clean":
-            return -1.0   # place "clean" to the left of 5 dB
-        return float(snr_str.replace("dB", "").strip())
+        return float(str(snr_str).replace("dB", "").strip())
 
     df["snr_val"] = df["snr"].apply(_snr_to_float)
     df["display_name"] = df["model"].map(MODEL_LABELS).fillna(df["model"])
@@ -116,15 +114,7 @@ def plot_accuracy_vs_snr(df: pd.DataFrame):
     """Line plot: Accuracy (%) vs SNR (dB)."""
     fig, ax = plt.subplots(figsize=(8.0, 5.0))
 
-    # Sort models by clean accuracy so legend is ordered
-    clean_acc = df[df["snr"] == "clean"].set_index("model")["accuracy"]
-    model_order = sorted(
-        df["model"].unique(),
-        key=lambda m: clean_acc.get(m, 0),
-        reverse=True,
-    )
-
-    for model in model_order:
+    for model in MODEL_ORDER:
         sub = df[df["model"] == model].sort_values("snr_val")
         x = sub["snr_val"].values
         y = sub["accuracy"].values
@@ -150,22 +140,12 @@ def plot_accuracy_vs_snr(df: pd.DataFrame):
                 fontsize=FONT["annotation"], color=color, fontweight="bold",
             )
 
-    # Clean reference lines
-    for model in model_order:
-        sub = df[df["model"] == model]
-        clean_row = sub[sub["snr"] == "clean"]
-        if not clean_row.empty:
-            ax.axhline(y=clean_row["accuracy"].values[0],
-                       color=COLORS.get(model, "#333333"),
-                       linestyle=":", linewidth=0.6, alpha=0.4, zorder=1)
-
     # Axis formatting
-    # Replace -1 with "Clean" on x-axis
     xtick_vals = sorted(df["snr_val"].unique())
-    xtick_labels = ["Clean" if v == -1 else f"{int(v)} dB" for v in xtick_vals]
+    xtick_labels = [f"{int(v)} dB" for v in xtick_vals]
     ax.set_xticks(xtick_vals)
     ax.set_xticklabels(xtick_labels, fontsize=FONT["tick_label"])
-    ax.set_xlim(-2.5, 31.5)
+    ax.set_xlim(3.0, 31.5)
 
     ax.set_ylabel("Accuracy (%)", fontsize=FONT["axis_label"])
     ax.set_xlabel("Noise Level (SNR)", fontsize=FONT["axis_label"])
@@ -193,22 +173,9 @@ def plot_accuracy_zoomed(df: pd.DataFrame):
     """Zoomed-in line plot for SNR ≥ 10 dB (where most models recover)."""
     fig, ax = plt.subplots(figsize=(8.0, 5.0))
 
-    clean_acc = df[df["snr"] == "clean"].set_index("model")["accuracy"]
-    model_order = sorted(
-        df["model"].unique(),
-        key=lambda m: clean_acc.get(m, 0),
-        reverse=True,
-    )
-
-    for model in model_order:
+    for model in MODEL_ORDER:
         sub = df[(df["model"] == model) & (df["snr_val"] >= 10)]
         sub = sub.sort_values("snr_val")
-        # Add clean reference point
-        clean_row = df[(df["model"] == model) & (df["snr"] == "clean")]
-        if not clean_row.empty:
-            clean_pt = clean_row.copy()
-            clean_pt["snr_val"] = -1  # visual anchor
-            sub = pd.concat([clean_pt, sub], ignore_index=True).sort_values("snr_val")
 
         x = sub["snr_val"].values
         y = sub["accuracy"].values
@@ -224,11 +191,11 @@ def plot_accuracy_zoomed(df: pd.DataFrame):
                 markeredgecolor="black", label=label, zorder=3,
                 markerfacecolor=color)
 
-    xtick_vals = sorted([v for v in df["snr_val"].unique() if v >= 10] + [-1])
-    xtick_labels = ["Clean" if v == -1 else f"{int(v)} dB" for v in xtick_vals]
+    xtick_vals = sorted([v for v in df["snr_val"].unique() if v >= 10])
+    xtick_labels = [f"{int(v)} dB" for v in xtick_vals]
     ax.set_xticks(xtick_vals)
     ax.set_xticklabels(xtick_labels, fontsize=FONT["tick_label"])
-    ax.set_xlim(-2.5, 31.5)
+    ax.set_xlim(8.0, 31.5)
 
     ax.set_ylabel("Accuracy (%)", fontsize=FONT["axis_label"])
     ax.set_xlabel("Noise Level (SNR)", fontsize=FONT["axis_label"])
@@ -260,16 +227,9 @@ def plot_multi_panel(df: pd.DataFrame):
         ("auc",      "AUC (%)"),
     ]
 
-    clean_acc = df[df["snr"] == "clean"].set_index("model")["accuracy"]
-    model_order = sorted(
-        df["model"].unique(),
-        key=lambda m: clean_acc.get(m, 0),
-        reverse=True,
-    )
-
     for ax_idx, (col, ylabel) in enumerate(metrics):
         ax = axes[ax_idx]
-        for model in model_order:
+        for model in MODEL_ORDER:
             sub = df[df["model"] == model].sort_values("snr_val")
             x = sub["snr_val"].values
             y = sub[col].values
@@ -286,11 +246,10 @@ def plot_multi_panel(df: pd.DataFrame):
                     markerfacecolor=color)
 
         xtick_vals = sorted(df["snr_val"].unique())
-        xtick_labels = ["Clean" if v == -1 else f"{int(v)} dB"
-                        for v in xtick_vals]
+        xtick_labels = [f"{int(v)} dB" for v in xtick_vals]
         ax.set_xticks(xtick_vals)
         ax.set_xticklabels(xtick_labels, fontsize=FONT["tick_label_sm"], rotation=30)
-        ax.set_xlim(-2.5, 31.5)
+        ax.set_xlim(3.0, 31.5)
         ax.set_ylabel(ylabel, fontsize=FONT["subplot_title"])
         ax.set_xlabel("Noise Level (SNR)", fontsize=FONT["axis_label"] - 2)
         ax.grid(axis="y", alpha=0.25, color="gray", zorder=0)
@@ -303,7 +262,7 @@ def plot_multi_panel(df: pd.DataFrame):
     # Shared legend below
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="lower center", fontsize=FONT["legend"],
-               framealpha=0.95, edgecolor="gray", ncol=len(model_order),
+               framealpha=0.95, edgecolor="gray", ncol=len(MODEL_ORDER),
                bbox_to_anchor=(0.5, -0.06))
 
     # fig.suptitle("Noise Robustness Comparison", fontsize=14,
@@ -319,7 +278,7 @@ def plot_multi_panel(df: pd.DataFrame):
 
 def print_summary_table(df: pd.DataFrame):
     """Print a markdown summary table of accuracy at each SNR level."""
-    snr_levels = ["clean", "5.0 dB", "10.0 dB", "15.0 dB",
+    snr_levels = ["5.0 dB", "10.0 dB", "15.0 dB",
                   "20.0 dB", "25.0 dB", "30.0 dB"]
     models = MODEL_ORDER
 
@@ -328,31 +287,31 @@ def print_summary_table(df: pd.DataFrame):
     print("=" * 100)
 
     # Header
-    header = f"{'Model':<22s}"
+    header = f"{'Model':<25s}"
     for snr in snr_levels:
-        header += f" {snr:>8s}"
+        header += f" {snr:>9s}"
     print(header)
     print("-" * len(header))
 
     for model in models:
-        row_str = f"{MODEL_LABELS.get(model, model).replace(chr(10), ' '):<22s}"
+        row_str = f"{MODEL_LABELS.get(model, model).replace(chr(10), ' '):<25s}"
         for snr in snr_levels:
             val = df[(df["model"] == model) & (df["snr"] == snr)]
             if not val.empty:
-                row_str += f" {val['accuracy'].values[0]:7.2f}"
+                row_str += f" {val['accuracy'].values[0]:8.2f}"
             else:
-                row_str += f" {'—':>8s}"
+                row_str += f" {'—':>9s}"
         print(row_str)
 
     print("-" * len(header))
 
-    # Drop from clean to 5 dB
-    print("\nAccuracy drop (Clean → 5 dB):")
+    # Drop from 30 dB to 5 dB
+    print("\nAccuracy drop (30 dB → 5 dB):")
     for model in models:
-        clean = df[(df["model"] == model) & (df["snr"] == "clean")]
-        noisy = df[(df["model"] == model) & (df["snr"] == "5.0 dB")]
-        if not clean.empty and not noisy.empty:
-            drop = clean["accuracy"].values[0] - noisy["accuracy"].values[0]
+        high = df[(df["model"] == model) & (df["snr"] == "30.0 dB")]
+        low  = df[(df["model"] == model) & (df["snr"] == "5.0 dB")]
+        if not high.empty and not low.empty:
+            drop = high["accuracy"].values[0] - low["accuracy"].values[0]
             name = MODEL_LABELS.get(model, model).replace("\n", " ")
             print(f"  {name:<22s}  Δ = {drop:.2f} pp")
 

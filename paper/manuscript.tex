@@ -689,7 +689,7 @@ These results collectively demonstrate that the STFT and GADF combination provid
 		\begin{subfigure}{0.32\linewidth}
 			\centering
 			\includegraphics[width=\linewidth]
-			{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/12k_de/exp1_efficientnet_b0/trial_seed42/figures/confusion_matrix.png}
+			{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/efficientnet_b0/12k_de/exp1_efficientnet_b0/trial_seed456/figures/confusion_matrix.png}
 			\caption{EfficientNet-B0}
 		\end{subfigure}
 		\hfill
@@ -710,7 +710,7 @@ These results collectively demonstrate that the STFT and GADF combination provid
 		\hfill
 		\begin{subfigure}{0.32\linewidth}
 			\centering
-			\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/12k_de/exp1_vgg16/trial_seed42/figures/confusion_matrix.png}
+			\includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/experiments/experiment_result/exp1/vgg16/12k_fe/exp1_vgg16/trial_seed123/figures/confusion_matrix.png}
 			\caption{VGG16}
 		\end{subfigure}
 		\hfill
@@ -875,18 +875,18 @@ To isolate the contribution of each component, a systematic ablation study compr
 \begin{figure*}[!t] 
 \centering
 \includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/data-optimization/noise_robustness/noise_robustness_multi_panel.pdf}
-\caption{Noise robustness comparison across seven backbone networks under additive Gaussian noise injection. Panels (a)--(c) report accuracy, $F_1$-score, and AUC respectively as functions of SNR level (clean, 5.0--30.0~dB). The proposed MSCA-VGG16 achieves the highest clean accuracy (100.0\%) and fully recovers to perfect classification by 20.0~dB.}
+\caption{Noise robustness comparison across seven backbone networks under additive Gaussian noise injection. Panels (a)--(c) report accuracy, $F_1$-score, and AUC respectively as functions of SNR level (5.0--30.0~dB). The proposed MSCA-VGG16 achieves 100.0\% accuracy at 20.0~dB and maintains 91.2\% at 5.0~dB, a degradation of only 8.8 pp.}
 \label{fig:noise_robustness}
 \end{figure*}
 
 \subsection{Noise Robustness Evaluation}
 \label{sec:noise_robustness}
 
-To evaluate model robustness under realistic industrial conditions, zero-mean additive Gaussian noise is injected at SNR levels from 5.0 to 30.0~dB, with the clean (noise-free) baseline also reported. Fig.~\ref{fig:noise_robustness} presents the accuracy, $F_1$-score, and AUC of each backbone network across SNR levels.
+To evaluate model robustness under realistic industrial conditions, zero-mean additive Gaussian noise is injected at SNR levels from 5.0 to 30.0~dB. Fig.~\ref{fig:noise_robustness} presents the accuracy, $F_1$-score, and AUC of each backbone network across SNR levels.
 
-The proposed MSCA-VGG16 achieves the highest clean accuracy (100.0\%) and fully recovers to perfect classification by 20.0~dB. At 10.0~dB it retains 94.8\% accuracy, and even at the most challenging 5.0~dB level it maintains 48.6\%, substantially outperforming VGG16 (15.4\%) and EfficientNet-B0 (11.2\%), which suffer near-complete performance collapse. This resilience is attributed to the multi-scale channel attention mechanism, which dynamically suppresses noise-dominated frequency bands while preserving fault-discriminative spectral components.
+The proposed MSCA-VGG16 achieves 100.0\% accuracy at 20.0~dB and above, and retains 91.2\% at the most challenging 5.0~dB level, corresponding to a degradation of only 8.8 pp across the full SNR range---the flattest profile among all evaluated networks. This substantially outperforms VGG16 (15.4\%) and EfficientNet-B0 (11.2\%), which suffer near-complete performance collapse at 5.0~dB. This resilience is attributed to the multi-scale channel attention mechanism, which dynamically suppresses noise-dominated frequency bands while preserving fault-discriminative spectral components.
 
-ConvNeXt-Tiny exhibits the flattest degradation profile, with accuracy varying only between 91.2\% and 95.1\% across all SNR levels, indicating that its modernized convolutional design with larger kernels provides inherent noise immunity at the cost of lower peak performance. ResNet18 offers a strong balance, retaining 76.3\% at 5.0~dB while achieving 96.9\% clean accuracy. ViT, despite the lowest clean accuracy (83.4\%), degrades modestly under noise. These results confirm that MSCA-VGG16 achieves the best balance between peak discriminative performance and noise robustness, making it suitable for practical industrial deployment where signal quality cannot be guaranteed.
+ConvNeXt-Tiny achieves moderate noise immunity, with accuracy ranging from 48.6\% at 5.0~dB to 95.0\% at 30.0~dB. ResNet18 offers a strong balance, retaining 76.3\% at 5.0~dB while achieving 96.9\% at 30.0~dB. ViT degrades modestly under noise (from 83.2\% to 72.5\%) despite the lowest peak accuracy (83.2\% at 30.0~dB). These results confirm that MSCA-VGG16 achieves the best balance between peak discriminative performance and noise robustness, making it suitable for practical industrial deployment where signal quality cannot be guaranteed.
 
 
 
