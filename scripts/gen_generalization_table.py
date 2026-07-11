@@ -1,0 +1,371 @@
+#!/usr/bin/env python3
+"""
+Comprehensive Generalization Validation Table Generator
+========================================================
+Collects test metrics across all models, both generalization datasets
+(12k FE and 48k DE), and three independent trials.  Computes mean ± std
+and produces a detailed LaTeX table suitable for direct \\input{} into
+the manuscript.
+
+Metrics reported per model per dataset:
+    Accuracy, Precision, Recall, F1-score, G-Mean, Balanced Accuracy,
+    Kappa, AUC, Best Epoch, Params (M)
+
+Usage::
+
+    python scripts/gen_generalization_table.py
+"""
+
+import json
+import sys
+from collections import defaultdict
+from pathlib import Path
+
+import numpy as np
+
+# ── Configuration ──────────────────────────────────────────────────────
+RESULT_ROOT = Path("experiments/experiment_result/exp1")
+METRICS_FILE = "results/test_metrics.json"
+OUTPUT_TEX  = Path("paper-jvet/auto_tables/generalization_table.tex")
+OUTPUT_TEX2 = Path("paper-tim/auto_tables/generalization_table.tex")  # mirror
+
+DATASETS = {
+    "12k_fe": "CWRU 12k FE",
+    "48k_de": "CWRU 48k DE",
+}
+
+MODEL_ORDER = [
+    ("MSCA_VGG16",        "MSCA-VGG16 (Ours)"),
+    ("resnet18",          "ResNet18"),
+    ("vgg16",             "VGG16"),
+    ("convnext_tiny",     "ConvNeXt-Tiny"),
+    ("efficientnet_b0",   "EfficientNet-B0"),
+    ("mobilenetv3_small", "MobileNetV3-Small"),
+    ("vit",               "ViT"),
+]
+
+TRIALS = ["trial_seed42", "trial_seed123", "trial_seed456"]
+
+# ── Collect ────────────────────────────────────────────────────────────
+def collect_all() -> dict:
+    """Collect metrics for all (model, dataset, trial) combinations.
+
+    Returns
+    -------
+    dict[model_name][dataset_key] = list of metric dicts (one per trial).
+    """
+    data = defaultdict(lambda: defaultdict(list))
+
+    for model_key, _ in MODEL_ORDER:
+        model_dir = RESULT_ROOT / model_key
+        if not model_dir.is_dir():
+            print(f"[WARN] Model dir not found: {model_dir}")
+            continue
+
+        for ds_key in DATASETS:
+            ds_dir = model_dir / ds_key
+            if not ds_dir.is_dir():
+                print(f"[WARN] Dataset dir not found: {ds_dir}")
+                continue
+
+            # Find inner experiment directory
+            inner_dirs = sorted(ds_dir.glob("exp1_*"))
+            if not inner_dirs:
+                print(f"[WARN] No exp1_* subdir in {ds_dir}")
+                continue
+
+            inner = inner_dirs[0]
+
+            for trial in TRIALS:
+                path = inner / trial / METRICS_FILE
+                if not path.exists():
+                    print(f"[WARN] Missing: {path}")
+                    continue
+
+                try:
+                    d = json.loads(path.read_text())
+                except (json.JSONDecodeError, OSError) as exc:
+                    print(f"[WARN] Failed to read {path}: {exc}")
+                    continue
+
+                data[model_key][ds_key].append(d)
+
+    return data
+
+
+# ── Aggregate ──────────────────────────────────────────────────────────
+def aggregate(data: dict) -> dict:
+    """Compute per-model per-dataset mean ± std over trials.
+
+    Returns
+    -------
+    dict[model_key][ds_key] = dict of metric_name -> (mean, std).
+    """
+    agg = defaultdict(dict)
+
+    for model_key, _ in MODEL_ORDER:
+        if model_key not in data:
+            continue
+
+        for ds_key in DATASETS:
+            trials_data = data[model_key].get(ds_key, [])
+            if len(trials_data) < 1:
+                agg[model_key][ds_key] = None
+                continue
+
+            keys = [
+                "test_acc", "test_precision", "test_recall", "test_f1",
+                "test_gmean", "test_bal_acc", "test_kappa", "test_auc",
+                "best_epoch", "params",
+            ]
+
+            metrics = {}
+            for k in keys:
+                vals = [td.get(k, 0) for td in trials_data]
+                # Convert to percentages
+                if k in ("test_acc", "test_precision", "test_recall",
+                         "test_f1", "test_gmean", "test_bal_acc",
+                         "test_kappa", "test_auc"):
+                    vals = [v * 100 for v in vals]
+                elif k == "params":
+                    vals = [v / 1e6 for v in vals]
+
+                mean_val = np.mean(vals)
+                std_val  = np.std(vals, ddof=1) if len(vals) > 1 else 0.0
+                metrics[k] = (mean_val, std_val)
+
+            agg[model_key][ds_key] = metrics
+
+    return agg
+
+
+# ── LaTeX Table ────────────────────────────────────────────────────────
+def generate_latex(agg: dict) -> str:
+    """Generate a compact combined table* with 4 core metrics per dataset."""
+    metric_keys = ["test_acc", "test_f1", "test_gmean", "test_auc"]
+    metric_abbrevs = ["Acc", "F1", "G-Mean", "AUC"]
+    cols_per_ds = len(metric_keys)
+
+    lines = []
+    lines.append("% Auto-generated by scripts/gen_generalization_table.py")
+    lines.append("\\begin{table*}[!htbp]")
+    lines.append("    \\centering")
+    lines.append(
+        "    \\caption{Generalization Validation on the CWRU 12k FE and 48k DE "
+        "Datasets (Mean $\\pm$ Std over 3 Independent Trials).}"
+    )
+    lines.append("    \\label{tab:generalization_comprehensive}")
+    lines.append("    \\renewcommand{\\arraystretch}{1.12}")
+    lines.append("    \\footnotesize")
+    lines.append("    \\setlength{\\tabcolsep}{5pt}")
+
+    # Column spec: Model | 4 FE metrics | 4 DE metrics
+    col_spec = "l" + "c" * (cols_per_ds * 2)
+    lines.append(f"    \\begin{{tabular}}{{{col_spec}}}")
+    lines.append("        \\toprule")
+
+    # Header row 1: dataset names
+    fe_label = DATASETS["12k_fe"]
+    de_label = DATASETS["48k_de"]
+    lines.append(
+        f"        & \\multicolumn{{{cols_per_ds}}}{{c}}{{{fe_label}}}"
+        f" & \\multicolumn{{{cols_per_ds}}}{{c}}{{{de_label}}} \\\\"
+    )
+    fe_start = 2
+    fe_end   = fe_start + cols_per_ds - 1
+    de_start = fe_end + 1
+    de_end   = de_start + cols_per_ds - 1
+    lines.append(
+        f"        \\cmidrule(lr){{{fe_start}-{fe_end}}} "
+        f"\\cmidrule(lr){{{de_start}-{de_end}}}"
+    )
+
+    # Header row 2: metric names
+    fe_metrics = " & ".join(metric_abbrevs)
+    de_metrics = " & ".join(metric_abbrevs)
+    lines.append(f"        \\textbf{{Model}} & {fe_metrics} & {de_metrics} \\\\")
+    lines.append("        \\midrule")
+
+    # Data rows
+    for model_key, model_label in MODEL_ORDER:
+        if model_key not in agg:
+            continue
+        row_cells = [model_label]
+        for ds_key in DATASETS:
+            met = agg[model_key].get(ds_key)
+            if met is None:
+                row_cells.extend(["--"] * len(metric_keys))
+            else:
+                for mk in metric_keys:
+                    mean_val, std_val = met[mk]
+                    if mk == "test_auc":
+                        fmt = f"{mean_val:.2f}$\\pm${std_val:.2f}"
+                    else:
+                        fmt = f"{mean_val:.2f}$\\pm${std_val:.2f}"
+                    row_cells.append(fmt)
+        lines.append("        " + " & ".join(row_cells) + " \\\\")
+
+    lines.append("        \\bottomrule")
+    lines.append("    \\end{tabular}")
+    lines.append("\\end{table*}")
+
+    return "\n".join(lines) + "\n"
+
+
+# ── Post-process: bold best values ─────────────────────────────────────
+def bold_best(tex: str, agg: dict) -> str:
+    """Wrap the best value in each metric column with \\textbf{}."""
+    metric_keys = ["test_acc", "test_f1", "test_gmean", "test_auc"]
+
+    for model_key, _ in MODEL_ORDER:
+        if model_key not in agg:
+            continue
+
+        for ds_key in DATASETS:
+            for mk in metric_keys:
+                # Find best model for this metric in this dataset
+                best_model = None
+                best_mean = -1.0
+                for mk2, _ in MODEL_ORDER:
+                    if mk2 not in agg or ds_key not in agg[mk2]:
+                        continue
+                    met = agg[mk2][ds_key]
+                    if met is None:
+                        continue
+                    mean_val, _ = met[mk]
+                    if mean_val > best_mean:
+                        best_mean = mean_val
+                        best_model = mk2
+
+                if best_model and best_model != model_key:
+                    continue
+
+                met = agg[model_key][ds_key]
+                mean_val, std_val = met[mk]
+                if mk == "test_auc":
+                    old = f"{mean_val:.2f}$\\pm${std_val:.2f}"
+                    new = f"$\\mathbf{{{mean_val:.2f}}}\\pm${std_val:.2f}"
+                else:
+                    old = f"{mean_val:.2f}$\\pm${std_val:.2f}"
+                    new = f"$\\mathbf{{{mean_val:.2f}}}\\pm${std_val:.2f}"
+                tex = tex.replace(old, new, 1)
+    return tex
+
+
+# ── Supplementary: per-model compact table ─────────────────────────────
+def generate_supplementary(agg: dict) -> str:
+    """Generate a compact supplementary table with Params and Best Epoch."""
+    lines = []
+    lines.append("% Auto-generated supplementary table")
+    lines.append("\\begin{table}[!htbp]")
+    lines.append("    \\centering")
+    lines.append(
+        "    \\caption{Model Complexity and Convergence Statistics.}"
+    )
+    lines.append("    \\label{tab:model_complexity}")
+    lines.append("    \\renewcommand{\\arraystretch}{1.1}")
+    lines.append("    \\small")
+    lines.append("    \\begin{tabular}{lcccc}")
+    lines.append("        \\toprule")
+    lines.append(
+        "        \\textbf{Model} & \\textbf{Params (M)} & "
+        "\\textbf{FLOPs (G)} & \\textbf{Best Epoch} & "
+        "\\textbf{Val F1} \\\\"
+    )
+    lines.append("        \\midrule")
+
+    for model_key, model_label in MODEL_ORDER:
+        if model_key not in agg:
+            continue
+        # Use 12k_de as reference for complexity stats
+        met = agg[model_key].get("12k_fe") or agg[model_key].get("48k_de")
+        if met is None:
+            continue
+
+        # params from first trial (they're constant across trials)
+        trials_data = None
+        for ds_key in DATASETS:
+            if ds_key in agg.get(model_key, {}):
+                # We need raw data for FLOPs
+                break
+
+        # Just report params from the agg dict
+        p_mean, p_std = met["params"]
+        # For FLOPs we need raw data — use a placeholder approach
+        flops_val = "--"
+
+        epoch_mean, epoch_std = met["best_epoch"]
+
+        # Val F1: need raw data, skip for now
+        val_f1_val = "--"
+
+        model_bold = f"\\textbf{{{model_label}}}" if model_key == "MSCA_VGG16" else model_label
+        lines.append(
+            f"        {model_bold} & {p_mean:.1f} & {flops_val} & "
+            f"{epoch_mean:.0f}$\\pm${epoch_std:.0f} & {val_f1_val} \\\\"
+        )
+
+    lines.append("        \\bottomrule")
+    lines.append("    \\end{tabular}")
+    lines.append("\\end{table}")
+
+    return "\n".join(lines) + "\n"
+
+
+# ── Main ───────────────────────────────────────────────────────────────
+def main():
+    print("Collecting metrics from all trials...")
+    data = collect_all()
+
+    # Summarize what was found
+    for model_key, _ in MODEL_ORDER:
+        for ds_key in DATASETS:
+            n = len(data.get(model_key, {}).get(ds_key, []))
+            if n > 0:
+                print(f"  {model_key:20s} / {ds_key:8s} : {n} trials")
+
+    if not any(
+        data.get(mk, {}).get(dk, [])
+        for mk, _ in MODEL_ORDER
+        for dk in DATASETS
+    ):
+        print("[ERROR] No data collected. Check paths.")
+        sys.exit(1)
+
+    print("\nAggregating...")
+    agg = aggregate(data)
+
+    print("Generating LaTeX...")
+    tex = generate_latex(agg)
+    tex = bold_best(tex, agg)
+
+    # Write to both paper directories
+    for out_path in (OUTPUT_TEX, OUTPUT_TEX2):
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(tex)
+        print(f"Saved  {out_path}")
+
+    # Also print a console summary
+    metric_keys = ["test_acc", "test_f1", "test_gmean", "test_auc"]
+    metric_names = ["Acc", "F1", "G-Mean", "AUC"]
+    print("\n── Console Summary ──")
+    for ds_key, ds_label in DATASETS.items():
+        print(f"\n  {ds_label}:")
+        hdr = f"  {'Model':<22s}"
+        for mn in metric_names:
+            hdr += f" {mn:>12s}"
+        print(hdr)
+        print("  " + "-" * len(hdr))
+        for model_key, model_label in MODEL_ORDER:
+            met = agg.get(model_key, {}).get(ds_key)
+            if met is None:
+                continue
+            row = f"  {model_label:<22s}"
+            for mk in metric_keys:
+                mean_val, _ = met[mk]
+                row += f" {mean_val:11.2f}"
+            print(row)
+
+
+if __name__ == "__main__":
+    main()
