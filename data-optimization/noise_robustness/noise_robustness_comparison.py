@@ -32,13 +32,13 @@ plt.rcParams["mathtext.fontset"] = "stix"
 # ── Font sizes ────────────────────────────────────────────────────────
 # Centralised font size control for all figures
 FONT = {
-    "title":        16,
-    "axis_label":   15,
-    "tick_label":   13,
-    "tick_label_sm": 11.5,   # smaller tick labels for multi-panel
-    "legend":       12,
-    "annotation":   10,
-    "subplot_title": 14,
+    "title":        18,
+    "axis_label":   17,
+    "tick_label":   15,
+    "tick_label_sm": 13.5,   # smaller tick labels for multi-panel
+    "legend":       14,
+    "annotation":   12,
+    "subplot_title": 16,
 }
 
 # ── Paths ─────────────────────────────────────────────────────────────
@@ -157,10 +157,6 @@ def plot_accuracy_vs_snr(df: pd.DataFrame):
     ax.legend(loc="lower left", fontsize=FONT["legend"], framealpha=0.95,
               edgecolor="gray", ncol=2, columnspacing=0.8)
 
-    # Title
-    ax.set_title("Noise Robustness Comparison — Accuracy vs SNR",
-                 fontsize=FONT["title"], fontweight="bold", pad=12)
-
     plt.tight_layout()
     out = OUTPUT_DIR / "noise_robustness_accuracy.png"
     fig.savefig(out, dpi=300, bbox_inches="tight")
@@ -206,9 +202,6 @@ def plot_accuracy_zoomed(df: pd.DataFrame):
     ax.legend(loc="lower left", fontsize=FONT["legend"], framealpha=0.95,
               edgecolor="gray", ncol=2, columnspacing=0.8)
 
-    ax.set_title("Noise Robustness Comparison — Accuracy vs SNR (Zoomed)",
-                 fontsize=FONT["title"], fontweight="bold", pad=12)
-
     plt.tight_layout()
     out = OUTPUT_DIR / "noise_robustness_accuracy_zoomed.png"
     fig.savefig(out, dpi=300, bbox_inches="tight")
@@ -250,25 +243,24 @@ def plot_multi_panel(df: pd.DataFrame):
         ax.set_xticks(xtick_vals)
         ax.set_xticklabels(xtick_labels, fontsize=FONT["tick_label_sm"], rotation=30)
         ax.set_xlim(3.0, 31.5)
-        ax.set_ylabel(ylabel, fontsize=FONT["subplot_title"])
-        ax.set_xlabel("Noise Level (SNR)", fontsize=FONT["axis_label"] - 2)
         ax.grid(axis="y", alpha=0.25, color="gray", zorder=0)
         ax.grid(axis="x", alpha=0.15, color="gray", zorder=0)
 
-        # Subplot letter
-        ax.set_title(f"({chr(97 + ax_idx)})  {ylabel}", fontsize=FONT["subplot_title"],
-                     fontweight="bold", loc="left")
+        # Subplot label placed below the panel
+        ax.set_xlabel(f"({chr(97 + ax_idx)})  {ylabel}",
+                      fontsize=FONT["subplot_title"], fontweight="bold",
+                      labelpad=18)
 
     # Shared legend below
     handles, labels = axes[0].get_legend_handles_labels()
     fig.legend(handles, labels, loc="lower center", fontsize=FONT["legend"],
                framealpha=0.95, edgecolor="gray", ncol=len(MODEL_ORDER),
-               bbox_to_anchor=(0.5, -0.06))
+               bbox_to_anchor=(0.5, 0.02))
 
     # fig.suptitle("Noise Robustness Comparison", fontsize=14,
     #              fontweight="bold", y=1.01)
 
-    plt.tight_layout(rect=[0, 0.06, 1, 0.96])
+    plt.tight_layout(rect=[0, 0.10, 1, 0.96])
     out = OUTPUT_DIR / "noise_robustness_multi_panel.png"
     fig.savefig(out, dpi=300, bbox_inches="tight")
     fig.savefig(out.with_suffix(".pdf"), bbox_inches="tight")
