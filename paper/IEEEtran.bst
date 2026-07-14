@@ -84,7 +84,7 @@ FUNCTION {default.is.use.paper} { #1 }
 
 % #0 turns off the display of urls
 % #1 enables
-FUNCTION {default.is.use.url} { #1 }
+FUNCTION {default.is.use.url} { #0 }
 
 
 % #0 turns off the forced use of "et al."
@@ -810,7 +810,7 @@ FUNCTION {bibinfo.warn}
 % Typical applications include patent and page numbers.
 
 % number of consecutive digits required to trigger the group separation.
-FUNCTION {large.number.trigger}{ #5 }
+FUNCTION {large.number.trigger}{ #10 }
 
 % For numbers longer than the trigger, this is the blocksize of the groups.
 % The blocksize must be less than the trigger threshold, and 2 * blocksize

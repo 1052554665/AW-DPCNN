@@ -1,0 +1,34 @@
+% ── Comparison with Previous Works in I&M Journals ──
+% References marked with [TODO] should be added manually by the user.
+\begin{table*}[!t]
+\caption{Performance Comparison Between the Proposed Method and Representative Works Published in I\&M Journals\label{tab:previous_works}}
+\centering
+\renewcommand{\arraystretch}{1.15}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{c c l l c c p{3.8cm}}
+\toprule
+\textbf{Ref.} & \textbf{Year} & \textbf{Method} & \textbf{Input} & \textbf{Acc. (\%)} & \textbf{F1 (\%)} & \textbf{Remarks} \\
+\midrule
+\multicolumn{7}{c}{\textit{IEEE Transactions on Instrumentation and Measurement}} \\
+\midrule
+\cite{9440949}  & 2021 & SVM + info. fusion      & Vibration \& current & --   & --   & Wind turbine gearbox; traditional ML \\
+\cite{8853278}  & 2020 & Mean shift clustering   & Raw vibration        & --   & --   & Unsupervised; gearbox, not bearing \\
+\cite{8788665}  & 2020 & CNN + decision fusion   & Motor current        & --   & --   & Current-based; CWRU, not vibration \\
+\cite{11028059} & 2025 & Contrastive learning    & Vibration (STFT)     & --   & --   & Open-set; semi-supervised \\
+\cite{10929672} & 2025 & GAN + multi-label CNN   & Acoustic (Mel)       & --   & --   & Acoustic; compound faults \\
+\cite{11345448} & 2026 & Log-Gabor network       & Raw vibration        & --   & --   & Single rep.; no fusion \\
+\midrule
+\multicolumn{7}{c}{\textit{Other I\&M journals --- CWRU bearing (vibration)}} \\
+\midrule
+\cite{YI2025116881}    & 2025 & VibrMamba              & Raw vibration (1-D)  & 99.77 & --   & Lightweight SSM; no TF fusion \\
+\cite{ZHANG2026106301} & 2026 & PCA-RAM + CBAM-CNN      & GAF image            & 99.50 & --   & Single encoding; 5-class task \\
+\cite{10663388}        & 2025 & MobileViT + deconv.     & MTF image            & --    & --   & Anti-noise; single rep. \\
+\cite{DUAN2026122469}  & 2026 & ResNet18-SimAM          & MTF image            & 98.11 & 98.11& FBG sensor; gearbox \\
+\midrule
+\multicolumn{7}{c}{\textit{This work}} \\
+\midrule
+\textbf{Ours} & 2026 & \textbf{AW-DPCNN + MSCA-VGG16} & \textbf{STFT + GADF} & $\mathbf{99.85 \pm 0.10}$ & $\mathbf{99.46 \pm 0.43}$ & Multi-rep. fusion; multi-scale attn.; 10-class; cross-sensor \& rate \\
+\bottomrule
+\end{tabular}
+\end{table*}

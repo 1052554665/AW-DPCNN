@@ -340,6 +340,67 @@ CWRU 48k DE & BF007  & 234 & 118 & 58  \\
 \end{table}
 
 
+\begin{table*}[!t]
+\caption{Summary of previous works (in chronological order) that consider similar acoustic signal datasets.}
+\label{tab:previous_works}
+\centering
+\begin{tabular}{c c l l l p{6.5cm}}
+\toprule
+\textbf{Ref.} & \textbf{Year} & \textbf{Method} & \textbf{Input feature} & \textbf{Performance measures} & \textbf{Remarks} \\
+\midrule
+\cite{ref19} & 2019 & AE & Mel spectrogram & AUC &
+Performance results, i.e., valve: 0.67, pump: 0.81, fan: 0.94; and slide rail: 0.90 \\
 
+\cite{ref49} & 2020 & IDNN & Mel spectrogram & AUC &
+Achieve 27\% improvement against non-stationary machine sounds. \\
+
+\cite{ref46} & 2020 & FCN & MDF & AUC &
+Performance results, i.e., valve: 0.7362, pump: 0.9996, fan: 0.9978, and slide rail: 0.9646 \\
+
+\cite{ref44} & 2020 & One-shot learning & Spectrogram & AUC and F1 scores &
+Utilizing a neural network-based feature extractor and attention mechanism. \\
+
+\cite{ref47} & 2021 & Fully connected U-Net & Mixed features, i.e., MFCC, chroma feature, Mel spectrogram, spectral contrast, and Tonnetz & AUC and pAUC &
+The proposed model achieves 83.38\% AUC and 64.51\% pAUC on average over all machine types. \\
+
+\cite{ref50} & 2021 & CNN & Mel spectrogram & Precision, sensitivity, and accuracy &
+The designed model has only 1--3 convolutional layers and gives higher accuracy than AlexNet. \\
+
+\cite{ref48} & 2021 & Convolutional VAE & Mel spectrogram & AUC and pAUC &
+The use of fully-connected models yields better performance in comparison with convolutional models. \\
+
+\cite{ref5} & 2021 & ResNet, Gaussian mixture models, and One-class SVM & Mel spectrogram & AUC &
+The use pre-trained model on the task of image classification. \\
+
+\cite{ref51} & 2021 & SVM and MLP & Mel spectrogram & AUC &
+The proposed approach improves the performance by up to 39.5\% compared with the baselines. \\
+
+\cite{ref41} & 2021 & RawdNet & Mel spectrogram & AUC &
+The proposed method is the fusion of supervised feature learning and unsupervised deep one-class neural network. \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{table}[!t]
+\caption{Comparison Results under Gaussian Noise Interference}
+\label{tab:gaussian_noise_comparison}
+\centering
+\begin{tabular}{l c c c c}
+\toprule
+\multirow{2}{*}{\textbf{Method}} & \textbf{Original} & \multicolumn{3}{c}{\textbf{Noise interference level}} \\
+\cmidrule(lr){3-5}
+ & \textbf{Data} & \textbf{Slight} & \textbf{Medium} & \textbf{Strong} \\
+\midrule
+Proposed method & 99.90\% & 98.09\% & 95.29\% & 92.28\% \\
+ & (4.30\%) & (34.94\%) & (52.49\%) & (66.41\%) \\
+\addlinespace
+Ensemble TICNN \cite{ref23} & 99.50\% & 99.61\% & 98.22\% & 82.05\% \\
+LDR-CNN \cite{ref26} & 100\% & 99.82\% & 99.45\% & 98.88\% \\
+Deep Transfer Learning \cite{ref28} & 97.95\% & 96.72\% & 94.68\% & 90.32\% \\
+AAnNet \cite{ref27} & 99.48\% & 99.83\% & 99.83\% & 98.28\% \\
+MCNN-LSTM \cite{ref29} & 98.46\% & 88.19\% & 81.41\% & 77.27\% \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \end{document}
