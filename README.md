@@ -1,32 +1,167 @@
-# AW-DPCNN: Adaptive Weighted Dual-Channel PCNN for Multi-Representation Acoustic Signal Fusion
+# AW-DPCNN: Adaptive Weighted Dual-Channel PCNN for Multi-Representation Signal Fusion
 
 [![Python](https://img.shields.io/badge/Python-3.10+-blue)](https://www.python.org/)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.11-red)](https://pytorch.org/)
 [![CUDA](https://img.shields.io/badge/CUDA-12.8-green)](https://developer.nvidia.com/cuda-toolkit)
 [![GPU](https://img.shields.io/badge/GPU-RTX%205090-orange)]()
 
-**AW-DPCNN** is a reproducible deep learning research framework for **acoustic fault diagnosis** via multi-representation signal fusion. Two complementary representations — **Mel spectrograms** (time–frequency) and **Gramian Angular Difference Field (GADF)** images (temporal correlation) — are adaptively fused through a contrast-guided dual-channel PCNN, then classified by a multi-scale channel attention enhanced VGG16 network (MSCA-VGG16).
 
-> **Paper:** *AW-DPCNN Based Multi-Representation and MSCA-VGG16 Signal Fusion for Fault Diagnosis* — under review at *IEEE TIM*.
 
----
+**AW-DPCNN** is a reproducible deep learning research framework for **fault diagnosis** via multi-representation signal fusion. Two complementary representations — **STFT spectrograms** (time–frequency) and **Gramian Angular Difference Field (GADF)** images (temporal correlation) — are adaptively fused through a contrast-guided dual-channel PCNN, then classified by a multi-scale channel attention enhanced VGG16 network (MSCA-VGG16).
+
+> **Paper:** *Adaptive Multi-Representation Fusion via Dual-Channel PCNN with Multi-Scale Convolution for Vibration Signal Fault Diagnosis* — under review at *IEEE TIM*.
 
 ## Table of Contents
+1. [Problem Statement](#problem-statement)
+2. [Proposed Method](#2-proposed-method)
+3. [Key Results](#3-key-results)
+4. [Project Structure](#4-project-structure)
+5. [Quick Start](#5-quick-start)
+6. [Dataset Construction](#6-dataset-construction)
+7. [Running Experiments](#7-running-experiments)
+8. [Evaluation & Visualization](#8-evaluation--visualization)
+9. [Output Artifacts](#9-output-artifacts)
+10. [Models](#10-models)
+11. [Environment](#11-environment)
+12. [Citation](#citation)
 
-1. [Project Structure](#1-project-structure)
-2. [Methodology Overview](#2-methodology-overview)
-3. [Quick Start](#3-quick-start)
-4. [Dataset Construction](#4-dataset-construction)
-5. [Running Experiments](#5-running-experiments)
-6. [Evaluation & Visualization](#6-evaluation--visualization)
-7. [Output Artifacts](#7-output-artifacts)
-8. [Models](#8-models)
-9. [Environment](#9-environment)
-10. [Citation](#citation)
+## Problem Statement
+Rotating machinery fault diagnosis via vibration signals faces a fundamental challenge: **single-representation methods cannot fully capture the discriminative features embedded in non-stationary vibration signals**.
+
+- **Time–frequency representations** (e.g., STFT/Mel spectrograms) capture local spectral energy distributions but do not explicitly model long-range temporal correlations.
+- **Temporal encoding methods** (e.g., GADF/GASF) preserve global pairwise temporal relationships but discard explicit frequency-domain structure.
+- **Naive fusion** (concatenation, pixel-wise averaging) ignores the heterogeneous statistical properties of different representations, often introducing **destructive interference** rather than constructive complementarity.
+
+To address these limitations, we propose a two-stage framework:
+1. **AW-DPCNN** — an adaptive weighted dual-channel pulse-coupled neural network that fuses STFT spectrograms and GADF images via contrast-guided dynamic weighting, representation-specific convolutional kernels ($3\times5$ stripe for STFT, $3\times3$ symmetric for GADF), and iterative pulse-coupled dynamics ($N=20$).
+2. **MSCA-VGG16** — a multi-scale channel attention enhanced VGG16 classifier that exploits the complementary information in fused representations for robust fault identification under noisy conditions.
+
+
+## Proposed Method
+
+The AW-DPCNN framework operates in three stages: **(i)** multi-representation encoding of raw vibration signals into complementary STFT and GADF images, **(ii)** adaptive fusion via contrast-guided dual-channel PCNN, and **(iii)** classification with a multi-scale channel attention enhanced VGG16 network.
+
+<!-- ![Overall Framework](paper/framework/framework1.png) -->
+
+```mermaid
+flowchart LR
+    A[Raw Acoustic Signal] --> B1[STFT Spectrogram]
+    A --> B2[GADF Image]
+    B1 --> C[AW-DPCNN<br/>Adaptive Fusion]
+    B2 --> C
+    C --> D[Fused Representation]
+    D --> E[MSCA-VGG16 Classifier]
+    E --> F[Fault Diagnosis]
+```
+
+### Stage 1 — Multi-Representation Encoding
+
+| Representation | Domain | Captures |
+|---|---|---|
+| **STFT Spectrogram** | Time–Frequency | Joint time–frequency energy distribution; local spectral evolution |
+| **GADF** (Gramian Angular Difference Field) | Angular / Temporal | Global pairwise temporal correlation via angular difference encoding |
+
+Both are rendered as $224 \times 224$ pseudo-colour RGB images via the Viridis colormap.
+<table>
+<tr>
+<td align="center"><b>STFT Spectrogram</b></td>
+<td align="center"><b>GADF Image</b></td>
+</tr>
+<tr>
+<td><img src="paper/representation/STFT_98_Normal_1_00000.png" alt="STFT" width="100%"/></td>
+<td><img src="paper/representation/GADF_98_Normal_1_00000.png" alt="GADF" width="100%"/></td>
+</tr>
+</table>
+
+### Stage 2 — AW-DPCNN Fusion
+
+An **adaptive weighted dual-channel PCNN** that fuses the two heterogeneous representations through:
+- **Contrast-guided adaptive weighting** ($\gamma=10$): dynamically emphasises the dominant representation at each spatial location
+- **Dual-channel coupling**: representation-specific convolution kernels (stripe $3\times5$ for STFT, symmetric $3\times3$ for GADF)
+- **Iterative pulse dynamics** ($N=20$): propagates and reinforces structurally consistent features
+
+### Stage 3 — MSCA-VGG16 Classification
+
+A VGG16-BN backbone augmented with three complementary modules:
+
+| Module | Description |
+|---|---|
+| **Multi-Scale Convolution (MS)** | $3\times3$, $5\times5$, and dilated $3\times3$ parallel branches |
+| **Channel Attention (CA)** | SE-style squeeze-and-excitation with reduction ratio $r=16$ |
+| **Embedding Head (EH)** | 512→1024→256 dimensional projection with BatchNorm + Dropout(0.5) |
+
+**Complexity:** 26.8 M parameters, 15.9 GFLOPs.
 
 ---
 
-## 1) Project Structure
+## 3) Key Results
+
+### 3.1 Backbone Comparison (CWRU 12k DE, 3 trials)
+
+| Model | Acc (%) | F1 (%) | G-Mean (%) | κ (%) |
+|---|---:|---:|---:|---:|
+| **MSCA-VGG16 (Ours)** ⭐ | **99.85 ± 0.10** | **99.46 ± 0.43** | **99.82 ± 0.15** | **99.82 ± 0.12** |
+| VGG16 | 99.19 ± 0.89 | 98.95 ± 1.16 | 98.91 ± 1.22 | 99.06 ± 1.05 |
+| ResNet18 | 98.39 ± 1.32 | 97.85 ± 1.81 | 97.66 ± 2.10 | 98.11 ± 1.55 |
+| EfficientNet-B0 | 95.74 ± 2.07 | 94.14 ± 3.05 | 93.08 ± 4.09 | 95.00 ± 2.43 |
+| MobileNetV3-Small | 93.69 ± 1.64 | 91.03 ± 2.69 | 87.82 ± 5.30 | 92.60 ± 1.92 |
+| ConvNeXt-Tiny | 92.93 ± 2.12 | 90.63 ± 2.50 | 88.99 ± 3.11 | 91.70 ± 2.49 |
+| ViT | 82.35 ± 0.89 | 74.71 ± 2.19 | 64.72 ± 7.53 | 79.30 ± 1.04 |
+
+<table>
+<tr>
+<td align="center"><b>STFT Spectrogram</b></td>
+<td align="center"><b>GADF Image</b></td>
+<td align="center"><b>ROC Curves</b></td>
+</tr>
+<tr>
+<td><img src="experiments/experiment_result/exp1/MSCA_VGG16/12k_de/exp1_MSCA_VGG16/trial_seed42/figures/confusion_matrix.png" alt="Confusion Matrix" width="100%"/></td>
+<td><img src="paper/tsne_models/tsne_MSCA_VGG16_12k_de_trial_seed42.png" alt="t-SNE" width="100%"/></td>
+<td><img src="paper/figures/roc/roc_comparison_macro_avg.png" alt="ROC" width="100%"/></td>
+</tr>
+</table>
+
+### 3.2 Ablation Study — Component Contributions
+| Config | Fusion | MS | CA | EH | Acc (%) | F1 (%) |
+|---|:---:|:---:|:---:|:---:|---:|---:|
+| B0 — STFT-only | ✗ | ✗ | ✗ | ✗ | 93.37 ± 1.32 | 91.49 ± 2.25 |
+| B1 — GADF-only | ✗ | ✗ | ✗ | ✗ | 60.99 ± 1.50 | 56.90 ± 2.13 |
+| B2 — Concat fusion | ✗ | ✗ | ✗ | ✗ | 96.28 ± 4.49 | 94.91 ± 6.59 |
+| B3 — AW-DPCNN (γ=1) | ✓ | ✗ | ✗ | ✗ | 96.30 ± 0.49 | 95.02 ± 0.40 |
+| B4 — +MS only | ✓ | ✓ | ✗ | ✗ | 96.84 ± 4.01 | 95.83 ± 5.62 |
+| B5 — +CA only | ✓ | ✗ | ✓ | ✗ | 98.97 ± 0.83 | 98.88 ± 0.91 |
+| B6 — +EH only | ✓ | ✗ | ✗ | ✓ | 98.10 ± 3.09 | 97.72 ± 3.72 |
+| **B7 — Full MSCA-VGG16** | **✓** | **✓** | **✓** | **✓** | **99.85 ± 0.10** | **99.46 ± 0.43** |
+
+**Key findings:** Adaptive fusion contributes **+2.93%** over STFT-only (B3 vs. B0). Channel attention (CA) provides the largest single-module gain (**+2.67%**, B5 vs. B3).
+
+### 3.3 Representation Comparison (12 TF × Temporal Combos)
+
+Among all 12 STFT/CWT/Mel × GADF/GASF/MTF/RP combinations tested with VGG16:
+
+| Rank | Combination | Acc (%) | F1 (%) | G-Mean (%) |
+|---:|---|---:|---:|---:|
+| **1** | **STFT + GADF** ⭐ | **96.30 ± 0.49** | **95.02 ± 0.40** | **94.22 ± 0.49** |
+| 2 | Mel + RP | 94.56 ± 3.61 | 92.55 ± 4.96 | 90.93 ± 6.56 |
+| 3 | Mel + MTF | 94.08 ± 1.08 | 90.94 ± 2.08 | 86.27 ± 4.76 |
+
+**STFT+GADF** is the optimal representation pair, confirming the complementary nature of time–frequency energy distribution and global temporal correlation.
+
+### 3.4 Generalization & Noise Robustness
+
+| Generalization Scenario | Accuracy (%) | F1 (%) |
+|---|---:|---:|
+| CWRU 12k DE (primary) | 99.85 ± 0.10 | 99.46 ± 0.43 |
+| CWRU 12k FE (cross-sensor) | 97.45 ± 1.44 | 97.01 ± 1.72 |
+| CWRU 48k DE (cross-sampling-rate) | 94.81 ± 1.74 | 86.43 ± 1.59 |
+
+![Generalization](paper/figures/generalization/generalization_trial_seed42.png)
+
+**Noise Robustness** — Accuracy, F1, and AUC under additive Gaussian noise:
+![Noise Robustness](data-optimization/noise_robustness/data-optimization/noise_robustness/noise_robustness_multi_panel.png)
+
+
+## Project Structure
 
 ```text
 AW-DPCNN/
@@ -104,50 +239,7 @@ AW-DPCNN/
 
 ---
 
-## 2) Methodology Overview
-
-```mermaid
-flowchart LR
-    A[Raw Acoustic Signal] --> B1[Mel Spectrogram]
-    A --> B2[GADF Image]
-    B1 --> C[AW-DPCNN<br/>Adaptive Fusion]
-    B2 --> C
-    C --> D[Fused Representation]
-    D --> E[MSCA-VGG16 Classifier]
-    E --> F[Fault Diagnosis]
-```
-
-### Stage 1 — Multi-Representation Encoding
-
-| Representation | Domain | Captures |
-|---|---|---|
-| **Mel Spectrogram** | Time–Frequency | Spectral energy distribution, perceptually motivated Mel-scale compression |
-| **GADF** (Gramian Angular Difference Field) | Angular / Temporal | Global temporal correlation through pairwise angular difference encoding |
-
-Both are rendered as $224 \times 224$ pseudo-colour RGB images via the Viridis colormap.
-
-### Stage 2 — AW-DPCNN Fusion
-
-An **adaptive weighted dual-channel PCNN** that fuses the two heterogeneous representations through:
-- **Contrast-guided adaptive weighting** ($\gamma=10$): dynamically emphasises the dominant representation at each spatial location
-- **Dual-channel coupling**: representation-specific convolution kernels (stripe $3\times5$ for Mel, symmetric $3\times3$ for GADF)
-- **Iterative pulse dynamics** ($N=20$): propagates and reinforces structurally consistent features
-
-### Stage 3 — MSCA-VGG16 Classification
-
-A VGG16-BN backbone augmented with three complementary modules:
-
-| Module | Description |
-|---|---|
-| **Multi-Scale Convolution (MS)** | $3\times3$, $5\times5$, and dilated $3\times3$ parallel branches |
-| **Channel Attention (CA)** | SE-style squeeze-and-excitation with reduction ratio $r=16$ |
-| **Embedding Head (EH)** | 512→1024→256 dimensional projection with BatchNorm + Dropout(0.5) |
-
-**Complexity:** 26.8 M parameters, 15.9 GFLOPs.
-
----
-
-## 3) Quick Start
+## 5) Quick Start
 
 ### Prerequisites
 
@@ -194,9 +286,9 @@ python scripts/evaluate.py \
 
 ---
 
-## 4) Dataset Construction
+## 6) Dataset Construction
 
-### 4.1 CWRU 12k DE Dataset (10 classes)
+### 6.1 CWRU 12k DE Dataset (10 classes)
 
 Builds from raw CWRU `.mat` files with file-level 60/20/20 split (seed=42). Includes all three fault severities (0.007'', 0.014'', 0.021'') across Ball, Inner Race, and Outer Race faults plus Normal baseline.
 
@@ -206,7 +298,7 @@ python scripts/build_cwru_de.py --workers 32
 
 Output: `datasets/cwru_de/{train,val,test}/{BF007,…,BF021,IF007,…,OF021,Normal}/`
 
-### 4.2 Ablation Datasets (5 variants)
+### 6.2 Ablation Datasets (5 variants)
 
 Builds B0–B4 fusion variants for component decomposition experiments:
 
@@ -222,7 +314,7 @@ Builds B0–B4 fusion variants for component decomposition experiments:
 python scripts/build_ablation_datasets.py --workers 32
 ```
 
-### 4.3 Representation Comparison Datasets (12 combos)
+### 6.3 Representation Comparison Datasets (12 combos)
 
 All combinations of 3 time–frequency methods × 4 temporal encoding methods:
 
@@ -242,9 +334,9 @@ Output: `datasets/rep_compare_12k_de_split/{mel_gadf,…,cwt_rp}/{train,val,test
 
 ---
 
-## 5) Running Experiments
+## 7) Running Experiments
 
-### 5.1 Backbone Comparison
+### 7.1 Backbone Comparison
 
 6 models on the CWRU DE dataset with AW-DPCNN fused representations:
 
@@ -261,7 +353,7 @@ python scripts/run_repeated_trials.py \
     --num-runs 3
 ```
 
-### 5.2 Ablation Study (B0–B8)
+### 7.2 Ablation Study (B0–B8)
 
 Systematic component decomposition across 9 configurations:
 
@@ -274,7 +366,7 @@ Systematic component decomposition across 9 configurations:
 python scripts/run_ablation_experiments.py --epochs 30
 ```
 
-### 5.3 Representation Comparison (12 combos)
+### 7.3 Representation Comparison (12 combos)
 
 Evaluates all 12 TF×temporal combinations under identical training settings using VGG16-BN.
 
@@ -292,7 +384,7 @@ python scripts/run_rep_compare.py --combo mel_gadf --num-workers 32 --num-trials
 python scripts/run_rep_compare.py --aggregate-only --num-trials 3
 ```
 
-### 5.4 Hyperparameter Sensitivity
+### 7.4 Hyperparameter Sensitivity
 
 Sweeps AW-DPCNN parameters ($\gamma$, $N$, $\alpha$) against a frozen MSCA-VGG16 classifier:
 
@@ -303,7 +395,7 @@ python scripts/hyperparameter_sensitivity.py \
     --auto-checkpoint
 ```
 
-### 5.5 Noise Robustness
+### 7.5 Noise Robustness
 
 Evaluates models under additive Gaussian noise at SNR levels from 0–30 dB:
 
@@ -316,7 +408,7 @@ python scripts/noise_robustness.py \
 
 ---
 
-## 6) Evaluation & Visualization
+## 8) Evaluation & Visualization
 
 ### Metrics
 
@@ -356,7 +448,7 @@ python scripts/results_to_latex.py
 
 ---
 
-## 7) Output Artifacts
+## 9) Output Artifacts
 
 Each run creates a directory under `output.root_dir`:
 
@@ -412,7 +504,7 @@ output:
 
 ---
 
-## 8) Models
+## 10) Models
 
 Set `model.name` in your experiment YAML:
 
@@ -429,7 +521,7 @@ All models support ImageNet pretrained weights via `model.pretrained: true`.
 
 ---
 
-## 9) Environment
+## 11) Environment
 
 | Component | Specification |
 |---|---|
@@ -452,12 +544,11 @@ python -c "import torch; print(f'CUDA: {torch.cuda.is_available()} | Device: {to
 
 ```bibtex
 @article{yang2025awdpcnn,
-  title   = {AW-DPCNN Based Multi-Representation and MSCA-VGG16
-             Signal Fusion for Fault Diagnosis},
+  title   = {Adaptive Multi-Representation Fusion via Dual-Channel PCNN with Multi-Scale Convolution for Vibration Signal Fault Diagnosis},
   author  = {Chen Yang and Zonglong Bai and Zhiyuan Xie and
              Chenggang Liu and Junyan Zhang and Yihe Guo},
   journal = {IEEE Transactions on Instrumentation and Measurement},
-  year    = {2025},
+  year    = {2026},
   note    = {Under review}
 }
 ```
