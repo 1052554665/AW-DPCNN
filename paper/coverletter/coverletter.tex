@@ -8,31 +8,34 @@
 \setstretch{1.15}
 \signature{\textbf{Zonglong Bai} \\
 	On behalf of all co-authors \\
-	baizongyao@163.com}
-	\address{Zonglong, Bai \\
+	zlbai@ncepu.edu.cn}
+\address{Zonglong Bai \\
 	North China Electric Power University\\
 	Department of Electronic and Communication Engineering \\
-	Yonghuabei Street 619th, Baoding, China\\
+	Yonghuabei Street 619th, Baoding 071003, China\\
 }
 \date{\today}
 \begin{document}
 \begin{letter}
 {Editor-in-Chief \\
-	IEEE Transactions on Instrumentation and Measurement}
+	Knowledge-Based Systems}
 \opening{Dear Editor,}
 
-We would like to submit our manuscript entitled \textit{``Adaptive Multi-Representation Fusion via Dual-Channel PCNN with Multi-Scale Convolution for Vibration Signal Fault Diagnosis''} for consideration for publication in \textit{IEEE Transactions on Instrumentation and Measurement}.
+We would like to submit our manuscript entitled \textit{``Adaptive Multi-Representation Fusion via Dual-Channel PCNN with Multi-Scale Convolution for Vibration Signal Fault Diagnosis''} for consideration for publication in \textit{Knowledge-Based Systems}.
 
-Vibration-based fault diagnosis is essential for rotating machinery, yet existing single-representation methods capture only partial signal characteristics, and current fusion strategies lack adaptivity to dynamically regulate heterogeneous representations. To address these gaps, this work proposes a two-stage framework: an adaptive weighted dual-channel pulse-coupled neural network (AW-DPCNN) that fuses STFT spectrograms and GADF images via contrast-guided dynamic weighting. Furthermore, a multi-scale convolution and channel attention enhanced VGG16 (MSCA-VGG16) classifier for robust fault identification. The main contributions are:
+Vibration-based fault diagnosis is essential for rotating machinery, yet existing single-representation methods capture only partial signal characteristics, and current fusion strategies lack the adaptivity to dynamically regulate heterogeneous representations. To address these gaps, this work proposes a two-stage framework: an adaptive weighted dual-channel pulse-coupled neural network (AW-DPCNN) that fuses STFT spectrograms and GADF images via contrast-guided dynamic weighting, and a multi-scale convolution and channel attention enhanced VGG16 (MSCA-VGG16) classifier for robust fault identification. The main contributions are:
+
 \begin{enumerate}
-	\item \textbf{AW-DPCNN:} To overcome the single-representation limitation, an adaptive fusion mechanism is proposed that integrates heterogeneous STFT spectrograms and GADF images via contrast-guided dynamic weighting and dual-channel convolutional stimuli, adaptively regulating per-channel contributions to suppress destructive interference.
-	\item \textbf{MSCA-VGG16:} To fully exploit the complementary information in the fused representations, a classification network is designed with multi-scale convolution for multi-granularity fault patterns, squeeze-and-excitation channel attention for dynamic frequency-band recalibration, and a compact embedding head for enhanced discriminability.
-	\item Extensive experiments on the CWRU bearing dataset, including backbone and representation comparisons, ablation studies, and noise robustness evaluations, with cross-sensor (97.45\%) and cross-sampling-rate (94.81\%) generalization.
+	\item \textbf{AW-DPCNN fusion mechanism:} An adaptive fusion mechanism is proposed that integrates heterogeneous STFT spectrograms and GADF images via contrast-guided dynamic weighting and dual-channel convolutional stimuli, adaptively regulating per-channel contributions to suppress destructive interference and enhance feature complementarity.
+	\item \textbf{MSCA-VGG16 classification network:} A dedicated classifier is designed with multi-scale convolution for capturing fault patterns at multiple temporal and spectral granularities, squeeze-and-excitation channel attention for dynamic frequency-band recalibration, and a compact embedding head for enhanced intra-class compactness and inter-class separability.
+	\item \textbf{Comprehensive experimental validation:} Extensive experiments on the CWRU bearing dataset, including backbone and representation comparisons, systematic ablation studies, and noise robustness evaluations, with cross-sensor generalization to fan-end data (97.45\%) and cross-sampling-rate robustness at 48~kHz (94.81\%).
 \end{enumerate}
 
-Results demonstrate 99.85\% accuracy on the 12~kHz drive-end benchmark, outperforming seven representative backbones. Ablation confirms that adaptive weighting contributes 2.93\% and multi-scale convolution adds 0.54\% over their respective baselines. To contextualize our contribution within the state of the art, we conduct a dedicated comparative evaluation against representative benchmarks, particularly those from IEEE TIM. The results explicitly underscore the proposed method's marked advantages, not only in effectively fusing multi-representational features but also in delivering robust cross-domain generalization that exceeds prior art. Noise robustness and generalization experiments further validate stable performance under realistic conditions.
+Results demonstrate 99.85\% accuracy on the 12~kHz drive-end benchmark, outperforming seven representative backbones. Ablation confirms that adaptive weighting contributes 2.93\% and multi-scale convolution adds 0.54\% over their respective baselines. To contextualize our contribution within the state of the art, we conduct a dedicated comparative evaluation against representative benchmarks, particularly those from Knowledge-Based Systems. The results explicitly underscore the proposed method's marked advantages, not only in effectively fusing multi-representational features but also in delivering robust cross-domain generalization that exceeds prior art. Noise robustness and generalization experiments further validate stable performance under realistic conditions.
 
-We believe this work fits well within the scope of \textit{IEEE Transactions on Instrumentation and Measurement}, particularly in intelligent signal processing, vibration signal-based fault diagnosis, and deep learning for instrumentation and measurement. This manuscript is original, has not been published previously, and is not under consideration elsewhere. All authors have approved the submission.
+We believe this work fits well within the scope of \textit{Knowledge-Based Systems}, particularly in the areas of knowledge-driven deep learning, multi-representation fusion, intelligent fault diagnosis, and data-driven decision support for industrial systems. The proposed adaptive fusion framework contributes novel knowledge integration strategies for heterogeneous signal representations, and the systematic experimental methodology aligns with the journal's emphasis on knowledge-based approaches to complex engineering problems.
+
+This manuscript is original, has not been published previously, and is not under consideration elsewhere. All authors have read and approved the submission. We confirm that there are no competing financial interests or personal relationships that could have influenced this work.
 
 Thank you for your time and consideration.
 

@@ -23,7 +23,6 @@ keywords = {Intelligentfault diagnosis, Interpretability, Fusion wavelet convolu
 abstract = {Deep learning has achieved significant success in intelligent fault diagnosis owing to its powerful nonlinear mapping capabilities. However, the lack of interpretability of deep learning-based fault diagnosis methods with black-box characteristics has seriously hindered their widespread industrial application. To address this issue, an interpretable adaptive denoising convolutional network (IADC-Net) is proposed for intelligent fault diagnosis of rotating machinery in this paper, which constructs a comprehensive interpretability framework. In this method, the interpretable signal processing layer is driven by adaptive fusion denoising wavelet convolution (AFDWC) module, enhancing the model’s generalization capabilities in various scenarios. The AFDWC integrated with multiple wavelet basis kernel can capture abundant multi-scale mechanical fault information. The adaptive soft threshold denoising (ASTD) dynamically removes noise interference on channel features, and the energy-entropy ratio channel weighting adaptively highlights frequency bands more relevant to faults. Then, the interpretable feature extraction layer leverages the sparse interaction characteristics of traditional convolutions to elucidate its intrinsic mathematical implications through sparse representation, which is of great significance to the engineering applications of various convolutional networks. And, the interpretable result analysis layer visualizes the model results with attention weight and output features to help users understand the decision process and trust diagnosis results. Finally, the effectiveness of the proposed method is verified and analyzed by the public fault datasets and the industrial robot experimental platform, demonstrating the interpretability of model, the rationality of network structure and the superiority of diagnostic performance. The code library is available at: https://github.com/GTH25/IADC-Net.}
 }
 
-
 @ARTICLE{6899683,
   author={Kang, Myeongsu and Kim, Jaeyoung and Kim, Jong-Myon and Tan, Andy C. C. and Kim, Eric Y. and Choi, Byeong-Keun},
   journal={IEEE Transactions on Power Electronics}, 
@@ -455,6 +454,20 @@ keywords = {Vibration signal, Low-speed bearing fault diagnosis, Largest Lyapuno
 abstract = {Fault diagnosis of low-speed bearings via vibration analysis is challenging due to the low energy of fault signatures and the high susceptibility to noise, particularly in early degradation stages. Recent deep-learning approaches have shown promising results in mitigating those limitations, yet many require large datasets, high sampling rates, or complex preprocessing for ensuring generalization. This study proposes a supervised learning framework optimized for limited data scenarios, advancing the state-of-the-art through four contributions. First, Rosenstein’s Largest Lyapunov Exponent (LLE) algorithm is modified by replacing Euclidean with Pearson correlation distance for nearest-neighbor identification in reconstructed phase space, enhancing class separability. Second, a hybrid feature set integrates classical time-domain indicators with nonlinear measures (LLE and Higuchi Fractal Dimension), tailored for incipient-fault conditions. Third, the influence of vibration signal window size, expressed in shaft revolutions, is systematically evaluated with the use of Welch’s t-test, providing guidelines for balancing sensitivity and computational cost. Finally, the framework is validated on two datasets, namely, (1) an experimental set simulating abrasive wear on bearing outer races at three severities under varied loads, representing a non-periodic defect type rarely studied, and (2) naturally degraded industrial pulley bearings. The results show high classification accuracy without complex preprocessing, confirming suitability for predictive maintenance in data- and resource-constrained environments. The approach offers a compact, interpretable, and data-efficient solution for early fault detection in low-speed bearings, with potential for deployment in industrial contexts where robustness and scalability are critical.}
 }
 
+@article{WEN2025114614,
+title = {A novel multi-scale quadratic convolutional network for bearing fault diagnosis: Handling noisy conditions},
+journal = {Knowledge-Based Systems},
+volume = {330},
+pages = {114614},
+year = {2025},
+issn = {0950-7051},
+doi = {https://doi.org/10.1016/j.knosys.2025.114614},
+url = {https://www.sciencedirect.com/science/article/pii/S0950705125016533},
+author = {Chuanbo Wen and Jiehao Zhang and Zidong Wang and Weibo Liu and Junjie Yang},
+keywords = {Fault diagnosis, Rolling bearing, Quadratic convolution, Multi-scale, Feature fusion},
+abstract = {Despite recent advances in deep learning-based fault diagnosis, it is challenging to build a reliable fault diagnosis model for rolling bearings under noisy conditions. Rolling bearing vibration signals are frequently corrupted by various types of noises, which poses significant challenges for accurate fault feature extraction and degrades diagnostic performance. This paper proposes a multi-scale hybrid information fusion method based on a quadratic embedded-attention convolutional network (MSHQAN) for bearing fault diagnosis. Specifically, a multi-scale feature extraction (MFE) module is proposed to extract representative features from the vibration signals. In the MFE module, a quadratic mixed layer is introduced to model the complex nonlinear relationships and multi-scale features in the vibration signal. Furthermore, a spatial-refined feature unit is put forward to refine the features extracted by the quadratic mixed unit to obtain discriminative spatial features. Additionally, a hybrid feature weight fusion module is proposed to achieve optimal fusion of cross-scale hybrid features via an adaptive weight allocation strategy. Moreover, a quadratic mixed-convolutional pooling module is developed to further strengthen the discriminative representation of fault-related features through in-depth refinement. To enhance model interpretability, a Grad-CAM++ method is employed to identify fault-related regions under noisy conditions. Experimental results validate the effectiveness of the proposed MSHQAN on two public bearing datasets.}
+}
+
 @ARTICLE{10663388,
   author={Liu, Jie and Tan, Yutao and Yang, Na and Gao, Yu and Zhao, Wei-Qiang},
   journal={IEEE Sensors Journal}, 
@@ -517,6 +530,20 @@ abstract = {Signal processing is an important task for machine fault diagnosis. 
   pages={7320-7333},
   keywords={Feature extraction;Fault diagnosis;Entropy;Complexity theory;Transforms;Training;Sensors;Efficient channel attention (ECA);fault diagnosis;multiscale residual feature (MRF);planetary gearboxes;stacked residual neural network (ResNet)},
   doi={10.1109/JSEN.2023.3244929}}
+
+@article{MIAO2022108116,
+title = {Deep sparse representation network for feature learning of vibration signals and its application in gearbox fault diagnosis},
+journal = {Knowledge-Based Systems},
+volume = {240},
+pages = {108116},
+year = {2022},
+issn = {0950-7051},
+doi = {https://doi.org/10.1016/j.knosys.2022.108116},
+url = {https://www.sciencedirect.com/science/article/pii/S0950705122000016},
+author = {Mengqi Miao and Yuanhang Sun and Jianbo Yu},
+keywords = {Machinery fault diagnosis, Vibration signals, Sparse representation, Adaptive densely stacked convolutional structure, Convolutional neural network},
+abstract = {Vibration signals play a key role in machinery fault diagnosis, which are often buried by strong noises due to complex working conditions. Typical deep neural networks (e.g., convolutional neural networks (CNNs)) can effectively learn features from vibration data and perform well in machinery fault diagnosis. Nonetheless, the vibration signals collected from real industry are often noised and nonstationary. It is still difficult for CNNs to implement feature extraction and noise reduction from large number of vibration signals. In this paper, a novel deep learning model, deep sparse representation network (DSRNet) is proposed to suppress noise and learn effective features from noised signals directly. Firstly, a sparse representation layer is developed to extract impulsive components and suppress noise hidden in vibration signals in an end-to-end manner. Secondly, an adaptive densely stacked convolutional structure is proposed to extract effective features from the filtered signals by the sparse representation layer. Finally, the effectiveness of DSRNet for feature learning on vibration signals is verified on two gearbox cases. The experimental results show that DSRNet has good feature learning and signal denoising performance, which outperforms those famous CNNs (e.g., ResNet, DenseNet).}
+}
 
 @article{WANG2026105996,
 title = {A novel CNN-transformer integrated with cross-attention mechanism for intelligent diagnosis of rolling bearing faults},

@@ -1,133 +1,80 @@
-%%
-%% Elsevier cas-dc template for Mechanical Systems and Signal Processing
-%% Converted from IEEEtran format
-%%
+\documentclass[journal]{IEEEtran}
 
-\documentclass[a4paper,fleqn]{cas-dc}
-
-\usepackage[numbers]{natbib}
+\usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{subcaption}
 \usepackage{booktabs}
 \usepackage{multirow}
-\usepackage[expansion=false]{microtype}
+\usepackage{microtype}
 \usepackage{caption}
+\usepackage{balance}
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{siunitx}
 \usepackage{url}
-
 \captionsetup{font=small,labelfont=bf}
 \captionsetup[table]{labelsep=colon, textfont=normalfont, labelfont=sc, font=footnotesize}
 
 \graphicspath{{framework/}{representation/}{AW-DPCNN/}{MSCA-VGG16/}{Fused images/}{equipment/}{confusion_matrix/}{tsne/}{tsne_cwru/}{raw_tsne/}{tsne_models/}{figures/}}
 
-\hyphenation{op-tical net-works semi-conduc-tor}
+\hyphenation{op-tical net-works semi-conduc-tor IEEE-Xplore}
 
 \begin{document}
-\let\WriteBookmarks\relax
-\def\floatpagepagefraction{1}
-\def\textpagefraction{.001}
 
-\shorttitle{Adaptive Multi-Representation Fusion for Fault Diagnosis}
-\shortauthors{C. Yang et~al.}
+% \title{AW-DPCNN Based Multi-Representation Supervised Learning for Mechanical Signal Fault Diagnosis}
+% \title{AW-DPCNN: Adaptive-Weighted Dual-PCNN Fusion of Time-Frequency Representations for Non-Stationary Fault Diagnosis}
 
-\title [mode = title]{Adaptive Multi-Representation Fusion via Dual-Channel PCNN with Multi-Scale Convolution for Vibration Signal Fault Diagnosis}
+% \title{Adaptive Multi-Representation Fusion with Multi-Scale Channel Attention for Vibration Signal Fault Diagnosis}
+% \title{Adaptive Dual-Channel PCNN Multi-Representation Fusion and MSCA-VGG16 for Vibration Signal Fault Diagnosis}
+% \title{Adaptive Weighted Dual-Channel Pulse-Coupled Neural Network Fusion with Multi-Scale Attention for Bearing Fault Diagnosis}
+% \title{Adaptive Weighted Dual-Channel PCNN Multi-Representation Fusion with Multi-Scale Convolution for Vibration Signal Fault Diagnosis}
+% \title{Adaptive Multi-Representation Fusion with Multi-Scale Convolution for Vibration Signal Fault Diagnosis}
+% \title{Adaptive Multi-Representation Fusion of DPCNN with Multi-Scale Convolution for Vibration Signal Fault Diagnosis}
+\title{Adaptive Multi-Representation Fusion via Dual-Channel PCNN with Multi-Scale Convolution for Vibration Signal Fault Diagnosis}
+
+\author{Chen Yang, Zonglong Bai, Zhiyuan Xie, Chenggang Liu, Junyan Zhang and Yihe Guo
+\thanks{This work is supported by the National Natural Science Foundation of
+China (No. 12404545), Science Research Project of Hebei Education Department, China (No. QN2025334), and the Fundamental Research Funds for the
+Central Universities (No. 2026MS144).}}
 
 
-\tnotemark[1]
+\markboth{IEEE Transactions on Instrumentation and Measurement}
+{Yang~\MakeLowercase{\textit{et al.}}: AW-DPCNN Based Multi-Representation Supervised Learning for Mechanical Signal Fault Diagnosis}
 
-\tnotetext[1]{This work is supported by the National Natural Science Foundation of China (No.~12404545), Science Research Project of Hebei Education Department, China (No.~QN2025334), and the Fundamental Research Funds for the Central Universities (No.~2026MS144).}
-
-% \author[1]{Chen Yang}
-% \author[2]{Zonglong Bai}
-% \cormark[1]
-% \ead{zlbai@ncepu.edu.cn}
-% \author[3]{Zhiyuan Xie}
-% \author[4]{Chenggang Liu}
-% \author[5]{Junyan Zhang}
-% \author[6]{Yihe Guo}
-
-% \affiliation[1]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
-%     city={Baoding},
-%     postcode={071003},
-%     country={China}}
-
-% \affiliation[2]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
-%     city={Baoding},
-%     postcode={071003},
-%     country={China}}
-
-% \affiliation[3]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
-%     city={Baoding},
-%     postcode={071003},
-%     country={China}}
-
-% \affiliation[4]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
-%     city={Baoding},
-%     postcode={071003},
-%     country={China}}
-
-% \affiliation[5]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
-%     city={Baoding},
-%     postcode={071003},
-%     country={China}}
-
-% \affiliation[6]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
-%     city={Baoding},
-%     postcode={071003},
-%     country={China}}
-
-% \cortext[cor1]{Corresponding author.}
+\maketitle
 
 \begin{abstract}
 Vibration signal analysis is essential for the fault diagnosis of rotating machinery. However, existing methods based on single representations often fail to fully extract the discriminative features embedded in vibration signals. To address this single-representation limitation and adaptively fuse heterogeneous fault features, this paper proposes an adaptive weighted dual-channel pulse-coupled neural network (AW-DPCNN) for multi-representation fusion. The AW-DPCNN adaptively integrates complementary and heterogeneous short-time Fourier transform (STFT) spectrograms and Gramian angular difference field (GADF) images derived from vibration signals. Furthermore, to fully exploit the complementary information encoded in the fused representations, a multi-scale receptive fields and dynamic channel attention enhanced VGG16 (MSCA-VGG16) network is designed to improve fault diagnosis performance and noise robustness under lower signal-to-noise ratio conditions. Extensive experiments on the CWRU bearing dataset demonstrate that the proposed framework achieves 99.85\% accuracy on the 12~kHz drive-end benchmark, with strong cross-sensor generalization (97.45\% on fan-end data) and cross-sampling-rate robustness (94.81\% at 48~kHz). Ablation studies confirm that adaptive weighting contributes 2.93\% and multi-scale convolution adds 0.54\% over the respective baselines, while noise robustness tests validate stable performance under degraded signal conditions.
 \end{abstract}
 
-% Uncomment and provide an image file for graphical abstract
-% \begin{graphicalabstract}
-% \includegraphics{figs/graphical-abstract.pdf}
-% \end{graphicalabstract}
-
-% \begin{highlights}
-% \item AW-DPCNN adaptively fuses STFT and GADF representations
-% \item MSCA-VGG16 with multi-scale attention for classification
-% \item 99.85\% accuracy on CWRU 12 kHz drive-end benchmark
-% \item Robust cross-sensor and cross-sampling-rate generalization
-% \item Stable noise performance down to 5.0 dB SNR level
-% \end{highlights}
-
-\begin{keywords}
-Fault diagnosis \sep Gramian angular difference field (GADF) \sep pulse coupled neural network (PCNN) \sep short-time Fourier transform (STFT) \sep vibration signal
-\end{keywords}
-
-\maketitle
+\begin{IEEEkeywords}
+Fault diagnosis, Gramian angular difference field (GADF), pulse coupled neural network (PCNN), short-time Fourier transform (STFT), vibration signal.
+\end{IEEEkeywords}
 
 \section{Introduction}
+\IEEEPARstart{R}{otating} machinery, including bearings, gears, and shafts, constitutes the core of modern industrial systems~\cite{10313245},~\cite{GAO2026114419}. Unexpected failures of these critical components can lead to catastrophic breakdowns, substantial economic losses, and severe safety hazards. Consequently, reliable and intelligent fault diagnosis techniques have become indispensable for condition-based maintenance and operational safety assurance~\cite{6899683}. Among various diagnostic modalities, vibration-based monitoring has received the most extensive research attention due to its rich fault-related information content, non-intrusive sensor deployment, and well-established physical understanding of fault-induced vibration signatures~\cite{YI2025116881},~\cite{9440949}.
 
-Rotating machinery, including bearings, gears, and shafts, constitutes the core of modern industrial systems~\cite{10313245,GAO2026114419,MIAO2022108116}. Unexpected failures of these critical components can lead to catastrophic breakdowns, substantial economic losses, and severe safety hazards. Consequently, reliable and intelligent fault diagnosis techniques have become indispensable for condition-based maintenance and operational safety assurance~\cite{6899683}. Among various diagnostic modalities, vibration-based monitoring has received the most extensive research attention due to its rich fault-related information content, non-intrusive sensor deployment, and well-established physical understanding of fault-induced vibration signatures~\cite{YI2025116881,9440949}.
+Despite the practical success of vibration-based diagnosis, the non-stationary nature of real-world machinery signals remains a fundamental challenge. Under variable speed, fluctuating load, and time-varying operating conditions, vibration signals exhibit pronounced non-stationary characteristics, as their spectral content and statistical properties evolve over time in complex ways that cannot be adequately captured by conventional stationary signal processing techniques~\cite{8853278}~\cite{9242332}. Single time-domain or frequency-domain representations each capture only partial aspects of these rich signals. Time-domain features may overlook critical spectral information, while frequency-domain representations discard temporal evolution patterns that are essential for distinguishing transient fault events from steady-state operating conditions~\cite{HONG20142164}~\cite{10319398}.
 
-Despite the practical success of vibration-based diagnosis, the non-stationary nature of real-world machinery signals remains a fundamental challenge. Under variable speed, fluctuating load, and time-varying operating conditions, vibration signals exhibit pronounced non-stationary characteristics, as their spectral content and statistical properties evolve over time in complex ways that cannot be adequately captured by conventional stationary signal processing techniques~\cite{8853278,9242332}. Single time-domain or frequency-domain representations each capture only partial aspects of these rich signals. Time-domain features may overlook critical spectral information, while frequency-domain representations discard temporal evolution patterns that are essential for distinguishing transient fault events from steady-state operating conditions~\cite{HONG20142164,10319398}.
+To address the limitations of single-representation approaches, researchers have explored complementary representation strategies. Time--frequency representations such as the short-time Fourier transform (STFT) spectrogram, Mel spectrogram, and continuous wavelet transform (CWT) scalogram provide joint time--frequency energy distributions that reveal how spectral content evolves temporally~\cite{10226588},~\cite{DONG2023108934},~\cite{10659159}. In parallel, temporal encoding methods such as the Gramian Angular Field (GAF), Markov transition field (MTF), and recurrence plot (RP) transform one-dimensional time series into two-dimensional images by encoding pairwise temporal relationships, thereby preserving global temporal correlation structures that time--frequency methods may not explicitly capture~\cite{ZHANG2026106301},~\cite{10517915}~\cite{LIU20254863}. However, most existing studies adopt a single representation for downstream classification, and the complementary nature of time--frequency and temporal-encoded representations remains largely underexploited.
 
-To address the limitations of single-representation approaches, researchers have explored complementary representation strategies. Time--frequency representations such as the short-time Fourier transform (STFT) spectrogram, Mel spectrogram, and continuous wavelet transform (CWT) scalogram provide joint time--frequency energy distributions that reveal how spectral content evolves temporally~\cite{10226588,DONG2023108934,10659159}. In parallel, temporal encoding methods such as the Gramian Angular Field (GAF), Markov transition field (MTF), and recurrence plot (RP) transform one-dimensional time series into two-dimensional images by encoding pairwise temporal relationships, thereby preserving global temporal correlation structures that time--frequency methods may not explicitly capture~\cite{ZHANG2026106301,10517915,LIU20254863}. However, most existing studies adopt a single representation for downstream classification, and the complementary nature of time--frequency and temporal-encoded representations remains largely underexploited.
+Multi-representation fusion offers a natural avenue to combine the strengths of heterogeneous representations, while existing fusion strategies face critical limitations. Simple concatenation or pixel-wise averaging ignores the distinct statistical properties and structural characteristics of different representations, potentially introducing destructive interference rather than constructive complementarity~\cite{8513874}~\cite{10260234}. Fixed-weight fusion schemes lack the adaptivity to emphasize discriminative representations while suppressing less informative ones on a per-sample or per-region basis~\cite{PENG2012164}. Furthermore, conventional deep learning classifiers are typically optimized for single-representation inputs and lack dedicated architectural mechanisms for capturing the multi-scale and channel-wise characteristics that emerge from multi-representation fusion~\cite{11345448}~\cite{8788665}.
 
-Multi-representation fusion offers a natural avenue to combine the strengths of heterogeneous representations, while existing fusion strategies face critical limitations. Simple concatenation or pixel-wise averaging ignores the distinct statistical properties and structural characteristics of different representations, potentially introducing destructive interference rather than constructive complementarity~\cite{8513874,10260234}. Fixed-weight fusion schemes lack the adaptivity to emphasize discriminative representations while suppressing less informative ones on a per-sample or per-region basis~\cite{PENG2012164}. Furthermore, conventional deep learning classifiers are typically optimized for single-representation inputs and lack dedicated architectural mechanisms for capturing the multi-scale and channel-wise characteristics that emerge from multi-representation fusion~\cite{11345448,8788665}.
-
-To address these gaps, we proposes a two-stage framework comprising an adaptive weighted dual-branch pulse-coupled neural network (AW-DPCNN) for multi-representation fusion, and a multi-scale channel attention enhanced VGG16 (MSCA-VGG16) classifier for robust fault identification. The main contributions are summarized as follows.
+To address these gaps, this paper proposes a two-stage framework comprising an adaptive weighted dual-branch pulse-coupled neural network (AW-DPCNN) for multi-representation fusion, and a multi-scale channel attention enhanced VGG16 (MSCA-VGG16) classifier for robust fault identification. The main contributions are summarized as follows.
 
 \begin{itemize}
 \item An AW-DPCNN fusion mechanism is proposed to adaptively integrate STFT spectrograms and Gramian angular difference field (GADF) images. The mechanism introduces contrast-guided adaptive weighting to dynamically regulate per-channel contributions, dual-channel external stimuli with representation-specific convolutional kernels, and iterative pulse-coupled dynamics for feature reinforcement.
 
 \item An MSCA-VGG16 classification network is constructed to further exploit the complementary information encoded in the fused representations. The architecture integrates multi-scale convolution for capturing fault patterns at multiple temporal and spectral granularities, squeeze-and-excitation channel attention for dynamic frequency-band recalibration, and a compact embedding head for enhanced discriminability.
 
+% \item Extensive experiments on the CWRU bearing dataset, including backbone comparisons, comprehensive ablation studies, representation comparisons across twelve time--frequency and temporal encoding combinations, noise robustness evaluations, and hyperparameter sensitivity analyses, systematically validate each component of the proposed framework. Cross-sensor and cross-sampling-rate generalization is further demonstrated on the 12 kHz fan-end and 48 kHz drive-end datasets, confirming robustness beyond the primary benchmark.
 \item Extensive experiments on the CWRU bearing dataset, including backbone comparisons, ablation studies, representation comparisons, and noise robustness evaluations, validate the proposed framework. Cross-sensor and cross-sampling-rate generalization is further demonstrated on the 12 kHz fan-end and 48 kHz drive-end datasets.
 
 \end{itemize}
 
 The remainder of this paper is organized as follows. Section~\ref{section2} reviews related work. Section~\ref{section3} presents the proposed AW-DPCNN fusion mechanism and MSCA-VGG16 classifier. Section~\ref{section4} describes the experimental setup and comprehensive performance evaluation. Finally, conclusions are drawn in Section~\ref{section5}.
-
 \begin{figure*}[!t]
 \centering
 \includegraphics[width=\linewidth]{framework/framework1}
@@ -140,21 +87,46 @@ The remainder of this paper is organized as follows. Section~\ref{section2} revi
 
 \subsection{Signal Representations for Fault Diagnosis}
 
-Time--frequency representations have been extensively applied to vibration-based bearing fault diagnosis, such as STFT spectrograms, CWT scalograms, and Mel spectrograms. STFT spectrograms combined with 2-D CNNs have demonstrated effective classification of bearing defects by converting raw vibration signals into time--frequency images that convolutional architectures can process~\cite{11028059,Xin_2019}. CWT scalograms have been employed to achieve improved time--frequency localization for transient fault signatures, with multi-resolution analysis offering advantages over fixed-resolution STFT for certain non-stationary conditions~\cite{SHAALAN2026103187}. Mel spectrograms have also been explored for their perceptually motivated frequency compression, particularly for harmonic-rich fault patterns~\cite{10929672}. Despite these successes, time--frequency representations inherently capture local spectral energy distributions but do not explicitly model the long-range temporal dependencies that carry complementary diagnostic information.
+Time--frequency representations have been extensively applied to vibration-based
+bearing fault diagnosis, such as STFT spectrograms, CWT scalograms, and Mel spectrograms. STFT spectrograms combined with 2-D CNNs have demonstrated
+effective classification of bearing defects by converting raw vibration signals into
+time--frequency images that convolutional architectures can process~\cite{11028059},
+\cite{Xin_2019}. CWT scalograms have been employed to achieve improved time--frequency
+localization for transient fault signatures, with multi-resolution analysis offering
+advantages over fixed-resolution STFT for certain non-stationary conditions~\cite{SHAALAN2026103187}.
+Mel spectrograms have also been explored for their perceptually motivated frequency
+compression, particularly for harmonic-rich fault patterns~\cite{10929672}. Despite
+these successes, time--frequency representations inherently capture local
+spectral energy distributions but do not explicitly model the long-range temporal
+dependencies that carry complementary diagnostic information.
 
-In parallel, temporal encoding methods have been introduced to transform one-dimensional vibration signals into two-dimensional images that preserve pairwise temporal relationships. Xiong et al.\ applied GAF encoding to complementary ensemble empirical mode decomposition-preprocessed vibration signals, enabling CNN-based classification of the resulting temporal correlation images~\cite{10109681}. MTF and RP encodings have similarly been adopted to capture sequential transition dynamics and recurrent phase-space patterns, respectively~\cite{11303191,10684078}. However, these temporal encoding methods primarily preserve correlation structures and lack explicit frequency-domain specificity, which is critical for distinguishing faults with similar temporal patterns but distinct spectral signatures.
+In parallel, temporal encoding methods have been introduced to transform
+one-dimensional vibration signals into two-dimensional images that preserve pairwise
+temporal relationships. Xiong et al. applied GAF encoding to complementary ensemble empirical mode decomposition-preprocessed vibration signals, enabling CNN-based classification of the resulting temporal correlation images~\cite{10109681}. MTF and RP encodings have similarly been adopted to
+capture sequential transition dynamics and recurrent phase-space patterns,
+respectively~\cite{11303191},~\cite{10684078}. However, these temporal encoding methods primarily preserve correlation
+structures and lack explicit frequency-domain specificity, which is critical for
+distinguishing faults with similar temporal patterns but distinct spectral signatures.
 
-A limited number of recent studies have explored combining multiple representations for fault diagnosis. Representative efforts include channel-wise concatenation of time--frequency and temporal-encoded images for CNN-based classification, and pixel-level averaging of complementary representation pairs~\cite{10214203}. However, these approaches employ fixed fusion strategies that treat all spatial locations and feature channels uniformly, without adaptively regulating the relative contribution of each representation. Given that time--frequency and temporal-encoded representations possess fundamentally different statistical properties and structural characteristics, naive fusion may introduce destructive interference rather than constructive complementarity.
+A limited number of recent studies have explored combining multiple representations
+for fault diagnosis. Representative efforts include channel-wise concatenation of
+time--frequency and temporal-encoded images for CNN-based classification, and
+pixel-level averaging of complementary representation pairs~\cite{10214203}. However, these approaches
+employ fixed fusion strategies that treat all spatial locations and feature channels
+uniformly, without adaptively regulating the relative contribution of each
+representation. Given that time--frequency and temporal-encoded representations
+possess fundamentally different statistical properties and structural characteristics,
+naive fusion may introduce destructive interference rather than constructive
+complementarity.
 
 \subsection{PCNN and Multi-Representation Fusion}
-
-Pulse-coupled neural network (PCNN) is a neural model originally developed to simulate the synchronous firing behavior observed in the mammalian visual cortex~\cite{761706}. Unlike conventional convolutional neural networks, PCNN employs a pulse-based activation mechanism in which neurons interact through local coupling and dynamic thresholds~\cite{761716}. Owing to these characteristics, PCNN exhibits strong capability in preserving structural information while suppressing background interference, and has been widely applied in image segmentation, edge detection, and feature enhancement tasks~\cite{1427771,Deng_2020,Liu_2019}.
+Pulse-coupled neural network (PCNN) is a neural model originally developed to simulate the synchronous firing behavior observed in the mammalian visual cortex \cite{761706}. Unlike conventional convolutional neural networks, PCNN employs a pulse-based activation mechanism in which neurons interact through local coupling and dynamic thresholds \cite{761716}. Owing to these characteristics, PCNN exhibits strong capability in preserving structural information while suppressing background interference, and have been widely applied in image segmentation, edge detection, and feature enhancement tasks~\cite{1427771},~\cite{Deng_2020},~\cite{Liu_2019}. 
 
 However, conventional PCNNs are typically driven by a single external stimulus, which limits their ability to effectively exploit complementary information from multiple representations. To address this limitation, dual-channel PCNN (DPCNN) architectures have been introduced to enable multi-representation fusion by incorporating multiple external stimuli within the neuronal feeding mechanism, and later extended with adaptive parameter estimation via fractal dimension to eliminate manual tuning~\cite{9072551}. Through this mechanism, heterogeneous feature maps can be jointly processed, thereby facilitating the integration of information from different representations. Nevertheless, the fusion process in such architectures generally relies on fixed or predefined coupling strategies, making it difficult to adaptively regulate the relative contributions of different channels. As a result, the model may not effectively emphasize discriminative representations while suppressing less relevant ones, thereby limiting the effectiveness of multi-representation fusion. The systematic exploration and adaptive fusion of heterogeneous representations for vibration signal fault diagnosis therefore remains an open research problem, motivating the AW-DPCNN framework proposed in this work.
 
 \subsection{Deep Learning for Fault Diagnosis}
 
-With the rapid advancement of deep learning techniques, a variety of neural network architectures have been applied to vibration signal fault diagnosis, demonstrating superior automatic feature extraction capability compared with traditional handcrafted methods~\cite{JIANG2026113823,COSTA2026113711,WEN2025114614}. Early studies commonly adopted baseline convolutional neural networks as benchmark architectures for vibration signal fault diagnosis, verifying the feasibility of end-to-end feature learning for fault diagnosis tasks~\cite{HE2020542}. Subsequently, classical deep convolutional backbones, including EfficientNet, ViT, MobileNet, ConvNeXt and ResNet, were introduced into intelligent fault diagnosis frameworks and achieved notable improvements in hierarchical feature representation and classification accuracy across machinery health monitoring applications~\cite{10663388,DUAN2026122469,10048773}. Among these, VGG's purely sequential topology with no skip connections or built-in attention mechanisms provides a clean architectural foundation for attaching auxiliary modules such as multi-scale convolution and channel attention, making it particularly suitable as a backbone for the MSCA enhancement strategy pursued in this work~\cite{WANG2026105996}. More recently, advanced architectures such as ConvNeXt, which incorporate modernized convolutional design principles, have further enhanced representation learning capability and demonstrated competitive performance in fault diagnosis and image-based classification tasks~\cite{10980179}. In addition, publicly available benchmark datasets, such as the CWRU bearing fault dataset, have been extensively employed to evaluate the effectiveness and generalization ability of deep learning-based diagnostic models, serving as a standard reference in fault diagnosis research~\cite{SMITH2015100}.
+With the rapid advancement of deep learning techniques, a variety of neural network architectures have been applied to vibration signal fault diagnosis, demonstrating superior automatic feature extraction capability compared with traditional handcrafted methods~\cite{JIANG2026113823},~\cite{COSTA2026113711}. Early studies commonly adopted baseline convolutional neural networks as benchmark architectures for vibration signal fault diagnosis, verifying the feasibility of end-to-end feature learning for fault diagnosis tasks \cite{HE2020542}. Subsequently, classical deep convolutional backbones, including EfficientNet, ViT, MobileNet, ConvNeXt and ResNet, were introduced into intelligent fault diagnosis frameworks and achieved notable improvements in hierarchical feature representation and classification accuracy across machinery health monitoring applications~\cite{10663388},~\cite{DUAN2026122469},~\cite{10048773}. Among these, VGG's purely sequential topology with no skip connections or built-in attention mechanisms provides a clean architectural foundation for attaching auxiliary modules such as multi-scale convolution and channel attention, making it particularly suitable as a backbone for the MSCA enhancement strategy pursued in this work~\cite{WANG2026105996}. More recently, advanced architectures such as ConvNeXt, which incorporate modernized convolutional design principles, have further enhanced representation learning capability and demonstrated competitive performance in fault diagnosis and image-based classification tasks~\cite{10980179}. In addition, publicly available benchmark datasets, such as the CWRU bearing fault dataset, have been extensively employed to evaluate the effectiveness and generalization ability of deep learning-based diagnostic models, serving as a standard reference in fault diagnosis research \cite{SMITH2015100}.
 
 Despite these advances, most existing deep learning approaches for fault diagnosis are designed to process a single input representation and lack dedicated architectural mechanisms, such as multi-scale receptive fields and dynamic channel attention, for jointly exploiting the heterogeneous features produced by multi-representation fusion. Consequently, their capacity to fully leverage the complementary information encoded in fused time--frequency and temporal representations remains limited, motivating the design of the MSCA-VGG16 classifier proposed in this work.
 
@@ -162,7 +134,6 @@ Despite these advances, most existing deep learning approaches for fault diagnos
 \label{section3}
 
 \subsection{Overview}
-
 The proposed framework comprises two sequential stages, i.e., multi-representation signal fusion and fused representation classification, as illustrated in Fig.~\ref{framework}. In the fusion stage, the raw vibration signal is first transformed into two complementary representations, namely the STFT spectrogram and the GADF image, to capture time--frequency energy distributions and global temporal correlation structures, respectively. These heterogeneous representations are then adaptively integrated through the proposed AW-DPCNN mechanism, which employs contrast-guided adaptive weighting and dual-channel pulse-coupled dynamics to produce a unified fused representation. In the classification stage, the fused representation is fed into the MSCA-VGG16 network, which incorporates multi-scale convolution and channel attention to enhance feature discrimination, followed by a compact embedding head for robust fault classification.
 
 Let $\boldsymbol{x} \in \mathbb{R}^{L}$ denote a raw vibration signal segment of length $L$. The signal is first mapped to two heterogeneous representations as
@@ -214,21 +185,33 @@ The STFT spectrogram is parameterized by the FFT window size $n_{\mathrm{fft}}$ 
 	
 	\caption{Vibration signal representations. (a) STFT spectrogram capturing local time--frequency energy distributions. (b) GADF image encoding global temporal correlation structures through pairwise angular relationships.}
 	\label{representation}
+	
 \end{figure}
 
 \subsubsection{Gramian Angular Field}
 
+% To address the limitations of the STFT spectrogram in encoding global temporal structures, the Gramian Angular Field (GAF) is introduced as a complementary representation. 
 The GAF transforms the same vibration signal segment $\boldsymbol{x}$ into a two-dimensional image that preserves temporal correlation information through pairwise angular encoding. Let $x_i$ denote the $i$-th sample of $\boldsymbol{x}$. For the purpose of GADF construction, a sequence of $n$ samples $\{x_1, x_2, \ldots, x_n\}$ drawn from $\boldsymbol{x}$ is first normalized to $[-1, 1]$ via min--max scaling,
+% \begin{equation}
+% \tilde{x}_i = \frac{\bigl(x_i - \min\limits_{i\in I} \boldsymbol{x_i}\bigr) + \bigl(x_i - \max\limits_{i\in I}\boldsymbol{x_i}\bigr)}
+% {\max\limits_{i\in I}\boldsymbol{x_i} - \min\limits_{i\in I}\boldsymbol{x_i}},
+% \label{normalization}
+% \end{equation}
 \begin{equation}
 \tilde{x}_i = \frac{\left(x_i - \min\limits_{i\in I} x_i\right) + \left(x_i - \max\limits_{i\in I} x_i\right)}
 {\max\limits_{i\in I} x_i - \min\limits_{i\in I} x_i},
 \label{eq:normalization}
 \end{equation}
-where $I = \{1, 2, \ldots, n\}$ denotes the index set of the selected samples, and $\min_{i\in I} x_i$ and $\max_{i\in I} x_i$ are the minimum and maximum values of the sequence $\{x_i\}_{i=1}^n$, respectively.
+where $I = \{1, 2, \ldots, n\}$ denotes the index set of the selected samples, and $\min\limits_{i\in I} x_i$ and $\max\limits_{i\in I} x_i$ are the minimum and maximum values of the sequence $\{x_i\}_{i=1}^n$, respectively.
+% \begin{equation}
+% \tilde{x}_i = \frac{(x_i - \min\boldsymbol{x_i}) + (x_i - \max\boldsymbol{x_i})}
+% {\max\boldsymbol{x_i} - \min\boldsymbol{x_i}}.
+% \label{normalization}
+% \end{equation}
 
 The normalized values are then mapped to polar coordinates, where each $\tilde{x}_i$ is encoded as an angular coordinate $\phi_i$,
 \begin{equation}
-\phi_i = \arccos(\tilde{x}_i), \quad -1 \leq \tilde{x}_i \leq 1.
+\phi_i = \arccos(\tilde{x}_i), -1 \leq \tilde{x}_i \leq 1
 \label{eq:cosine_angle}
 \end{equation}
 
@@ -239,9 +222,14 @@ Finally, pairwise angular differences or sums are aggregated to form the Gramian
 \end{equation}
 is adopted in this study due to its higher sensitivity to abrupt temporal variations.
 
-The GADF representation offers several advantages that complement the STFT spectrogram. First, by encoding pairwise angular relationships between all time points, the GADF captures global temporal correlation structures that extend beyond the local receptive field of STFT-based representations. Second, the min--max normalization in~\eqref{eq:normalization} inherently suppresses the influence of absolute signal amplitude, making the GADF representation more robust to variations in signal gain and background noise levels. Furthermore, the polar encoding in~\eqref{eq:cosine_angle} provides a bijective mapping, ensuring that temporal information is preserved without loss.
+The GADF representation offers several advantages that complement the STFT spectrogram. First, by encoding pairwise angular relationships between all time points, the GADF captures global temporal correlation structures that extend beyond the local receptive field of STFT-based representations. Second, the min--max normalization in~\eqref{eq:normalization} inherently suppresses the influence of absolute signal amplitude, making the GADF representation more robust to variations in signal gain and background noise levels. Furthermore, the polar encoding in~\eqref{eq:cosine_angle} provides a bijective mapping, ensuring that temporal information is preserved without loss. 
+% As illustrated in Fig.~\ref{representation}(b), the GADF encodes structured temporal dependencies, exhibiting regular and symmetric patterns that reflect stable temporal correlations.
 
 Both representations are subsequently converted to pseudo-color RGB images of spatial dimensions $H \times W$ for compatibility with standard CNN input architectures, through logarithmic amplitude compression and colormap mapping. Fig.~\ref{representation} illustrates representative examples of the STFT spectrogram and GADF image. The concrete parameter values, including $n_{\mathrm{fft}}$, $f_s$, $n$, $H$, and $W$, are provided in Section~\ref{sec:dataset_preprocessing}.
+
+% In this study, the GADF variant is specifically adopted to complement the STFT spectrogram. Compared with GASF, GADF focuses on angular differences and thereby exhibits higher sensitivity to abrupt temporal variations and asymmetric dynamic patterns. This property is particularly beneficial for bearing fault diagnosis, where abnormal operating conditions produce irregular temporal fluctuations in vibration signals. 
+
+
 
 \subsection{AW-DPCNN for Multi-Representation Fusion}
 \label{sec:awdpcnn}
@@ -249,7 +237,7 @@ Both representations are subsequently converted to pseudo-color RGB images of sp
 Owing to their distinct statistical properties and structural characteristics, directly combining the STFT spectrogram and GADF image using conventional pixel-wise averaging or simple feature concatenation may introduce destructive interference rather than constructive complementarity, as demonstrated in the ablation study (Section~\ref{section4}). To address this issue, the proposed AW-DPCNN introduces a PCNN-inspired fusion mechanism with three key innovations: (i) dual-channel external stimuli that independently process STFT and GADF representations through representation-specific convolutional kernels; (ii) a contrast-guided adaptive weighting scheme that dynamically adjusts the relative contribution of each representation based on local saliency; and (iii) iterative pulse-coupled dynamics that propagate and reinforce structurally consistent features across multiple iterations while suppressing spurious activations. The key hyperparameters of the AW-DPCNN are summarized in Table~\ref{tab:awdpcnn_params}, and the detailed formulation of each component is presented below.
 
 \begin{table}[!t]
-	\caption{Key Hyperparameters of AW-DPCNN, where $\mathbf{I}$ Denotes the Identity Matrix\label{tab:awdpcnn_params}}
+	\caption{Key Hyperparameters of AW-DPCNN, where $\text{I}$ Denotes the Identity Matrix\label{tab:awdpcnn_params}}
 	\centering
 	\begin{tabular}{ccc}
 		\hline
@@ -264,22 +252,29 @@ Owing to their distinct statistical properties and structural characteristics, d
 		Local neighborhood window size & $\boldsymbol{\Omega}$ & $3 \times 3$ \\
 		Kernel size of STFT channel & $\boldsymbol{W}_1$ & $3 \times 5$ \\
 		Kernel size of GADF channel & $\boldsymbol{W}_2$ & $3 \times 3$ \\
-		Coupling matrix & $\boldsymbol{M}$ & $0.25\,\mathbf{I}$ \\
+		Coupling matrix & $\boldsymbol{M}$ & $$0.25\,\text{I}$$ \\
 		\hline
 	\end{tabular}
 \end{table}
 
 \subsubsection{Input Normalization}
-
 To eliminate scale differences between two representations, each input is first normalized to the interval $[0,1]$ as
+% \begin{equation}
+% 	\boldsymbol{\tilde{S}}_k(i,j) = \frac{\boldsymbol{S}_k(i,j) - \min\boldsymbol{S}_k}{\max\boldsymbol{S}_k - \min\boldsymbol{S}_k + \epsilon}, \quad k\in\{1,2\}
+% 	\label{eq:aw_input_norm}
+% \end{equation}
+
 \begin{equation}
 	\boldsymbol{\tilde{S}}_k(i,j) = \frac{\boldsymbol{S}_k(i,j) - \min\limits_{i\in I,j\in J} \boldsymbol{S}_k(i,j)}{\max\limits_{i\in I,j\in J} \boldsymbol{S}_k(i,j) - \min\limits_{i\in I,j\in J} \boldsymbol{S}_k(i,j) + \epsilon}, \quad k\in\{1,2\}
 	\label{eq:aw_input_norm}
 \end{equation}
+% \begin{equation}
+% 	\boldsymbol{\tilde{S}}_k(i,j) = \frac{\boldsymbol{S}_k(i,j) - \min\limits_{\substack{i\in I\\ j\in J}} \boldsymbol{S}_k(i,j)}{\max\limits_{\substack{i\in I\\ j\in J}} \boldsymbol{S}_k(i,j) - \min\limits_{\substack{i\in I\\ j\in J}} \boldsymbol{S}_k(i,j) + \varepsilon}, \quad \text{for } k=1,2
+% 	\label{eq:aw_input_norm}
+% \end{equation}
 where $\boldsymbol{S}_1$ and $\boldsymbol{S}_2$ denote the STFT spectrogram and GADF image, respectively, and $\epsilon$ is a small positive constant.
 
 \subsubsection{Contrast-Guided Adaptive Weighting}
-
 For each representation, the local mean of the normalized representation is computed as
 \begin{equation}
 	\boldsymbol{\mu}_k(i,j) = \frac{1}{|\boldsymbol{\Omega}|}
@@ -309,7 +304,6 @@ where $\mathbb{E}_\Omega[\cdot]$ denotes local averaging within $\boldsymbol{\Om
 the above formulation ensures $\beta_1(i,j) + \beta_2(i,j) \approx 1$, enabling contrast-driven dynamic weighting.
 
 \subsubsection{Dual-Channel PCNN}
-
 Let $\boldsymbol{L}^n(i,j)$, $\boldsymbol{T}^n(i,j)$, and $\boldsymbol{Y}^n(i,j)$ denote the linking term, dynamic threshold, and binary pulse output, respectively, where $n$ denotes the current iteration and $n \in [1, N]$, with $N$ being the total number of iterations. The neural states are initialized as
 \begin{equation}
 	\boldsymbol{L}^0(i,j) = \boldsymbol {0}, \quad 
@@ -362,7 +356,6 @@ The dynamic threshold evolves according to
 where $\alpha_T$ controls threshold decay and $V_T$ is the amplification coefficient.
 
 \subsubsection{Fused Representation}
-
 The accumulated neural response after $N$ iterations is
 \begin{equation}
 	\boldsymbol{U}_{\mathrm{sum}}(i,j)=\sum_{n=1}^{N} \boldsymbol{U}^{n}(i,j),
@@ -375,13 +368,13 @@ and the final fused representation is obtained via normalization as
 \end{equation}
 
 The overall architecture of the proposed AW-DPCNN is illustrated in Fig.~\ref{AW-DPCNN}. The qualitative effectiveness of the adaptive fusion mechanism is further analyzed in Section~\ref{section4}.
-
 \begin{figure}[!t]
 	\centering
 	\includegraphics[width=\linewidth]{AW-DPCNN/AW-DPCNN}
 	\caption{Architecture of the proposed adaptive weighted dual-channel PCNN (AW-DPCNN) for multi-representation signal fusion. The mechanism comprises contrast-guided adaptive weighting, dual-channel PCNN with representation-specific convolutional kernels, and iterative pulse-coupled dynamics for feature reinforcement.}
 	\label{AW-DPCNN}                       
 \end{figure}
+
 
 \begin{figure*}[!t] 
 \centering
@@ -451,7 +444,7 @@ The \emph{excitation} operation models channel-wise dependencies through a bottl
 \boldsymbol{s} = \sigma\big(\boldsymbol{U}_2 \, \delta(\boldsymbol{U}_1 \boldsymbol{z})\big),
 \label{eq:se_excitation}
 \end{equation}
-where $\boldsymbol{U}_1 \in \mathbb{R}^{\frac{C}{r} \times C}$ and $\boldsymbol{U}_2 \in \mathbb{R}^{C \times \frac{C}{r}}$ are learnable weight matrices, $r$ is the channel reduction ratio controlling the bottleneck capacity, and $\sigma(\cdot)$ is the sigmoid function. The output $\boldsymbol{s}=[s_1, \dots, s_C]^\mathrm{T}$ represents per-channel attention weights in $[0, 1]$. The refined feature map is obtained by channel-wise rescaling, i.e.,
+where $\boldsymbol{U}_1 \in \mathbb{R}^{\frac{C}{r} \times C}$ and $\boldsymbol{U}_2 \in \mathbb{R}^{C \times \frac{C}{r}}$ are learnable weight matrices, $r$ is the channel reduction ratio controlling the bottleneck capacity, and $\sigma(\cdot)$ is the sigmoid function. The output $s=[s_1, \dots, s_C]^\mathrm{T}$ represents per-channel attention weights in $[0, 1]$. The refined feature map is obtained by channel-wise rescaling, i.e.,
 \begin{equation}
 \boldsymbol{F}_{\mathrm{att}}(i, j, c) = s_c \cdot \boldsymbol{F}_{\mathrm{act}}(i, j, c).
 \label{eq:attention_feature}
@@ -520,18 +513,17 @@ Algorithm~\ref{alg:msca_vgg16} summarizes the complete forward pass of the propo
 \end{algorithmic}
 \end{algorithm}
 
+
+
 \section{Dataset and Experiments}
 \label{section4}
-
 \subsection{Dataset Construction and Preprocessing}
 \label{sec:dataset_preprocessing}
-
-The Case Western Reserve University (CWRU) bearing dataset\footnote{The dataset is available at \url{https://csegroups.case.edu/bearingdatacenter/pages/welcome-page}} is employed as the primary benchmark. The test stand, illustrated in Fig.~\ref{fig:cwru_teststand}, comprises a 2-hp motor, a torque transducer/encoder, a dynamometer, and control electronics. Vibration data were collected using accelerometers placed at the 12 o'clock position on the drive-end (DE) and fan-end (FE) motor housing, digitized at 12~kHz for all experiments and additionally at 48~kHz for DE bearing faults.
+The Case Western Reserve University (CWRU) bearing dataset~\footnote{The dataset is available at \url{https://csegroups.case.edu/bearingdatacenter/pages/welcome-page}} is employed as the primary benchmark. The test stand, illustrated in Fig.~\ref{fig:cwru_teststand}, comprises a 2-hp motor, a torque transducer/encoder, a dynamometer, and control electronics. Vibration data were collected using accelerometers placed at the 12 o'clock position on the drive-end (DE) and fan-end (FE) motor housing, digitized at 12~kHz for all experiments and additionally at 48~kHz for DE bearing faults.
 
 Single-point faults of diameters 7, 14, and 21 mils were introduced to the ball, inner race, and outer race of bearings via electro-discharge machining. For the outer race, the fault was located at the 6 o'clock position (orthogonal to the load zone). Together with the healthy baseline, this yields ten categories listed in Table~\ref{tab:operating_conditions}.
 
 For dataset construction, the raw vibration signals are segmented into overlapping windows and converted into pseudo-color fused images through the AW-DPCNN pipeline. Three dataset variants are constructed to support comprehensive evaluation as follows.
-
 \begin{enumerate}
 \item \textbf{CWRU 12k DE (primary benchmark):} 12~kHz drive-end signals, window length 2048 samples, hop length 1024 samples, $n_{\text{fft}}=1024$, yielding $\Delta f=11.7$~Hz/bin.
 \item \textbf{CWRU 12k FE (cross-sensor generalization):} 12~kHz fan-end signals with identical time--frequency parameters, enabling evaluation of sensor-position transferability.
@@ -541,6 +533,7 @@ For dataset construction, the raw vibration signals are segmented into overlappi
 The window and hop lengths are scaled proportionally with the sampling rate to ensure that every fused image represents the same physical duration of vibration signal, eliminating temporal-scale confounds from cross-dataset comparisons. File-level stratified splitting is applied with a 60\%/20\%/20\% (train/validation/test) ratio, using a fixed random seed (42) for reproducibility. All windows from a given source recording are assigned exclusively to a single split to prevent data leakage. The detailed dataset composition, including sample counts per class and per split, is provided in Table~\ref{tab:datasets_comprehensive}.
 
 For the primary benchmark (12k DE), the normal class contains substantially more windows than the fault classes (see Table~\ref{tab:datasets_comprehensive}) because the normal baseline recordings are approximately four times longer. This inherent class imbalance is addressed through class-weighted cross-entropy loss and macro-averaged evaluation metrics. All datasets use the linear STFT spectrogram as the time--frequency representation and GADF as the temporal encoding, with the optimal combination validated through systematic representation comparison experiments in Section~\ref{sec:rep_compare}.
+
 
 \begin{table}[!t]
 	\caption{Operating Conditions and Corresponding Labels of the CWRU Bearing Dataset\label{tab:operating_conditions}}
@@ -559,9 +552,11 @@ For the primary benchmark (12k DE), the normal class contains substantially more
 		OF007 & Outer Race Fault @6 (0.007'') \\
 		OF014 & Outer Race Fault @6 (0.014'') \\
 		OF021 & Outer Race Fault @6 (0.021'') \\
+		
 		\bottomrule
 	\end{tabular}
 \end{table}
+
 
 \begin{table}[!t]
 \caption{Class-Wise Sample Distribution of Three CWRU Bearing Datasets\label{tab:datasets_comprehensive}}
@@ -614,15 +609,14 @@ For the primary benchmark (12k DE), the normal class contains substantially more
 \end{tabular}
 \end{table}
 
+
 \begin{figure*}[!t]
 	\centering
 	\includegraphics[width=\textwidth]{Fused images/Fused images2}
 	\caption{STFT spectrograms (top), GADF images (middle), and AW-DPCNN fused representations (bottom) for ten bearing conditions.}
 	\label{fig:fused_images}
 \end{figure*}
-
 Fig.~\ref{fig:fused_images} illustrates the representations before and after adaptive fusion. The fused outputs exhibit enhanced structural clarity, i.e., background noise is suppressed while fault-discriminative features are preserved, demonstrating that AW-DPCNN effectively integrates complementary time--frequency and temporal-domain information.
-
 \subsection{Implementation Details and Evaluation Metrics}
 
 \begin{figure}[!t]
@@ -652,6 +646,11 @@ To ensure statistical reliability and to account for performance variance due to
 
 The experiments in this study were conducted on a system equipped with an Intel i9-14900K CPU and an NVIDIA RTX 5090 GPU. The software environment was based on PyTorch 2.11 and CUDA 13.0. Classification performance is evaluated using accuracy, precision, recall, macro-averaged F1-score, balanced accuracy (B-Acc), G-mean, Cohen's kappa, and the area under the receiver operating characteristic curve (ROC-AUC). For multi-class ROC-AUC, the One-vs-Rest (OvR) macro-averaged AUC is reported.
 
+
+
+
+
+
 \begin{figure}[!t]
 	\centering
 	\begin{subfigure}{0.48\columnwidth}
@@ -669,38 +668,16 @@ The experiments in this study were conducted on a system equipped with an Intel 
 	\label{fig:rep_compare_cm}
 \end{figure}
 
-% ========== Representation Comparison Table (INLINED) ==========
-\begin{table*}
-    \caption{Representation Comparison across Time--Frequency and Temporal Encoding Methods\label{tab:rep_compare}}
-    \centering
-    \renewcommand{\arraystretch}{1.15}
-    \small
-    \begin{tabular}{llcccc}
-        \toprule
-        \textbf{TF Method} & \textbf{Temporal} & \textbf{Acc (\%)} & \textbf{F1 (\%)} & \textbf{G-mean (\%)} & \textbf{AUC (\%)} \\
-        \midrule
-        \multirow{4}{*}{Mel} & GADF & $89.18 \pm 1.87$ & $83.94 \pm 3.64$ & $77.27 \pm 6.99$ & $99.46 \pm 0.23$ \\
-         & GASF & $93.53 \pm 2.22$ & $90.52 \pm 4.02$ & $86.27 \pm 8.92$ & $99.44 \pm 0.43$ \\
-         & MTF & $94.08 \pm 1.08$ & $90.94 \pm 2.08$ & $86.27 \pm 4.76$ & $99.62 \pm 0.17$ \\
-         & RP & $94.56 \pm 3.61$ & $92.55 \pm 4.96$ & $90.93 \pm 6.56$ & $99.57 \pm 0.36$ \\
-        \cmidrule(lr){2-6}
-        \multirow{4}{*}{STFT} & GADF & $\mathbf{96.30 \pm 0.49}$ & $\mathbf{95.02 \pm 0.40}$ & $\mathbf{94.22 \pm 0.49}$ & $\mathbf{99.97 \pm 0.03}$ \\
-         & GASF & $91.23 \pm 0.65$ & $85.86 \pm 0.79$ & $69.32 \pm 8.26$ & $99.38 \pm 0.27$ \\
-         & MTF & $90.16 \pm 7.46$ & $86.48 \pm 9.50$ & $78.92 \pm 17.99$ & $98.16 \pm 2.81$ \\
-         & RP & $90.12 \pm 0.95$ & $84.28 \pm 0.95$ & $39.34 \pm 26.45$ & $99.35 \pm 0.04$ \\
-        \cmidrule(lr){2-6}
-        \multirow{4}{*}{CWT} & GADF & $89.70 \pm 1.53$ & $84.32 \pm 2.55$ & $76.01 \pm 6.93$ & $99.33 \pm 0.16$ \\
-         & GASF & $89.81 \pm 1.30$ & $85.75 \pm 2.14$ & $80.87 \pm 3.91$ & $99.14 \pm 0.17$ \\
-         & MTF & $90.01 \pm 2.72$ & $85.24 \pm 4.42$ & $77.00 \pm 9.29$ & $99.16 \pm 0.50$ \\
-         & RP & $90.88 \pm 0.04$ & $87.43 \pm 0.39$ & $83.95 \pm 1.41$ & $98.99 \pm 0.13$ \\
-        \bottomrule
-    \end{tabular}
-\end{table*}
+\input{auto_tables/rep_compare_table.tex}
 
 \subsection{Representation Comparison}
 \label{sec:rep_compare}
 
+
+
 To empirically justify the choice of STFT and GADF as the input representations, twelve combinations of three time--frequency representations and four temporal encoding methods are systematically compared. All representations are fused through the identical AW-DPCNN pipeline ($\gamma=10$, $N=20$) and classified using a standard VGG16 network trained from scratch, thereby isolating the effect of the input representation on diagnostic performance. All other training settings follow Section~\ref{sec:dataset_preprocessing} and are kept identical across runs.
+
+
 
 Table~\ref{tab:rep_compare} reports the test set performance of all twelve combinations. In addition to the superior accuracy and F1-score, the STFT+GADF pair achieves the highest AUC (99.97\%), converges to the best validation F1-score within approximately 9 epochs, notably fewer than competing combinations, and produces the most compact and well-separated confusion patterns (Fig.~\ref{fig:rep_compare_cm}). Several important observations emerge as follows.
 
@@ -710,77 +687,58 @@ Table~\ref{tab:rep_compare} reports the test set performance of all twelve combi
 
 \textbf{3) Optimal combination.} The STFT spectrogram paired with GADF achieves the best overall performance across all metrics, with 96.30\% accuracy, 95.02\% F1-score, and 94.22\% G-mean. This result empirically validates the choice of STFT and GADF as the input representation pair for the proposed AW-DPCNN framework. The STFT spectrogram provides uniform-resolution time--frequency energy distributions, while the GADF encodes complementary temporal correlation structures through angular differences, forming a jointly discriminative basis for bearing fault diagnosis. The representation comparison also reveals that some non-optimal pairs (e.g., Mel and RP at 94.56\%) can achieve competitive accuracy, suggesting that the AW-DPCNN fusion mechanism is sufficiently robust to extract discriminative features from suboptimal input representations, though the optimal STFT and GADF pair provides the best performance with the lowest variance.
 
+
+
 These results collectively demonstrate that the STFT and GADF combination provides the most effective input representation for the AW-DPCNN fusion framework, offering consistent advantages over alternative time--frequency and temporal encoding methods. The empirical evidence supports the representation design adopted in this work and further validates the robustness of the proposed diagnostic pipeline.
 
-\begin{figure*}[!t]
-	\centering
-	\begin{subfigure}{0.32\linewidth}
-		\centering
-		\includegraphics[width=\linewidth]
-		{../experiments/experiment_result/exp1/convnext_tiny/12k_de/exp1_convnext_tiny/trial_seed42/figures/confusion_matrix.png}
-		\caption{ConvNeXt-Tiny}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.32\linewidth}
-		\centering
-		\includegraphics[width=\linewidth]
-		{../experiments/experiment_result/exp1/efficientnet_b0/12k_de/exp1_efficientnet_b0/trial_seed456/figures/confusion_matrix.png}
-		\caption{EfficientNet-B0}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.32\linewidth}
-		\centering
-		\includegraphics[width=\linewidth]
-		{../experiments/experiment_result/exp1/vit/12k_de/exp1_vit/trial_seed42/figures/confusion_matrix.png}
-		\caption{ViT}
-	\end{subfigure}
 
-	\vspace{2mm}
+	\begin{figure*}[!t]
+		\centering
+		\begin{subfigure}{0.32\linewidth}
+			\centering
+			\includegraphics[width=\linewidth]
+			{../experiments/experiment_result/exp1/convnext_tiny/12k_de/exp1_convnext_tiny/trial_seed42/figures/confusion_matrix.png}
+			\caption{ConvNeXt-Tiny}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}{0.32\linewidth}
+			\centering
+			\includegraphics[width=\linewidth]
+			{../experiments/experiment_result/exp1/efficientnet_b0/12k_de/exp1_efficientnet_b0/trial_seed456/figures/confusion_matrix.png}
+			\caption{EfficientNet-B0}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}{0.32\linewidth}
+			\centering
+			\includegraphics[width=\linewidth]
+			{../experiments/experiment_result/exp1/vit/12k_de/exp1_vit/trial_seed42/figures/confusion_matrix.png}
+			\caption{ViT}
+		\end{subfigure}
 
-	\begin{subfigure}{0.32\linewidth}
-		\centering
-		\includegraphics[width=\linewidth]{../experiments/experiment_result/exp1/mobilenetv3_small/12k_de/exp1_mobilenetv3_small/trial_seed42/figures/confusion_matrix.png}
-		\caption{MobileNetV3-Small}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.32\linewidth}
-		\centering
-		\includegraphics[width=\linewidth]{../experiments/experiment_result/exp1/vgg16/12k_fe/exp1_vgg16/trial_seed123/figures/confusion_matrix.png}
-		\caption{VGG16}
-	\end{subfigure}
-	\hfill
-	\begin{subfigure}{0.32\linewidth}
-		\centering
-		\includegraphics[width=\linewidth]{../experiments/experiment_result/exp1/MSCA_VGG16/12k_de/exp1_MSCA_VGG16/trial_seed42/figures/confusion_matrix.png}
-		\caption{MSCA-VGG16 (Ours)}
-	\end{subfigure}
-	\caption{Confusion matrices of different network backbones trained using the AW-DPCNN fusion representations on the CWRU 12k DE dataset. The proposed MSCA-VGG16 achieves the most accurate classification with significantly reduced inter-class confusion.}
-	\label{fig:confusion_matrix}
-\end{figure*}
+		\vspace{2mm}
 
-% ========== Backbone Comparison Table (INLINED) ==========
-\begin{table*}
-    \caption{Performance Comparison with Different Backbone Networks\label{tab:network_comparison}}
-    \centering
-    \renewcommand{\arraystretch}{1.15}
-    \small
-    \begin{tabular}{lcccccc}
-        \toprule
-        \textbf{Network} & \textbf{Acc (\%)} & \textbf{Recall (\%)} & \textbf{F1 (\%)} & \textbf{G-mean (\%)} & \textbf{B-Acc (\%)} & \textbf{Kappa (\%)} \\
-        \midrule
-        \textbf{MSCA-VGG16 (Ours)} & $\mathbf{99.85 \pm 0.10}$ & $\mathbf{99.84 \pm 0.22}$ & $\mathbf{99.46 \pm 0.43}$ & $\mathbf{99.82 \pm 0.15}$ & $\mathbf{99.86 \pm 0.13}$ & $\mathbf{99.82 \pm 0.12}$ \\
-        VGG16~\cite{9440949} & $99.19 \pm 0.89$ & $98.95 \pm 1.16$ & $98.95 \pm 1.16$ & $98.91 \pm 1.22$ & $98.95 \pm 1.16$ & $99.06 \pm 1.05$ \\
-        EfficientNet-B0~\cite{11028059}& $95.74 \pm 2.07$ & $94.47 \pm 2.68$ & $94.14 \pm 3.05$ & $93.08 \pm 4.09$ & $94.47 \pm 2.68$ & $95.00 \pm 2.43$ \\
-        ViT~\cite{10663388} & $82.35 \pm 0.89$ & $77.20 \pm 1.06$ & $74.71 \pm 2.19$ & $64.72 \pm 7.53$ & $77.20 \pm 1.06$ & $79.30 \pm 1.04$ \\
-        MobileNetV3-Small~\cite{ZHANG2026106301}& $93.69 \pm 1.64$ & $91.81 \pm 2.13$ & $91.03 \pm 2.69$ & $87.82 \pm 5.30$ & $91.81 \pm 2.13$ & $92.60 \pm 1.92$ \\
-        ResNet18~\cite{MIAO2022108116}& $ 98.39\pm 1.32$ & $97.91 \pm 1.71$ & $97.85 \pm1.81 $ & $ 97.66 \pm 2.10$ & $ 97.91\pm 1.71$ & $ 98.11\pm 1.55$ \\
-        ConvNeXt-Tiny~\cite{10929672}& $92.93 \pm 2.12$ & $90.82 \pm 2.76$ & $90.63 \pm 2.50$ & $88.99 \pm 3.11$ & $90.82 \pm 2.76$ & $91.70 \pm 2.49$ \\
-        \midrule
-        VGG16 (STFT only)~\cite{9440949} & $93.37\pm 1.32$ & $92.71 \pm1.45 $ & $91.49 \pm 2.25$ & $86.89\pm 5.47$ & $ 92.71\pm1.45 $ & $92.58\pm 1.48$ \\
-        VGG16 (GADF only)~\cite{9440949} & $60.99\pm 1.50$ & $ 62.71\pm 2.51$ & $ 56.90\pm 2.13$ & $ 12.93\pm 1.42$ & $ 62.71\pm 2.51$ & $ 56.75\pm 1.37$ \\
-        \bottomrule
-    \end{tabular}
-\end{table*}
+		\begin{subfigure}{0.32\linewidth}
+			\centering
+			\includegraphics[width=\linewidth]{../experiments/experiment_result/exp1/mobilenetv3_small/12k_de/exp1_mobilenetv3_small/trial_seed42/figures/confusion_matrix.png}
+			\caption{MobileNetV3-Small}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}{0.32\linewidth}
+			\centering
+			\includegraphics[width=\linewidth]{../experiments/experiment_result/exp1/vgg16/12k_fe/exp1_vgg16/trial_seed123/figures/confusion_matrix.png}
+			\caption{VGG16}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}{0.32\linewidth}
+			\centering
+			\includegraphics[width=\linewidth]{../experiments/experiment_result/exp1/MSCA_VGG16/12k_de/exp1_MSCA_VGG16/trial_seed42/figures/confusion_matrix.png}
+			\caption{MSCA-VGG16 (Ours)}
+		\end{subfigure}
+		\caption{Confusion matrices of different network backbones trained using the AW-DPCNN fusion representations on the CWRU 12k DE dataset. The proposed MSCA-VGG16 achieves the most accurate classification with significantly reduced inter-class confusion.}
+		\label{fig:confusion_matrix}
+	\end{figure*}
+
+\input{auto_tables/backbone_comparison_table.tex}
 
 \subsection{Backbone Comparison}
 \label{sec:backbone_comparison}
@@ -788,6 +746,7 @@ These results collectively demonstrate that the STFT and GADF combination provid
 To evaluate the effectiveness of the proposed classification network, seven representative deep learning backbones are compared under identical settings, with results reported as mean $\pm$ standard deviation over three independent trials in Table~\ref{tab:network_comparison}.
 
 MSCA-VGG16 achieves the highest overall performance, i.e., 99.85\% accuracy, 99.46\% F1-score, and 99.82\% G-mean, outperforming the second-best VGG16 baseline by 0.66\% (99.19\%) and the widely-used ResNet18 by 1.46\% (98.39\%). This margin confirms that the multi-scale convolution, channel attention, and compact embedding modules each contribute meaningful gains beyond the VGG16 backbone alone. Among the remaining architectures, EfficientNet-B0 (95.74\%), MobileNetV3-Small (93.69\%), ConvNeXt-Tiny (92.93\%), and ViT (82.35\%) all underperform substantially, with ViT's poor result confirming that transformer-based architectures are ill-suited for the small-scale CWRU dataset where convolutional inductive biases provide stronger priors.
+
 
 \begin{figure*}[!t]
 	\centering
@@ -832,8 +791,9 @@ MSCA-VGG16 achieves the highest overall performance, i.e., 99.85\% accuracy, 99.
 	\label{fig:roc}
 \end{figure*}
 
-\subsection{Visualization and Qualitative Analysis}
+% \input{auto_tables/roc_auc_table.tex}
 
+\subsection{Visualization and Qualitative Analysis}
 Qualitative analysis via confusion matrices, ROC curves, and t-SNE visualization corroborates these findings.
 
 \textbf{1) Confusion matrix analysis.} The confusion matrices in Fig.~\ref{fig:confusion_matrix} provide a direct view of per-class classification accuracy and error patterns. MSCA-VGG16 (Fig.~\ref{fig:confusion_matrix}(f)) achieves near-perfect diagonal dominance, with only isolated off-diagonal activations confined to severity-adjacent fault pairs. In comparison, ConvNeXt-Tiny and ViT exhibit diffuse off-diagonal confusion patterns spanning multiple fault types and severities, consistent with their lower quantitative metrics. The progressive diagonal sharpening from lightweight backbones through VGG16 to MSCA-VGG16 visually confirms the cumulative benefit of the proposed architectural enhancements.
@@ -841,6 +801,7 @@ Qualitative analysis via confusion matrices, ROC curves, and t-SNE visualization
 \textbf{2) ROC curve analysis.} The ROC curves in Fig.~\ref{fig:roc} provide a threshold-independent assessment of per-class discriminability. MSCA-VGG16 (Fig.~\ref{fig:roc}(f)) achieves near-optimal curves for all ten categories, with macro-averaged AUC approaching unity and minimal false alarm rates across the full decision threshold range. In contrast, ViT (Fig.~\ref{fig:roc}(b)) exhibits the widest inter-class AUC dispersion, ConvNeXt-Tiny (Fig.~\ref{fig:roc}(a)) shows pronounced deterioration on Normal and ball fault classes, and VGG16 (Fig.~\ref{fig:roc}(c)) trails MSCA-VGG16 on severity-adjacent fault pairs where channel attention is critical for fine-grained discrimination. The consistent ROC superiority of MSCA-VGG16 confirms that the multi-scale convolution and channel attention modules jointly enhance per-class discriminability, which is essential for practical deployment where false alarms incur substantial economic cost.
 
 \textbf{3) t-SNE visualization.} The t-SNE projections in Fig.~\ref{fig:tsne_backbones} reveal that raw input pixels exhibit substantial inter-class overlap, confirming that high accuracy is not attributable to inherent input separability. Among all backbones, MSCA-VGG16 produces the most compact, well-separated feature clusters with minimal intra-class dispersion, demonstrating that the proposed multi-scale convolution and channel attention mechanisms effectively transform the AW-DPCNN fused representations into a highly discriminative feature space. Notably, the embedding head's dimensionality reduction contributes to tighter cluster formation for the ball fault and inner race fault categories, which are notoriously challenging to separate due to their similar temporal impulse patterns.
+
 
 \begin{figure*}[!t]
 	\centering
@@ -885,30 +846,20 @@ Qualitative analysis via confusion matrices, ROC curves, and t-SNE visualization
 	\label{fig:tsne_backbones}
 \end{figure*}
 
-% ========== Ablation Study Table (INLINED) ==========
-\begin{table*}
-    \caption{Unified Component Decomposition Ablation\label{tab:ablation_unified}}
-    \centering
-    \renewcommand{\arraystretch}{1.15}
-    \small
-    \begin{tabular}{lcccccccc}
-        \toprule
-        \textbf{Exp.} & \textbf{AW-DPCNN} & \textbf{MS} & \textbf{CA} & \textbf{EH} & \textbf{Acc (\%)} & \textbf{F1 (\%)} & \textbf{G-mean (\%)} & \textbf{Kappa (\%)} \\
-        \midrule
-        \multicolumn{9}{c}{\textit{Fusion-level ablation (VGG16 classifier)}} \\
-        B0 & $\times$ & $\times$ & $\times$ & $\times$ & $93.37 \pm 1.32$ & $91.49 \pm 2.25$ & $86.89 \pm 5.47$ & $92.58 \pm 1.48$ \\
-        B1 & $\times$ & $\times$ & $\times$ & $\times$ & $60.99 \pm 1.50$ & $56.90 \pm 2.13$ & $12.93 \pm 1.42$ & $56.75 \pm 1.37$ \\
-        B2 & $\times$ & $\times$ & $\times$ & $\times$ & $96.28 \pm 4.49$ & $94.91 \pm 6.59$ & $89.45 \pm 15.78$ & $95.83 \pm 5.03$ \\
-        \text{B3} & $\checkmark$ & $\times$ & $\times$ & $\times$ & $\mathbf{96.30 \pm 0.49}$ & $\mathbf{95.02 \pm 0.40}$ & $\mathbf{94.22 \pm 0.49}$ & $\mathbf{95.65 \pm 0.58}$ \\
-        \midrule
-        \multicolumn{9}{c}{\textit{Classifier-level ablation (full AW-DPCNN fusion)}} \\
-        B4 & $\checkmark$ & $\checkmark$ & $\times$ & $\times$ & $96.84 \pm 4.01$ & $95.83 \pm 5.62$ & $93.98 \pm 8.77$ & $96.46 \pm 4.49$ \\
-        B5 & $\checkmark$ & $\times$ & $\checkmark$ & $\times$ & $98.97 \pm 0.83$ & $98.88 \pm 0.91$ & $98.81 \pm 0.97$ & $98.85 \pm 0.93$ \\
-        B6 & $\checkmark$ & $\times$ & $\times$ & $\checkmark$ & $98.10 \pm 3.09$ & $97.72 \pm 3.72$ & $97.13 \pm 4.75$ & $97.87 \pm 3.46$ \\
-        B7 & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\mathbf{99.85 \pm 0.10}$ & $\mathbf{99.46 \pm 0.43}$ & $\mathbf{99.82 \pm 0.15}$ & $\mathbf{99.82 \pm 0.12}$ \\
-        \bottomrule
-    \end{tabular}
-\end{table*}
+% To evaluate the classification performance of the proposed MSCA-VGG16 model, confusion matrices were employed to visualize the recognition accuracy across ten fault categories, as shown in Fig.~\ref{fig:confusion_matrix}. A hierarchical comparison was conducted among the baseline model, several representative deep learning architectures, and the proposed MSCA-enhanced framework. 
+
+% \textbf{1) Performance of the Baseline Model.}
+% As illustrated in Fig.~\ref{fig:confusion_matrix}(a), the baseline model exhibits limited capability in distinguishing different transformer operating conditions, particularly harmonic-related conditions. Consequently, multiple harmonic-associated states are frequently misclassified. For example, the recognition accuracy of pure third harmonic category is extremely low, with most samples incorrectly classified as pure fifth harmonic category. In addition, the 30\% seventh harmonic category also shows poor performance and is frequently misclassified as pure fifth harmonic category. Similar confusion can be observed between other harmonic conditions, indicating that the baseline network has difficulty capturing subtle spectral differences among harmonic components. These results demonstrate that the baseline architecture lacks sufficient representation capability to effectively discriminate complex acoustic patterns in transformer fault signals.
+
+% \textbf{2) Performance of Standard Deep Architectures.}
+% With the adoption of deeper architectures, including AlexNet, ResNet18, ConvNeXt-Tiny, and VGG16 (Fig.~\ref{fig:confusion_matrix}(b)–(e)), the overall diagnostic performance is noticeably improved compared with the baseline model. The confusion matrices show stronger diagonal dominance, indicating enhanced classification capability across most categories. AlexNet achieves high recognition accuracy for several conditions, such as 30\% fifth harmonic category and pure seventh harmonic category, while misclassification of the normal state remains evident. ResNet18 further improves the recognition of certain harmonic categories, particularly 30\% third harmonic category, although different harmonic components remain difficult to distinguish. ConvNeXt-Tiny and VGG16 exhibit relatively balanced performance across most classes but remain limited in distinguishing acoustically similar harmonic patterns. These observations suggest that although deeper networks strengthen representation capability, accurately discriminating highly similar harmonic signals remains challenging for conventional backbone architectures.
+
+% \textbf{3) Superiority of the Proposed MSCA-VGG16 Model.}
+% As shown in Fig.~\ref{fig:confusion_matrix}(f), the proposed MSCA-VGG16 model achieves the most consistent and accurate classification results among all evaluated architectures. By incorporating the Multi-Scale Convolutional Attention (MSCA) mechanism, the model effectively enhances discriminative representation and suppresses inter-class confusion. Several categories, including 10 kV overload, loosen, partial discharge, and pure seventh harmonic, are recognized with perfect accuracy. Moreover, the recognition performance of previously challenging harmonic-related conditions is significantly improved. For example, the accuracy of the 30\% seventh harmonic category increases to 62\%, while the 30\% third harmonic category reaches 99\% accuracy. Although slight confusion still exists between pure third harmonic and pure fifth harmonic category, the overall confusion pattern is substantially reduced compared with the other backbone networks. These results indicate that the proposed MSCA-VGG16 framework provides more discriminative acoustic representation learning and achieves superior robustness for transformer acoustic fault diagnosis.
+
+\input{auto_tables/ablation_table.tex}
+
+% \input{auto_tables/previous_works_table.tex}
 
 \subsection{Ablation Study}
 \label{sec:ablation}
@@ -921,12 +872,33 @@ To isolate the contribution of each component, a systematic ablation study compr
 
 \textbf{3) Cumulative decomposition.} From B1 (GADF-only, 60.99\%) to B7 (full model, 99.85\%), the total gain of 38.86\% decomposes as follows. The STFT representation provides the foundational spectral discrimination (32.38\%, from B1 to B0); AW-DPCNN fusion contributes robust integration (2.93\% over STFT-only, from B0 to B3); and the MSCA-VGG16 classifier adds 3.55\% (from B3 to B7), with channel attention accounting for the majority of this gain.
 
+% \subsection{Hyperparameter Sensitivity Analysis}
+% \label{sec:hyperparam}
+
+% The AW-DPCNN fusion module involves several key hyperparameters whose settings may influence the quality of the fused representation and, consequently, the downstream classification performance. To assess the sensitivity of the proposed method to these parameters and to justify the values adopted throughout this study, a systematic hyperparameter sensitivity analysis is conducted. Three critical parameters are examined: the contrast amplification factor $\gamma$, which controls the degree of emphasis placed on the dominant representation in the adaptive weighting scheme; the number of PCNN iterations $N$, which governs the depth of pulse-coupled interaction; and the decay coefficients $\alpha_L$ and $\alpha_T$, which regulate the temporal dynamics of the linking field and the firing threshold, respectively. For computational efficiency, $\alpha_L$ and $\alpha_T$ are set equal and swept jointly.
+
+% For each parameter configuration, the raw test-set acoustic windows are re-fused on-the-fly using the AW-DPCNN module with the specified parameter values, while keeping all other parameters at their default settings ($\gamma=10$, $N=20$, $\alpha_L=\alpha_T=0.001$). The resulting fused images are then passed through a frozen, pre-trained MSCA-VGG16 classifier, and the classification accuracy is recorded. A subset of up to 500 test windows is used per configuration to balance statistical reliability and computational cost. Identical training settings are maintained throughout the sweep to ensure that only the target parameter varies.     
+
+% Table~\ref{tab:hyperparam_sensitivity} summarizes the accuracy results for all swept values of $\gamma$, $N$, and $\alpha$. Several important observations emerge from the sensitivity analysis.
+
+% \textbf{1) Contrast amplification factor $\gamma$.} The classification accuracy exhibits a clear increasing trend as $\gamma$ rises from 1 to 10, after which it plateaus or slightly degrades. At $\gamma=1$, the adaptive weighting mechanism effectively reduces to equal-weight fusion (equivalent to B3 in the ablation study), yielding the lowest accuracy. As $\gamma$ increases, the STFT representation, which carries richer fault-discriminative information in the time--frequency domain, receives progressively greater emphasis, leading to improved performance. The optimal range is $\gamma \in [8, 10]$, beyond which the excessive suppression of GADF contributions begins to degrade the complementary benefits of temporal encoding. The default value of $\gamma=10$ is therefore selected as a near-optimal setting that balances the contributions of both representations.
+
+% \textbf{2) Number of iterations $N$.} Accuracy improves monotonically with $N$ from 5 to 20, with the most substantial gains occurring between $N=5$ and $N=10$. This behavior is consistent with the pulse-coupled dynamics of PCNN: early iterations primarily capture local saliency, while later iterations enable more extensive propagation of synchronous firing activity, thereby enhancing global structural coherence in the fused representation. The performance saturates beyond $N=15$, indicating that 15 to 20 iterations are sufficient for effective fusion without incurring unnecessary computational overhead. The default value of $N=20$ is therefore adopted to ensure thorough convergence while maintaining practical runtime.
+
+% \textbf{3) Decay coefficients $\alpha_L$, $\alpha_T$.} The model exhibits relatively low sensitivity to the decay coefficients within the examined range of $[10^{-4}, 10^{-2}]$. The optimal performance is achieved at $\alpha=0.001$, with modest degradation at both extremes. A very small decay ($\alpha=0.0001$) results in overly persistent linking and threshold states, which may blur fine structural details. Conversely, a large decay ($\alpha=0.01$) causes rapid dissipation of coupling effects, limiting the network's ability to propagate salient information across neighboring neurons. The default value of $\alpha_L=\alpha_T=0.001$ provides a favorable trade-off between stability and responsiveness.
+
+% Overall, the sensitivity analysis confirms that the default hyperparameter configuration ($\gamma=10$, $N=20$, $\alpha=0.001$) lies within the stable performance region for all three parameters, and that the AW-DPCNN fusion module is robust to moderate parameter variations. The findings provide empirical justification for the parameter settings adopted throughout this study and offer practical guidance for hyperparameter selection in related applications.
+
+% \input{auto_tables/hyperparam_sensitivity_table.tex}
+
+
 \begin{figure*}[!t] 
 \centering
 \includegraphics[width=\linewidth]{/home/yangchen/git_clone/AW-DPCNN/data-optimization/noise_robustness/data-optimization/noise_robustness/noise_robustness_multi_panel.pdf}
 \caption{Noise robustness comparison across seven backbone networks under additive Gaussian noise injection. Panels (a)--(c) report accuracy, $F_1$-score, and AUC respectively as functions of SNR level (5.0--30.0~dB). The proposed MSCA-VGG16 achieves 100.0\% accuracy at 20.0~dB and maintains 91.2\% at 5.0~dB, a degradation of only 8.8\%.}
 \label{fig:noise_robustness}
 \end{figure*}
+
 
 \begin{figure*}[!t]
 	\centering
@@ -944,9 +916,13 @@ The proposed MSCA-VGG16 achieves 100.0\% accuracy at 20.0~dB and above, and reta
 
 ConvNeXt-Tiny achieves moderate noise immunity, with accuracy ranging from 48.6\% at 5.0~dB to 95.0\% at 30.0~dB. ResNet18 offers a strong balance, retaining 76.3\% at 5.0~dB while achieving 96.9\% at 30.0~dB. ViT degrades modestly under noise (from 83.2\% to 72.5\%) despite the lowest peak accuracy (83.2\% at 30.0~dB). These results confirm that MSCA-VGG16 achieves the best balance between peak discriminative performance and noise robustness, making it suitable for practical industrial deployment where signal quality cannot be guaranteed.
 
+% \input{auto_tables/noise_robustness_table.tex}
 
 \subsection{Generalization Validation}
 \label{sec:generalization}
+
+
+% \input{auto_tables/three_trial_summary.tex}
 
 To assess generalization beyond the primary benchmark, experiments are conducted on the 12k FE dataset and the 48k DE dataset. The same AW-DPCNN pipeline and MSCA-VGG16 classifier are applied without architectural modifications, with only the signal-processing parameters adjusted per Section~\ref{sec:dataset_preprocessing} to maintain consistent temporal duration and frequency resolution. Key findings are summarized as follows.
 
@@ -967,78 +943,153 @@ Extensive experiments on the CWRU bearing dataset demonstrate that the full pipe
 
 These results collectively demonstrate that adaptive multi-representation fusion combined with multi-scale channel attention provides an effective and generalizable approach to non-stationary vibration signal fault diagnosis. Future work will explore several directions: (i) extending the AW-DPCNN framework to multi-sensor fusion, where vibration signals from multiple measurement points are jointly weighted and integrated; (ii) evaluating the proposed pipeline on larger-scale industrial datasets under variable-speed and fluctuating-load conditions; and (iii) investigating lightweight architectures to reduce the computational cost of AW-DPCNN fusion for real-time deployment.
 
-% \appendix
-% \section{Supplementary Tables}
 
-% ========== Noise Robustness Table (INLINED) ==========
 % \begin{table*}[!htbp]
-%     \centering
-%     \caption{Noise Robustness Comparison --- Accuracy (\%) at Different SNR Levels Under Additive Gaussian Noise.}
-%     \label{tab:noise_robustness}
-%     \renewcommand{\arraystretch}{1.1}
-%     \footnotesize
-%     \setlength{\tabcolsep}{4pt}
-%     \begin{tabular}{lcccccc}
-%         \toprule
-%         \textbf{Model} & $\mathbf{5.0}$~dB & $\mathbf{10.0}$~dB & $\mathbf{15.0}$~dB & $\mathbf{20.0}$~dB & $\mathbf{25.0}$~dB & $\mathbf{30.0}$~dB \\
-%         \midrule
-%         \textbf{MSCA-VGG16 (Ours)} & $\mathbf{91.19}$ & $\mathbf{97.45}$ & $\mathbf{99.87}$ & $\mathbf{100.00}$ & $\mathbf{100.00}$ & $\mathbf{100.00}$ \\
-%         ResNet18 & $76.31$ & $94.78$ & $97.26$ & $97.06$ & $97.06$ & $96.93$ \\
-%         ConvNeXt-Tiny & $48.56$ & $93.21$ & $94.13$ & $94.84$ & $95.04$ & $95.04$ \\
-%         EfficientNet-B0 & $11.23$ & $87.01$ & $94.97$ & $95.63$ & $95.37$ & $95.43$ \\
-%         MobileNetV3-Small & $45.76$ & $85.12$ & $95.76$ & $95.89$ & $95.37$ & $95.43$ \\
-%         VGG16 & $15.40$ & $78.85$ & $98.02$ & $98.87$ & $98.87$ & $98.87$ \\
-%         ViT & $72.52$ & $81.92$ & $82.57$ & $83.22$ & $83.03$ & $83.16$ \\
-%         \bottomrule
-%     \end{tabular}
+% \centering
+% \caption{Noise Robustness Comparison --- Accuracy (\%) at Different SNR Levels.}
+% \label{tab:noise_robustness}
+% \renewcommand{\arraystretch}{1.1}
+% \small
+% \begin{tabular}{lccccccc}
+% \toprule
+% \textbf{Model} & Clean & 5.0~dB & 10.0~dB & 15.0~dB & 20.0~dB & 25.0~dB & 30.0~dB \\
+% \midrule
+% \textbf{MSCA-VGG16} & 95.1 & 92.9 & 93.9 & 94.7 & 94.8 & 95.1 & 95.2 \\
+% VGG16 & 94.7 & 83.5 & 93.7 & 94.5 & 94.6 & 94.8 & 94.7 \\
+% ViT & 88.0 & 73.8 & 85.8 & 87.7 & 88.4 & 88.0 & 88.4 \\
+% EfficientNet-B0 & 91.0 & 14.1 & 75.3 & 88.4 & 91.0 & 90.8 & 91.3 \\
+% MobileNetV3-Small & 84.7 & 56.9 & 72.6 & 83.6 & 84.2 & 84.0 & 84.0 \\
+% ConvNeXt-Tiny & 76.4 & 78.5 & 78.0 & 77.0 & 76.4 & 76.7 & 76.4 \\
+% \bottomrule
+% \end{tabular}
 % \end{table*}
 
 
-
-% ========== Per-Class ROC-AUC Table (INLINED) ==========
 % \begin{table*}[!htbp]
-%     \centering
-%     \caption{Per-Class AUC Values Across Backbone Networks.}
-%     \label{tab:roc_auc}
-%     \renewcommand{\arraystretch}{1.05}
-%     \footnotesize
-%     \begin{tabular}{lccccccc}
-%         \toprule
-%         \textbf{Fault Class} & \textbf{MSCA-VGG16 (Ours)} & ConvNeXt-Tiny & EfficientNet-B0 & MobileNetV3-Small & ResNet18 & VGG16 & ViT \\
-%         \midrule
-%         BF007 & $1.000$ & $\mathbf{1.000}$ & $0.998$ & $0.995$ & $1.000$ & $1.000$ & $0.936$ \\
-%         BF014 & $\mathbf{1.000}$ & $0.987$ & $1.000$ & $1.000$ & $1.000$ & $1.000$ & $0.973$ \\
-%         BF021 & $0.994$ & $0.970$ & $0.918$ & $0.892$ & $0.989$ & $\mathbf{1.000}$ & $0.670$ \\
-%         IF007 & $\mathbf{1.000}$ & $1.000$ & $1.000$ & $0.997$ & $1.000$ & $1.000$ & $1.000$ \\
-%         IF014 & $0.972$ & $0.950$ & $0.838$ & $0.468$ & $\mathbf{0.977}$ & $0.872$ & $0.879$ \\
-%         IF021 & $\mathbf{0.999}$ & $0.997$ & $0.972$ & $0.966$ & $0.990$ & $0.969$ & $0.907$ \\
-%         Normal & $\mathbf{1.000}$ & $1.000$ & $1.000$ & $1.000$ & $1.000$ & $1.000$ & $1.000$ \\
-%         OF007 & $\mathbf{1.000}$ & $0.994$ & $0.997$ & $0.982$ & $1.000$ & $1.000$ & $0.990$ \\
-%         OF014 & $\mathbf{0.998}$ & $0.994$ & $0.963$ & $0.816$ & $0.993$ & $0.977$ & $0.712$ \\
-%         OF021 & $\mathbf{1.000}$ & $0.998$ & $1.000$ & $1.000$ & $1.000$ & $1.000$ & $1.000$ \\
-%         \midrule
-%         \textbf{Macro} & $\mathbf{0.996}$ & $0.989$ & $0.968$ & $0.911$ & $0.995$ & $0.981$ & $0.907$ \\
-%         \textbf{Micro} & $\mathbf{0.999}$ & $0.993$ & $0.984$ & $0.967$ & $0.998$ & $0.993$ & $0.936$ \\
-%         \bottomrule
-%     \end{tabular}
+% \centering
+% \caption{Performance Comparison on the EXP1 Dataset (Seed 42)}
+% \label{tab:exp1_comparison}
+% \renewcommand{\arraystretch}{1.15}
+% \small
+% \begin{tabular}{lcccccc}
+% \toprule
+% \textbf{Network} & \textbf{Acc} & \textbf{F1} & \textbf{G-Mean} & \textbf{AUC} & \textbf{$\kappa$} & \textbf{Params (M)} \\
+% \midrule
+% \textbf{MSCA-VGG16 (Ours)} & \textbf{95.1} & \textbf{92.9} & \textbf{90.3} & 99.9 & \textbf{94.3} & 26.8 \\
+% VGG16 & 94.7 & 91.9 & 89.0 & \textbf{99.9} & 93.8 & 15.3 \\
+% EfficientNet-B0 & 91.0 & 86.7 & 83.1 & 98.9 & 89.5 & 4.0 \\
+% ViT & 88.0 & 84.1 & 82.3 & 99.2 & 85.9 & 11.0 \\
+% MobileNetV3-Small & 84.7 & 79.3 & 75.0 & 98.2 & 82.0 & 1.5 \\
+% ConvNeXt-Tiny & 76.4 & 66.0 & 45.1 & 97.1 & 72.3 & 27.8 \\
+% \bottomrule
+% \end{tabular}
 % \end{table*}
 
-\printcredits
+% \begin{table*}[!htbp]
+% \centering
+% \caption{Training Summary and Leakage Check}
+% \label{tab:exp1_training}
+% \renewcommand{\arraystretch}{1.15}
+% \small
+% \begin{tabular}{lccccc}
+% \toprule
+% \textbf{Network} & \textbf{Best Epoch} & \textbf{Val F1} & \textbf{Params (M)} & \textbf{FLOPs (M)} & \textbf{Shuffled Acc} \\
+% \midrule
+% \textbf{MSCA-VGG16 (Ours)} & 24 & 99.8 & 26.8 & 15947 & 15.7 \\
+% VGG16 & 30 & 99.8 & 15.3 & 15394 & 15.6 \\
+% EfficientNet-B0 & 14 & 92.0 & 4.0 & 15338 & 15.7 \\
+% ViT & 29 & 78.8 & 11.0 & 65 & 15.5 \\
+% MobileNetV3-Small & 30 & 84.3 & 1.5 & 1845 & 15.8 \\
+% ConvNeXt-Tiny & 18 & 95.3 & 27.8 & 25708 & 15.5 \\
+% \bottomrule
+% \end{tabular}
+% \end{table*}
 
-%% Loading bibliography style file (sorted by citation order)
-\bibliographystyle{unsrtnat}
+% \begin{figure*}[!htbp]
+% 	\centering
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{../experiments/experiment_result/exp1/convnext_tiny/exp1_convnext_tiny/trial_seed42/figures/confusion_matrix.png}
+% 		\caption{ConvNeXt-Tiny}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{../experiments/experiment_result/exp1/vit/exp1_vit/trial_seed42/figures/confusion_matrix.png}
+% 		\caption{ViT}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{../experiments/experiment_result/exp1/vgg16/exp1_vgg16/trial_seed42/figures/confusion_matrix.png}
+% 		\caption{VGG16}
+% 	\end{subfigure}
 
-% Loading bibliography database
+% 	\vspace{3mm}
+
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{../experiments/experiment_result/exp1/efficientnet_b0/exp1_efficientnet_b0/trial_seed42/figures/confusion_matrix.png}
+% 		\caption{EfficientNet-B0}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{../experiments/experiment_result/exp1/mobilenetv3_small/exp1_mobilenetv3_small/trial_seed42/figures/confusion_matrix.png}
+% 		\caption{MobileNetV3-Small}
+% 	\end{subfigure}
+% 	\hfill
+% 	\begin{subfigure}{0.32\textwidth}
+% 		\centering
+% 		\includegraphics[width=\linewidth]{../experiments/experiment_result/exp1/MSCA_VGG16/exp1_MSCA_VGG16/trial_seed42/figures/confusion_matrix.png}
+% 		\caption{MSCA-VGG16 (Ours)}
+% 	\end{subfigure}
+% 	\caption{t-SNE feature visualization of different backbone networks on the transformer acoustic test set. The proposed MSCA-VGG16 produces the most compact and well-separated clusters, indicating superior discriminative representation learning.}
+% 	\label{fig:tsne_backbones}
+% \end{figure*}
+
+
+% \input{auto_tables/roc_auc_table.tex}
+
+
+
+
+
+
+% \begin{figure*}[!htbp] 
+% \centering
+% \includegraphics[width=\linewidth]{../paper/figures/model_comparison_panel.png}
+% \caption{}
+% \label{}
+% \end{figure*}
+
+
+
+
+
+% \input{auto_tables/noise_robustness_table.tex}
+
+
+% \begin{figure*}[!htbp] 
+% \centering
+% \includegraphics[width=\linewidth]{figures/model_comparison/model_comparison_12k_de_trial_seed42.png}
+% \caption{}
+% \label{}
+% \end{figure*}
+
+
+% The overall architecture of the proposed MSCA-VGG16 network is illustrated in Fig.~\ref{MSCA-VGG}.
+% \begin{figure*}[!htbp]
+% 	\centering
+% 	\includegraphics[width=\textwidth]{MSCA-VGG16/MSCA-VGG16}
+% 	\caption{Overall architecture of the proposed MSCA-VGG16 network. The fused AW-DPCNN image is processed by a convolutional backbone, followed by a multi-scale convolution module, squeeze-and-excitation channel attention, and a compact embedding head for fault classification.}
+% 	\label{MSCA-VGG}
+% \end{figure*}
+
+
+% \balance
+
+\bibliographystyle{IEEEtran}
 \bibliography{references}
-
-\bio{}
-% TODO: Fill in author biographies
-% Author biography for Chen Yang.
-% Author biography for Zonglong Bai.
-% Author biography for Zhiyuan Xie.
-% Author biography for Chenggang Liu.
-% Author biography for Junyan Zhang.
-% Author biography for Yihe Guo.
-\endbio
 
 \end{document}

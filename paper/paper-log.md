@@ -1,204 +1,170 @@
-some detail are revised.
-
-# Abstract
->the current abstract sentence frames MSCA-VGG16's motivation as "noise robustness," but the real contribution is the multi-scale receptive fields and dynamic channel attention architecture. The noise robustness is just one result/benefit, not the core motivation. 
-
-The current sentence over-emphasizes noise robustness as the *motivation*, when the real contribution is the **multi-scale + channel attention architecture**. Noise robustness is just a demonstrated benefit, not the core reason MSCA-VGG16 exists. Let me reframe:
+# replace IEEEtran with Elsevier `cas-dc` template
+- replace this paper `manuscript.tex` with elsevier template `cas-dc-sample.tex`
+- follow the instructions in `elsevier-format-check.md`
+- Save files in an editable format, using `.tex` for LaTeX files, consequently, relative data are required to rewrite to the paper rather than cite the `.tex` file.
 
 
+## Summary of Changes: IEEEtran → Elsevier `cas-dc`
 
-| | Before | After |
-|---|--------|-------|
-| **Motivation (WHY)** | *"to address the noise sensitivity... under degraded signal conditions"* | *"to fully exploit the complementary information encoded in the fused representations"* |
-| **Primary outcome** | *"improve noise robustness and fault diagnosis performance"* | *"improve fault diagnosis performance and noise robustness"* |
+### Files Modified/Created
 
-### Why this matters
-
-The old version **reduces MSCA-VGG16 to a denoising module** — but the paper's real innovation is architectural: multi-scale receptive fields + SE channel attention + compact embedding. Aligning the abstract's motivation with the introduction's contribution statement (*"to further exploit the complementary information encoded in the fused representations"*) makes the value proposition clear:
-
-1. **AW-DPCNN** → fuses heterogeneous representations
-2. **MSCA-VGG16** → exploits the fused representations via multi-scale + channel attention mechanisms
-3. **Noise robustness** → a demonstrated outcome, not the raison d'être
-
-
-# Introduction
->reconstruct the sentence about conventional deep learning classifiers
-
-### Before
-> *"Furthermore, conventional deep learning classifiers, **while powerful**, often lack **explicit** architectural mechanisms **to exploit** the multi-scale and channel-wise characteristics of fused representations."*
-
-### After
-> *"Furthermore, conventional deep learning classifiers **are typically optimized for single-representation inputs and** lack **dedicated** architectural mechanisms **for capturing** the multi-scale and channel-wise characteristics **that emerge from** multi-representation fusion."*
-
-### What was improved
-
-| Change | Rationale |
-|--------|-----------|
-| Removed *"while powerful"* | Weak filler that disrupts flow; the concessive adds no information |
-| Added *"are typically optimized for single-representation inputs"* | Establishes **why** they lack the mechanisms — logical causation rather than assertion |
-| *"explicit"* → *"dedicated"* | Matches consistent phrasing used throughout the paper (e.g., Deep Learning subsection, MSCA-VGG16 section) |
-| *"to exploit"* → *"for capturing"* | More neutral academic tone; "exploit" carries a slightly negative connotation |
-| *"of fused representations"* → *"that emerge from multi-representation fusion"* | Ties the limitation directly to the fusion context, strengthening the logical transition to the proposed MSCA-VGG16 solution |
-
-Made changes.
-
-
-
->make the contribution bullet more concise
-
-| Removed | Reason |
-|---------|--------|
-| *"comprehensive"* before "ablation studies" | Implied by "ablation" |
-| *"across twelve time--frequency and temporal encoding combinations"* | Overly specific for a contribution bullet; the detail belongs in Section 4 |
-| *"systematically"* | Implied by experimental design |
-| *"each component of"* | Redundant; "validate the proposed framework" is sufficient |
-| *"confirming robustness beyond the primary benchmark"* | Already conveyed by "generalization" and the dataset names |
-
-**Before** (48 words):
-> *"Extensive experiments on the CWRU bearing dataset, including backbone comparisons, **comprehensive** ablation studies, representation comparisons **across twelve time--frequency and temporal encoding combinations**, and noise robustness evaluations, **systematically** validate **each component of** the proposed framework. Cross-sensor and cross-sampling-rate generalization is further demonstrated on the 12 kHz fan-end and 48 kHz drive-end datasets**, confirming robustness beyond the primary benchmark**."*
-
-**After** (35 words):
-> *"Extensive experiments on the CWRU bearing dataset, including backbone comparisons, ablation studies, representation comparisons, and noise robustness evaluations, validate the proposed framework. Cross-sensor and cross-sampling-rate generalization is further demonstrated on the 12 kHz fan-end and 48 kHz drive-end datasets."*
-
-Made changes.
-
-
->make it fluent
-
-Time--frequency representations have been extensively applied to vibration-based
-bearing fault diagnosis, such as STFT spectrograms, CWT scalograms, and Mel spectrograms.
-
->reconstruct the sentence, it seems awkward and unnatural
-
-Despite these successes, time--frequency representations fundamentally characterize local
-spectral energy distributions and do not explicitly model long-range temporal
-dependencies that may contain complementary diagnostic information.
-
-
-| | Before | After |
-|---|--------|-------|
-| **Verb** | *fundamentally characterize* | *inherently capture* |
-| **Connector** | *and do not* (weak additive) | *but do not* (sharp contrast) |
-| **Qualifier** | *that **may** contain* (tentative, weak) | *that **carry*** (definitive, confident) |
-| **Article** | *model long-range* (missing "the") | *model **the** long-range* |
-
-Three problems were fixed:
-
-1. **"fundamentally characterize"** → unnatural collocation. "Inherently capture" is both more idiomatic and more precise — time-frequency representations are *inherently* local, that's their nature.
-
-2. **"and"** → the original used an additive connector to link a positive statement (what they do) with a negative one (what they don't do). "But" creates the logical contrast the sentence is trying to make: *they're good at X, but bad at Y.*
-
-3. **"may contain"** → in a limitation statement, hedging with "may" undermines your argument. If the dependencies *may* contain complementary information, the reader wonders whether the limitation even matters. Dropping the hedge makes the claim stronger and more persuasive.
-
-Made changes.
-
-
-
->Revise `In a parallel direction`
-
-**"On another aspect"** is not idiomatic in English academic writing. The standard phrase for contrasting two parallel research directions is:
-
-| ❌ Current | ✅ Recommended |
+| File | Action |
 |---|---|
-| *"On another aspect"* | *"In parallel"* |
+| manuscript.tex | **Replaced** — now uses Elsevier `cas-dc` format |
+| manuscript-ieee-backup.tex | **Created** — backup of original IEEE version |
+| cas-dc.cls | **Copied** from `els-cas-templates/` |
+| cas-model2-names.bst | **Copied** from `els-cas-templates/` |
 
-This is the conventional transition when presenting two complementary lines of work (time-frequency ↔ temporal encoding), and it was in fact already used in an earlier version of the manuscript. Let me fix it:
+### Key Structural Changes
 
+1. **Document class**: `IEEEtran` → `cas-dc` (Elsevier double-column)
+2. **Bibliography**: `IEEEtran.bst` → `cas-model2-names.bst` with `[numbers]{natbib}`
+3. **Front matter** now uses Elsevier-style commands:
+   - `\title[mode=title]{...}` with `\tnotemark`/`\tnotetext` for funding
+   - Individual `\author[]{}` / `\affiliation[]{}` / `\cormark[]` / `\ead{}` per author
+   - `\shorttitle{}` / `\shortauthors{}` for running headers
 
-| | Before | After |
-|---|--------|-------|
-| **Phrase** | *"On another aspect"* | *"In parallel"* |
-| **Problem** | Not idiomatic English; sounds like a calque/translation | Standard academic transition for contrasting two complementary research directions |
+4. **Added required Elsevier elements**:
+   - `\begin{highlights}...\end{highlights}` (5 bullet points, each ≤85 chars)
+   - `\begin{keywords}...\end{keywords}` with `\sep` separators
+   - `\begin{graphicalabstract}...\end{graphicalabstract}` (commented out — needs image)
+   - `\printcredits` for author contributions
+   - `\bio{}...\endbio` for author biographies (placeholder)
 
-*"In parallel"* is the conventional phrase used in academic writing to introduce a second body of work that runs alongside (but is distinct from) the first — here, temporal encoding methods as a parallel direction to time-frequency representations.
+5. **All `\input{}` calls replaced** with inlined table data (6 tables total):
+   - Representation comparison table
+   - Backbone comparison table
+   - Ablation study table
+   - Noise robustness table (appendix)
+   - Generalization summary table (appendix)
+   - Per-class ROC-AUC table (appendix)
 
-Made changes.
+### ⚠️ Action Items for You
 
-# References
-
->some references have extra spaces in the page numbers, like "pp. 2 9 9669-29 990" instead of "pp. 29969-29990".
-
-
-I can see the issue. The `IEEEtran.bst` style automatically inserts thin-space thousand separators (`\,`) in page numbers with 5+ digits (e.g., `29\,969`), which renders as visible spaces in the PDF. Let me fix this by modifying the `.bst` file.
-
-
-**Problem 1 — Spaces in page numbers:** The IEEEtran.bst style inserts thin-space thousand separators (`\,`) for numbers with 5+ digits (e.g., `29\,969`), which rendered as visible spaces in the PDF.
-
-- **Fix:** Changed `large.number.trigger` from `#5` to `#10` in IEEEtran.bst (line 814), effectively disabling thousand separators for all practical page numbers.
-
-**Problem 2 — BibTeX compilation error:** The references.bib file had two syntax issues:
-- The `@article{SMITH2015100}` entry was missing its closing `}`
-- An extra trailing `}` at the end of the file
-
-- **Fix:** Added missing `}` to close the SMITH2015100 entry and removed the extraneous trailing brace. Also fixed the `@ARTICLE{10659159}` doi field's `}}` placement.
-
-The PDF now compiles cleanly with page numbers rendered as `pp. 29969--29990` instead of `pp. 29 969--29 990`.
-
-Made changes.
-
->remove all the "[Online]. Available: https://..." entries from the .bbl file. These appear in the bibliography for entries that have a url field. 
-
-**What was changed:** IEEEtran.bst line 87 — `default.is.use.url` from `#1` (enable URLs) to `#0` (disable URLs). This permanently suppresses URL output for all bibliography entries, so the `.bib` file's `url` fields are preserved for reference but no longer appear in the PDF.
+1. **Fill in affiliations** (lines 53–73): Replace `Your University`, `Your City`, etc. with actual institution details
+2. **Fill in corresponding author email** (line 47): Replace `chenyang@example.edu.cn`
+3. **Fill in author biographies** (end of file): Replace placeholder comments with actual bios
+4. **Graphical abstract** (line 92–94): Uncomment and provide image (531×1328 px recommended)
+5. **Compile** with `pdflatex` + `bibtex` to verify everything works with the `cas-dc` class
 
 Made changes.
 
->The rejection of reviewers are as follows, how to add relative references to the paper, and how to add more comparisons to other works published in journals with their primary field being I&M.
 
-`It also does not have any references or comparisons to other works published in journals with their primary field being I&M`
+>compile this file and fix the issue
 
-revise the tables, mark relative references. or add a new table similar to the following.
+### Issues Found & Fixed
 
-```latex
-\begin{table*}[!t]
-\caption{Summary of previous works (in chronological order) that consider similar acoustic signal datasets.}
-\label{tab:previous_works}
-\centering
-\begin{tabular}{c c l l l p{6.5cm}}
-\toprule
-\textbf{Ref.} & \textbf{Year} & \textbf{Method} & \textbf{Input feature} & \textbf{Performance measures} & \textbf{Remarks} \\
-\midrule
-\cite{ref19} & 2019 & AE & Mel spectrogram & AUC &
-Performance results, i.e., valve: 0.67, pump: 0.81, fan: 0.94; and slide rail: 0.90 \\
+| # | Error | Fix |
+|---|---|---|
+| 1 | **Missing thumbnails**: `File 'thumbnails/cas-email.jpeg' not found` — the `cas-dc` class requires thumbnail icons for email/URL links in the author block | Copied `els-cas-templates/thumbnails/` → thumbnails |
+| 2 | **Font expansion fatal error**: `auto expansion is only possible with scalable fonts` — `microtype`'s font expansion feature conflicts with `cas-dc`'s font setup | Changed `\usepackage{microtype}` → `\usepackage[expansion=false]{microtype}` |
 
-\cite{ref49} & 2020 & IDNN & Mel spectrogram & AUC &
-Achieve 27\% improvement against non-stationary machine sounds. \\
+### Build Result
+- **PDF generated**: `manuscript.pdf` (11 MB)
+- **0 undefined references**
+- **0 undefined citations** (all BibTeX entries resolved)
+- Full cycle: `pdflatex` → `bibtex` → `pdflatex` × 2 completed cleanly
 
-\cite{ref46} & 2020 & FCN & MDF & AUC &
-Performance results, i.e., valve: 0.7362, pump: 0.9996, fan: 0.9978, and slide rail: 0.9646 \\
+Made changes.
 
-\cite{ref44} & 2020 & One-shot learning & Spectrogram & AUC and F1 scores &
-Utilizing a neural network-based feature extractor and attention mechanism. \\
+>Here are the two ways to compile it:
 
-\cite{ref47} & 2021 & Fully connected U-Net & Mixed features, i.e., MFCC, chroma feature, Mel spectrogram, spectral contrast, and Tonnetz & AUC and pAUC &
-The proposed model achieves 83.38\% AUC and 64.51\% pAUC on average over all machine types. \\
 
-\cite{ref50} & 2021 & CNN & Mel spectrogram & Precision, sensitivity, and accuracy &
-The designed model has only 1--3 convolutional layers and gives higher accuracy than AlexNet. \\
+### Option 1: One-command build (recommended)
 
-\cite{ref48} & 2021 & Convolutional VAE & Mel spectrogram & AUC and pAUC &
-The use of fully-connected models yields better performance in comparison with convolutional models. \\
-
-\cite{ref5} & 2021 & ResNet, Gaussian mixture models, and One-class SVM & Mel spectrogram & AUC &
-The use pre-trained model on the task of image classification. \\
-
-\cite{ref51} & 2021 & SVM and MLP & Mel spectrogram & AUC &
-The proposed approach improves the performance by up to 39.5\% compared with the baselines. \\
-
-\cite{ref41} & 2021 & RawdNet & Mel spectrogram & AUC &
-The proposed method is the fusion of supervised feature learning and unsupervised deep one-class neural network. \\
-\bottomrule
-\end{tabular}
-\end{table*}
-
+```bash
+cd /home/yangchen/git_clone/AW-DPCNN/paper
+latexmk -pdf manuscript.tex
 ```
 
->look for literatures for comparison table, add a comparison table with the previous works.
-- only STFT, GADF, CWT, Mel, MTF, RP, GASF, ours
-- VGG16, ResNet18, EfficientNet-B0, ViT, ours
+### Option 2: Manual build (if latexmk has issues)
 
->add the following contents to proper location.
+```bash
+cd /home/yangchen/git_clone/AW-DPCNN/paper
+pdflatex manuscript.tex
+bibtex manuscript
+pdflatex manuscript.tex
+pdflatex manuscript.tex
+```
 
-\thanks{This work is supported by the National Natural Science Foundation of
-China (No. 12404545), Science Research Project of Hebei Education Depart
-ment, China (No. QN2025334), and the Fundamental Research Funds for the
-Central Universities (No. 2026MS144).}
+The earlier `latexmk` timeout (exit code 148) was caused by the missing `thumbnails/` folder and the microtype font expansion conflict — both are now fixed, so `latexmk -pdf manuscript.tex` should work cleanly now.
+
+
+# title page
+
+>move the following information in `manuscript.tex` to `TitlePage.tex`, and review the `TitlePage.tex` file using `title-page.md` to ensure it meets the requirements of the title page information.
+
+```latex
+\author[1]{Chen Yang}
+\author[2]{Zonglong Bai}
+\cormark[1]
+\ead{zlbai@ncepu.edu.cn}
+\author[3]{Zhiyuan Xie}
+\author[4]{Chenggang Liu}
+\author[5]{Junyan Zhang}
+\author[6]{Yihe Guo}
+
+\affiliation[1]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
+    city={Baoding},
+    postcode={071003},
+    country={China}}
+
+\affiliation[2]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
+    city={Baoding},
+    postcode={071003},
+    country={China}}
+
+\affiliation[3]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
+    city={Baoding},
+    postcode={071003},
+    country={China}}
+
+\affiliation[4]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
+    city={Baoding},
+    postcode={071003},
+    country={China}}
+
+\affiliation[5]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
+    city={Baoding},
+    postcode={071003},
+    country={China}}
+
+\affiliation[6]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
+    city={Baoding},
+    postcode={071003},
+    country={China}}
+
+\cortext[cor1]{Corresponding author.}
+```
+
+### Changes to TitlePage.tex
+
+| Element | Before | After |
+|---|---|---|
+| **Title** | "Voiceprint Diagnosis Method for Transformer Faults..." | "Adaptive Multi-Representation Fusion via Dual-Channel PCNN..." (matches manuscript.tex) |
+| **Authors** | 4 authors (missing Zhiyuan Xie) | 6 authors: Chen Yang, Zonglong Bai, **Zhiyuan Xie** (added), Chenggang Liu, Junyan Zhang, Yihe Guo |
+| **Affiliation markers** | Numbers (¹²³⁴) | Lower-case letters (ᵃ) per `title-page.md` |
+| **Author order** | Non-standard | Matches manuscript.tex exactly |
+
+### Compliance with `title-page.md`
+
+| Requirement | Status |
+|---|---|
+| Concise, informative title with no abbreviations | ✅ |
+| Given + family name, order matches submission | ✅ |
+| Lower-case superscript letter for affiliations | ✅ Fixed (all `ᵃ` — same institution) |
+| Full postal address with country | ✅ |
+| Email for each author (where available) | ✅ |
+| Corresponding author clearly indicated | ✅ Zonglong Bai with `zlbai@ncepu.edu.cn` |
+| Present/permanent address footnote | N/A — no author has moved |
+
+### ⚠️ Note
+**Zhiyuan Xie** (author 3) has no email or ORCID in TitlePage.tex. If you have that information, add it after line `\textbf{Zhiyuan Xie}\textsuperscript{a}\\`.
+
+Made changes.
+
+
+>revise the cover letter
+
+
+>revise the highlights according to the instructions in `highlights.md` to fit the Elsevier submission requirements

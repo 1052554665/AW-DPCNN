@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.7.3)  14 JUL 2026 21:06
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.7.3)  28 JUL 2026 19:09
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -131,19 +131,24 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <8> on input line 22.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 22.
+
+Overfull \hbox (1.0647pt too wide) in paragraph at lines 31--32
+[]\OT1/cmr/bx/n/12 Comprehensive ex-per-i-men-tal val-i-da-tion: \OT1/cmr/m/n/12 Ex-ten-sive ex-per-i-ments on the CWRU
+ []
+
 [1
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] [2] (./coverletter.aux) ) 
 Here is how much of TeX's memory you used:
  1834 strings out of 479654
  31700 string characters out of 5883417
- 329978 words of memory out of 5000000
+ 329984 words of memory out of 5000000
  19962 multiletter control sequences out of 15000+600000
  472649 words of font info for 39 fonts, out of 8000000 for 9000
  309 hyphenation exceptions out of 8191
- 55i,6n,62p,846b,152s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 55i,6n,62p,861b,152s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb>
-Output written on coverletter.pdf (2 pages, 52727 bytes).
+Output written on coverletter.pdf (2 pages, 57425 bytes).
 PDF statistics:
  26 PDF objects out of 1000 (max. 8388607)
  15 compressed objects within 1 object stream
