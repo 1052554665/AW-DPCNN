@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.7.3)  28 JUL 2026 19:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2026.7.3)  1 AUG 2026 16:00
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -48,13 +48,23 @@ LaTeX Font Info:    ... okay on input line 4.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 4.
 LaTeX Font Info:    ... okay on input line 4.
 
+Overfull \hbox (11.16725pt too wide) in paragraph at lines 10--11
+[]\OT1/cmr/m/n/10 MSCA-VGG16 in-te-grates multi-scale con-vo-lu-tion and squeeze-and-excitation
+ []
+
+
+Overfull \hbox (16.0007pt too wide) in paragraph at lines 10--11
+\OT1/cmr/m/n/10 chan-nel at-ten-tion with a com-pact em-bed-ding head for ro-bust multi-granularity
+ []
+
+
 Overfull \hbox (1.38835pt too wide) in paragraph at lines 11--12
 []\OT1/cmr/m/n/10 Achieves 99.85% ac-cu-racy on CWRU 12 kHz drive-end bear-ing fault bench-
  []
 
 
-Overfull \hbox (1.47273pt too wide) in paragraph at lines 12--13
-[]\OT1/cmr/m/n/10 Demonstrates cross-sensor and cross-sampling-rate gen-er-al-iza-tion with sys-
+Overfull \hbox (10.50061pt too wide) in paragraph at lines 12--13
+[]\OT1/cmr/m/n/10 Demonstrates 97.45% cross-sensor gen-er-al-iza-tion and 94.81% cross-sampling-
  []
 
 [1
@@ -63,13 +73,13 @@ Overfull \hbox (1.47273pt too wide) in paragraph at lines 12--13
 Here is how much of TeX's memory you used:
  442 strings out of 479654
  8514 string characters out of 5883417
- 295475 words of memory out of 5000000
+ 296475 words of memory out of 5000000
  18619 multiletter control sequences out of 15000+600000
  470199 words of font info for 31 fonts, out of 8000000 for 9000
  309 hyphenation exceptions out of 8191
- 34i,5n,38p,203b,122s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 34i,5n,38p,303b,122s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/yangchen/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1000.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb>
-Output written on Highlights.pdf (1 page, 31634 bytes).
+Output written on Highlights.pdf (1 page, 33476 bytes).
 PDF statistics:
  23 PDF objects out of 1000 (max. 8388607)
  14 compressed objects within 1 object stream

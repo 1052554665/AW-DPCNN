@@ -168,3 +168,10 @@ Made changes.
 
 
 >revise the highlights according to the instructions in `highlights.md` to fit the Elsevier submission requirements
+
+
+>this paper will be submitted to digital signal processing, revise relative description to fit the scope of DSP
+
+>revise highlights according to contribution
+
+>revise the cover letter according to the instructions in `coverletter.md` to fit the Elsevier submission requirements
