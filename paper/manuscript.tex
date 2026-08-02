@@ -36,68 +36,54 @@
 
 \title [mode = title]{Adaptive Multi-Representation Fusion via Dual-Channel PCNN with Multi-Scale Convolution for Vibration Signal Fault Diagnosis}
 
-
 \tnotemark[1]
 
 \tnotetext[1]{This work is supported by the National Natural Science Foundation of China (No.~12404545), Science Research Project of Hebei Education Department, China (No.~QN2025334), and the Fundamental Research Funds for the Central Universities (No.~2026MS144).}
 
-% \author[1]{Chen Yang}
-% \author[2]{Zonglong Bai}
-% \cormark[1]
-% \ead{zlbai@ncepu.edu.cn}
-% \author[3]{Zhiyuan Xie}
-% \author[4]{Chenggang Liu}
-% \author[5]{Junyan Zhang}
-% \author[6]{Yihe Guo}
+\author[1]{Chen Yang}
+\author[1,2,3]{Zonglong Bai}[orcid=0000-0003-4465-5466]
+\cormark[1]
+\ead{zlbai@ncepu.edu.cn}
+\author[1]{Zhiyuan Xie}
+\author[1]{Chenggang Liu}
+\author[1]{Junyan Zhang}
 
-% \affiliation[1]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
-%     city={Baoding},
-%     postcode={071003},
-%     country={China}}
+\affiliation[1]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
+    city={Baoding},
+    postcode={071003},
+    country={China}}
 
-% \affiliation[2]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
-%     city={Baoding},
-%     postcode={071003},
-%     country={China}}
+\affiliation[2]{organization={Yanzhao Electric Power Laboratory},
+	addressline={Lixing Street 666},
+	city={Baoding},
+	postcode={071000},
+	state={Hebei},
+	country={China}}
 
-% \affiliation[3]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
-%     city={Baoding},
-%     postcode={071003},
-%     country={China}}
+\affiliation[3]{organization={Hebei Key Laboratory of Power Internet of Things Technology},
+	addressline={Yonghuabei Street 619},
+	city={Baoding},
+	postcode={071003},
+	state={Hebei},
+	country={China}}
 
-% \affiliation[4]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
-%     city={Baoding},
-%     postcode={071003},
-%     country={China}}
-
-% \affiliation[5]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
-%     city={Baoding},
-%     postcode={071003},
-%     country={China}}
-
-% \affiliation[6]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
-%     city={Baoding},
-%     postcode={071003},
-%     country={China}}
-
-% \cortext[cor1]{Corresponding author.}
+\cortext[cor1]{Corresponding author.}
 
 \begin{abstract}
 Vibration signal analysis is essential for the fault diagnosis of rotating machinery. However, existing methods based on single representations often fail to fully extract the discriminative features embedded in vibration signals. To address this single-representation limitation and adaptively fuse heterogeneous fault features, this paper proposes an adaptive weighted dual-channel pulse-coupled neural network (AW-DPCNN) for multi-representation fusion. The AW-DPCNN adaptively integrates complementary and heterogeneous short-time Fourier transform (STFT) spectrograms and Gramian angular difference field (GADF) images derived from vibration signals. Furthermore, to fully exploit the complementary information encoded in the fused representations, a multi-scale receptive fields and dynamic channel attention enhanced VGG16 (MSCA-VGG16) network is designed to improve fault diagnosis performance and noise robustness under lower signal-to-noise ratio conditions. Extensive experiments on the CWRU bearing dataset demonstrate that the proposed framework achieves 99.85\% accuracy on the 12~kHz drive-end benchmark, with strong cross-sensor generalization (97.45\% on fan-end data) and cross-sampling-rate robustness (94.81\% at 48~kHz). Ablation studies confirm that adaptive weighting contributes 2.93\% and multi-scale convolution adds 0.54\% over the respective baselines, while noise robustness tests validate stable performance under degraded signal conditions.
 \end{abstract}
 
-% Uncomment and provide an image file for graphical abstract
-% \begin{graphicalabstract}
-% \includegraphics{figs/graphical-abstract.pdf}
-% \end{graphicalabstract}
+\begin{graphicalabstract}
+\includegraphics[width=\linewidth]{overview/overview2}
+\end{graphicalabstract}
 
-% \begin{highlights}
-% \item AW-DPCNN adaptively fuses STFT and GADF representations
-% \item MSCA-VGG16 with multi-scale attention for classification
-% \item 99.85\% accuracy on CWRU 12 kHz drive-end benchmark
-% \item Robust cross-sensor and cross-sampling-rate generalization
-% \item Stable noise performance down to 5.0 dB SNR level
-% \end{highlights}
+\begin{highlights}
+\item AW-DPCNN adaptively fuses STFT spectrograms and GADF images via contrast-guided dynamic weighting with dual-channel convolutional stimuli, suppressing destructive interference between heterogeneous representations
+\item MSCA-VGG16 integrates multi-scale convolution and squeeze-and-excitation channel attention with a compact embedding head for robust multi-granularity fault identification
+\item Achieves 99.85\% accuracy on CWRU 12~kHz drive-end bearing fault benchmark; adaptive weighting contributes 2.93\% over fixed fusion baseline
+\item Demonstrates 97.45\% cross-sensor generalization and 94.81\% cross-sampling-rate robustness with systematic ablation validation
+\item Maintains 91.2\% accuracy at 5.0~dB SNR under additive Gaussian noise, confirming real-world noise resilience
+\end{highlights}
 
 \begin{keywords}
 Fault diagnosis \sep Gramian angular difference field (GADF) \sep pulse coupled neural network (PCNN) \sep short-time Fourier transform (STFT) \sep vibration signal
