@@ -1,23 +1,43 @@
-%%
-%% Elsevier cas-dc template for Mechanical Systems and Signal Processing
-%% Converted from IEEEtran format
-%%
+%% Springer Nature sn-jnl template (sn-mathphys-num)
 
-\documentclass[a4paper,fleqn]{cas-dc}
+\documentclass[pdflatex,sn-mathphys-num]{sn-jnl}
 
-\usepackage[numbers]{natbib}
-\usepackage{amsmath,amssymb,amsfonts}
-\usepackage{graphicx}
-\usepackage{textcomp}
+%%%% Standard Springer Packages
+\usepackage{graphicx}%
+\usepackage{multirow}%
+\usepackage{amsmath,amssymb,amsfonts}%
+\usepackage{amsthm}%
+\usepackage{mathrsfs}%
+\usepackage[title]{appendix}%
+\usepackage{xcolor}%
+\usepackage{textcomp}%
+\usepackage{manyfoot}%
+\usepackage{booktabs}%
+\usepackage{algorithm}%
+\usepackage{algorithmicx}%
+\usepackage{algpseudocode}%
+\usepackage{listings}%
+
+%%%% Additional Packages
 \usepackage{subcaption}
-\usepackage{booktabs}
-\usepackage{multirow}
 \usepackage[expansion=false]{microtype}
 \usepackage{caption}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
 \usepackage{siunitx}
 \usepackage{url}
+
+%%%% Theorem Styles (Springer predefined)
+\theoremstyle{thmstyleone}%
+\newtheorem{theorem}{Theorem}%
+\newtheorem{proposition}[theorem]{Proposition}%
+
+\theoremstyle{thmstyletwo}%
+\newtheorem{example}{Example}%
+\newtheorem{remark}{Remark}%
+
+\theoremstyle{thmstylethree}%
+\newtheorem{definition}{Definition}%
+
+\raggedbottom
 
 \captionsetup{font=small,labelfont=bf}
 \captionsetup[table]{labelsep=colon, textfont=normalfont, labelfont=sc, font=footnotesize}
@@ -27,67 +47,28 @@
 \hyphenation{op-tical net-works semi-conduc-tor}
 
 \begin{document}
-\let\WriteBookmarks\relax
-\def\floatpagepagefraction{1}
-\def\textpagefraction{.001}
 
-\shorttitle{Adaptive Multi-Representation Fusion for Fault Diagnosis}
-\shortauthors{C. Yang et~al.}
+\title[Adaptive Multi-Representation Fusion for Fault Diagnosis]{Adaptive Multi-Representation Fusion via Dual-Channel PCNN with Multi-Scale Convolution for Vibration Signal Fault Diagnosis}
 
-\title [mode = title]{Adaptive Multi-Representation Fusion via Dual-Channel PCNN with Multi-Scale Convolution for Vibration Signal Fault Diagnosis}
+\author[1]{\fnm{Chen} \sur{Yang}}
 
-\tnotemark[1]
+\author*[1,2,3]{\fnm{Zonglong} \sur{Bai}}\email{zlbai@ncepu.edu.cn}
 
-\tnotetext[1]{This work is supported by the National Natural Science Foundation of China (No.~12404545), Science Research Project of Hebei Education Department, China (No.~QN2025334), and the Fundamental Research Funds for the Central Universities (No.~2026MS144).}
+\author[1]{\fnm{Zhiyuan} \sur{Xie}}
 
-\author[1]{Chen Yang}
-\author[1,2,3]{Zonglong Bai}[orcid=0000-0003-4465-5466]
-\cormark[1]
-\ead{zlbai@ncepu.edu.cn}
-\author[1]{Zhiyuan Xie}
-\author[1]{Chenggang Liu}
-\author[1]{Junyan Zhang}
+\author[1]{\fnm{Chenggang} \sur{Liu}}
 
-\affiliation[1]{organization={Department of Electronic and Communication Engineering, North China Electric Power University},
-    city={Baoding},
-    postcode={071003},
-    country={China}}
+\author[1]{\fnm{Junyan} \sur{Zhang}}
 
-\affiliation[2]{organization={Yanzhao Electric Power Laboratory},
-	addressline={Lixing Street 666},
-	city={Baoding},
-	postcode={071000},
-	state={Hebei},
-	country={China}}
+\affil*[1]{\orgdiv{Department of Electronic and Communication Engineering}, \orgname{North China Electric Power University}, \orgaddress{\city{Baoding}, \postcode{071003}, \country{China}}}
 
-\affiliation[3]{organization={Hebei Key Laboratory of Power Internet of Things Technology},
-	addressline={Yonghuabei Street 619},
-	city={Baoding},
-	postcode={071003},
-	state={Hebei},
-	country={China}}
+\affil[2]{\orgname{Yanzhao Electric Power Laboratory}, \orgaddress{\street{Lixing Street 666}, \city{Baoding}, \postcode{071000}, \state{Hebei}, \country{China}}}
 
-\cortext[cor1]{Corresponding author.}
+\affil[3]{\orgname{Hebei Key Laboratory of Power Internet of Things Technology}, \orgaddress{\street{Yonghuabei Street 619}, \city{Baoding}, \postcode{071003}, \state{Hebei}, \country{China}}}
 
-\begin{abstract}
-Vibration signal analysis is essential for the fault diagnosis of rotating machinery. However, existing methods based on single representations often fail to fully extract the discriminative features embedded in vibration signals. To address this single-representation limitation and adaptively fuse heterogeneous fault features, this paper proposes an adaptive weighted dual-channel pulse-coupled neural network (AW-DPCNN) for multi-representation fusion. The AW-DPCNN adaptively integrates complementary and heterogeneous short-time Fourier transform (STFT) spectrograms and Gramian angular difference field (GADF) images derived from vibration signals. Furthermore, to fully exploit the complementary information encoded in the fused representations, a multi-scale receptive fields and dynamic channel attention enhanced VGG16 (MSCA-VGG16) network is designed to improve fault diagnosis performance and noise robustness under lower signal-to-noise ratio conditions. Extensive experiments on the CWRU bearing dataset demonstrate that the proposed framework achieves 99.85\% accuracy on the 12~kHz drive-end benchmark, with strong cross-sensor generalization (97.45\% on fan-end data) and cross-sampling-rate robustness (94.81\% at 48~kHz). Ablation studies confirm that adaptive weighting contributes 2.93\% and multi-scale convolution adds 0.54\% over the respective baselines, while noise robustness tests validate stable performance under degraded signal conditions.
-\end{abstract}
+\abstract{Vibration signal analysis is essential for the fault diagnosis of rotating machinery. However, existing methods based on single representations often fail to fully extract the discriminative features embedded in vibration signals. To address this single-representation limitation and adaptively fuse heterogeneous fault features, this paper proposes an adaptive weighted dual-channel pulse-coupled neural network (AW-DPCNN) for multi-representation fusion. The AW-DPCNN adaptively integrates complementary and heterogeneous short-time Fourier transform (STFT) spectrograms and Gramian angular difference field (GADF) images derived from vibration signals. Furthermore, to fully exploit the complementary information encoded in the fused representations, a multi-scale receptive fields and dynamic channel attention enhanced VGG16 (MSCA-VGG16) network is designed to improve fault diagnosis performance and noise robustness under lower signal-to-noise ratio conditions. Extensive experiments on the CWRU bearing dataset demonstrate that the proposed framework achieves 99.85\% accuracy on the 12~kHz drive-end benchmark, with strong cross-sensor generalization (97.45\% on fan-end data) and cross-sampling-rate robustness (94.81\% at 48~kHz). Ablation studies confirm that adaptive weighting contributes 2.93\% and multi-scale convolution adds 0.54\% over the respective baselines, while noise robustness tests validate stable performance under degraded signal conditions.}
 
-\begin{graphicalabstract}
-\includegraphics[width=\linewidth]{overview/overview2}
-\end{graphicalabstract}
-
-\begin{highlights}
-\item AW-DPCNN adaptively fuses STFT spectrograms and GADF images via contrast-guided dynamic weighting with dual-channel convolutional stimuli, suppressing destructive interference between heterogeneous representations
-\item MSCA-VGG16 integrates multi-scale convolution and squeeze-and-excitation channel attention with a compact embedding head for robust multi-granularity fault identification
-\item Achieves 99.85\% accuracy on CWRU 12~kHz drive-end bearing fault benchmark; adaptive weighting contributes 2.93\% over fixed fusion baseline
-\item Demonstrates 97.45\% cross-sensor generalization and 94.81\% cross-sampling-rate robustness with systematic ablation validation
-\item Maintains 91.2\% accuracy at 5.0~dB SNR under additive Gaussian noise, confirming real-world noise resilience
-\end{highlights}
-
-\begin{keywords}
-Fault diagnosis \sep Gramian angular difference field (GADF) \sep pulse coupled neural network (PCNN) \sep short-time Fourier transform (STFT) \sep vibration signal
-\end{keywords}
+\keywords{Fault diagnosis, Gramian angular difference field (GADF), pulse coupled neural network (PCNN), short-time Fourier transform (STFT), vibration signal}
 
 \maketitle
 
@@ -744,8 +725,8 @@ These results collectively demonstrate that the STFT and GADF combination provid
 	\label{fig:confusion_matrix}
 \end{figure*}
 
-% ========== Backbone Comparison Table (INLINED) ==========
-\begin{table*}
+% ========== Combined Landscape Tables ==========
+\begin{sidewaystable}
     \caption{Performance Comparison with Different Backbone Networks\label{tab:network_comparison}}
     \centering
     \renewcommand{\arraystretch}{1.15}
@@ -766,7 +747,31 @@ These results collectively demonstrate that the STFT and GADF combination provid
         VGG16 (GADF only)~\cite{9440949} & $60.99\pm 1.50$ & $ 62.71\pm 2.51$ & $ 56.90\pm 2.13$ & $ 12.93\pm 1.42$ & $ 62.71\pm 2.51$ & $ 56.75\pm 1.37$ \\
         \bottomrule
     \end{tabular}
-\end{table*}
+
+    \vspace{6mm}
+
+    \caption{Unified Component Decomposition Ablation\label{tab:ablation_unified}}
+    \centering
+    \renewcommand{\arraystretch}{1.15}
+    \small
+    \begin{tabular}{lcccccccc}
+        \toprule
+        \textbf{Exp.} & \textbf{AW-DPCNN} & \textbf{MS} & \textbf{CA} & \textbf{EH} & \textbf{Acc (\%)} & \textbf{F1 (\%)} & \textbf{G-mean (\%)} & \textbf{Kappa (\%)} \\
+        \midrule
+        \multicolumn{9}{c}{\textit{Fusion-level ablation (VGG16 classifier)}} \\
+        B0 & $\times$ & $\times$ & $\times$ & $\times$ & $93.37 \pm 1.32$ & $91.49 \pm 2.25$ & $86.89 \pm 5.47$ & $92.58 \pm 1.48$ \\
+        B1 & $\times$ & $\times$ & $\times$ & $\times$ & $60.99 \pm 1.50$ & $56.90 \pm 2.13$ & $12.93 \pm 1.42$ & $56.75 \pm 1.37$ \\
+        B2 & $\times$ & $\times$ & $\times$ & $\times$ & $96.28 \pm 4.49$ & $94.91 \pm 6.59$ & $89.45 \pm 15.78$ & $95.83 \pm 5.03$ \\
+        \text{B3} & $\checkmark$ & $\times$ & $\times$ & $\times$ & $\mathbf{96.30 \pm 0.49}$ & $\mathbf{95.02 \pm 0.40}$ & $\mathbf{94.22 \pm 0.49}$ & $\mathbf{95.65 \pm 0.58}$ \\
+        \midrule
+        \multicolumn{9}{c}{\textit{Classifier-level ablation (full AW-DPCNN fusion)}} \\
+        B4 & $\checkmark$ & $\checkmark$ & $\times$ & $\times$ & $96.84 \pm 4.01$ & $95.83 \pm 5.62$ & $93.98 \pm 8.77$ & $96.46 \pm 4.49$ \\
+        B5 & $\checkmark$ & $\times$ & $\checkmark$ & $\times$ & $98.97 \pm 0.83$ & $98.88 \pm 0.91$ & $98.81 \pm 0.97$ & $98.85 \pm 0.93$ \\
+        B6 & $\checkmark$ & $\times$ & $\times$ & $\checkmark$ & $98.10 \pm 3.09$ & $97.72 \pm 3.72$ & $97.13 \pm 4.75$ & $97.87 \pm 3.46$ \\
+        B7 & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\mathbf{99.85 \pm 0.10}$ & $\mathbf{99.46 \pm 0.43}$ & $\mathbf{99.82 \pm 0.15}$ & $\mathbf{99.82 \pm 0.12}$ \\
+        \bottomrule
+    \end{tabular}
+\end{sidewaystable}
 
 \subsection{Backbone Comparison}
 \label{sec:backbone_comparison}
@@ -871,31 +876,6 @@ Qualitative analysis via confusion matrices, ROC curves, and t-SNE visualization
 	\label{fig:tsne_backbones}
 \end{figure*}
 
-% ========== Ablation Study Table (INLINED) ==========
-\begin{table*}
-    \caption{Unified Component Decomposition Ablation\label{tab:ablation_unified}}
-    \centering
-    \renewcommand{\arraystretch}{1.15}
-    \small
-    \begin{tabular}{lcccccccc}
-        \toprule
-        \textbf{Exp.} & \textbf{AW-DPCNN} & \textbf{MS} & \textbf{CA} & \textbf{EH} & \textbf{Acc (\%)} & \textbf{F1 (\%)} & \textbf{G-mean (\%)} & \textbf{Kappa (\%)} \\
-        \midrule
-        \multicolumn{9}{c}{\textit{Fusion-level ablation (VGG16 classifier)}} \\
-        B0 & $\times$ & $\times$ & $\times$ & $\times$ & $93.37 \pm 1.32$ & $91.49 \pm 2.25$ & $86.89 \pm 5.47$ & $92.58 \pm 1.48$ \\
-        B1 & $\times$ & $\times$ & $\times$ & $\times$ & $60.99 \pm 1.50$ & $56.90 \pm 2.13$ & $12.93 \pm 1.42$ & $56.75 \pm 1.37$ \\
-        B2 & $\times$ & $\times$ & $\times$ & $\times$ & $96.28 \pm 4.49$ & $94.91 \pm 6.59$ & $89.45 \pm 15.78$ & $95.83 \pm 5.03$ \\
-        \text{B3} & $\checkmark$ & $\times$ & $\times$ & $\times$ & $\mathbf{96.30 \pm 0.49}$ & $\mathbf{95.02 \pm 0.40}$ & $\mathbf{94.22 \pm 0.49}$ & $\mathbf{95.65 \pm 0.58}$ \\
-        \midrule
-        \multicolumn{9}{c}{\textit{Classifier-level ablation (full AW-DPCNN fusion)}} \\
-        B4 & $\checkmark$ & $\checkmark$ & $\times$ & $\times$ & $96.84 \pm 4.01$ & $95.83 \pm 5.62$ & $93.98 \pm 8.77$ & $96.46 \pm 4.49$ \\
-        B5 & $\checkmark$ & $\times$ & $\checkmark$ & $\times$ & $98.97 \pm 0.83$ & $98.88 \pm 0.91$ & $98.81 \pm 0.97$ & $98.85 \pm 0.93$ \\
-        B6 & $\checkmark$ & $\times$ & $\times$ & $\checkmark$ & $98.10 \pm 3.09$ & $97.72 \pm 3.72$ & $97.13 \pm 4.75$ & $97.87 \pm 3.46$ \\
-        B7 & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\mathbf{99.85 \pm 0.10}$ & $\mathbf{99.46 \pm 0.43}$ & $\mathbf{99.82 \pm 0.15}$ & $\mathbf{99.82 \pm 0.12}$ \\
-        \bottomrule
-    \end{tabular}
-\end{table*}
-
 \subsection{Ablation Study}
 \label{sec:ablation}
 
@@ -953,78 +933,26 @@ Extensive experiments on the CWRU bearing dataset demonstrate that the full pipe
 
 These results collectively demonstrate that adaptive multi-representation fusion combined with multi-scale channel attention provides an effective and generalizable approach to non-stationary vibration signal fault diagnosis. Future work will explore several directions: (i) extending the AW-DPCNN framework to multi-sensor fusion, where vibration signals from multiple measurement points are jointly weighted and integrated; (ii) evaluating the proposed pipeline on larger-scale industrial datasets under variable-speed and fluctuating-load conditions; and (iii) investigating lightweight architectures to reduce the computational cost of AW-DPCNN fusion for real-time deployment.
 
-% \appendix
-% \section{Supplementary Tables}
+\backmatter
 
-% ========== Noise Robustness Table (INLINED) ==========
-% \begin{table*}[!htbp]
-%     \centering
-%     \caption{Noise Robustness Comparison --- Accuracy (\%) at Different SNR Levels Under Additive Gaussian Noise.}
-%     \label{tab:noise_robustness}
-%     \renewcommand{\arraystretch}{1.1}
-%     \footnotesize
-%     \setlength{\tabcolsep}{4pt}
-%     \begin{tabular}{lcccccc}
-%         \toprule
-%         \textbf{Model} & $\mathbf{5.0}$~dB & $\mathbf{10.0}$~dB & $\mathbf{15.0}$~dB & $\mathbf{20.0}$~dB & $\mathbf{25.0}$~dB & $\mathbf{30.0}$~dB \\
-%         \midrule
-%         \textbf{MSCA-VGG16 (Ours)} & $\mathbf{91.19}$ & $\mathbf{97.45}$ & $\mathbf{99.87}$ & $\mathbf{100.00}$ & $\mathbf{100.00}$ & $\mathbf{100.00}$ \\
-%         ResNet18 & $76.31$ & $94.78$ & $97.26$ & $97.06$ & $97.06$ & $96.93$ \\
-%         ConvNeXt-Tiny & $48.56$ & $93.21$ & $94.13$ & $94.84$ & $95.04$ & $95.04$ \\
-%         EfficientNet-B0 & $11.23$ & $87.01$ & $94.97$ & $95.63$ & $95.37$ & $95.43$ \\
-%         MobileNetV3-Small & $45.76$ & $85.12$ & $95.76$ & $95.89$ & $95.37$ & $95.43$ \\
-%         VGG16 & $15.40$ & $78.85$ & $98.02$ & $98.87$ & $98.87$ & $98.87$ \\
-%         ViT & $72.52$ & $81.92$ & $82.57$ & $83.22$ & $83.03$ & $83.16$ \\
-%         \bottomrule
-%     \end{tabular}
-% \end{table*}
+\bmhead{Acknowledgements}
 
+This work is supported by the National Natural Science Foundation of China (No.~12404545), Science Research Project of Hebei Education Department, China (No.~QN2025334), and the Fundamental Research Funds for the Central Universities (No.~2026MS144).
 
+% \section*{Declarations}
 
-% ========== Per-Class ROC-AUC Table (INLINED) ==========
-% \begin{table*}[!htbp]
-%     \centering
-%     \caption{Per-Class AUC Values Across Backbone Networks.}
-%     \label{tab:roc_auc}
-%     \renewcommand{\arraystretch}{1.05}
-%     \footnotesize
-%     \begin{tabular}{lccccccc}
-%         \toprule
-%         \textbf{Fault Class} & \textbf{MSCA-VGG16 (Ours)} & ConvNeXt-Tiny & EfficientNet-B0 & MobileNetV3-Small & ResNet18 & VGG16 & ViT \\
-%         \midrule
-%         BF007 & $1.000$ & $\mathbf{1.000}$ & $0.998$ & $0.995$ & $1.000$ & $1.000$ & $0.936$ \\
-%         BF014 & $\mathbf{1.000}$ & $0.987$ & $1.000$ & $1.000$ & $1.000$ & $1.000$ & $0.973$ \\
-%         BF021 & $0.994$ & $0.970$ & $0.918$ & $0.892$ & $0.989$ & $\mathbf{1.000}$ & $0.670$ \\
-%         IF007 & $\mathbf{1.000}$ & $1.000$ & $1.000$ & $0.997$ & $1.000$ & $1.000$ & $1.000$ \\
-%         IF014 & $0.972$ & $0.950$ & $0.838$ & $0.468$ & $\mathbf{0.977}$ & $0.872$ & $0.879$ \\
-%         IF021 & $\mathbf{0.999}$ & $0.997$ & $0.972$ & $0.966$ & $0.990$ & $0.969$ & $0.907$ \\
-%         Normal & $\mathbf{1.000}$ & $1.000$ & $1.000$ & $1.000$ & $1.000$ & $1.000$ & $1.000$ \\
-%         OF007 & $\mathbf{1.000}$ & $0.994$ & $0.997$ & $0.982$ & $1.000$ & $1.000$ & $0.990$ \\
-%         OF014 & $\mathbf{0.998}$ & $0.994$ & $0.963$ & $0.816$ & $0.993$ & $0.977$ & $0.712$ \\
-%         OF021 & $\mathbf{1.000}$ & $0.998$ & $1.000$ & $1.000$ & $1.000$ & $1.000$ & $1.000$ \\
-%         \midrule
-%         \textbf{Macro} & $\mathbf{0.996}$ & $0.989$ & $0.968$ & $0.911$ & $0.995$ & $0.981$ & $0.907$ \\
-%         \textbf{Micro} & $\mathbf{0.999}$ & $0.993$ & $0.984$ & $0.967$ & $0.998$ & $0.993$ & $0.936$ \\
-%         \bottomrule
-%     \end{tabular}
-% \end{table*}
+% \begin{itemize}
+% \item Funding: This work is supported by the National Natural Science Foundation of China (No.~12404545), Science Research Project of Hebei Education Department, China (No.~QN2025334), and the Fundamental Research Funds for the Central Universities (No.~2026MS144).
+% \item Conflict of interest: The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+% \item Ethics approval and consent to participate: Not applicable.
+% \item Consent for publication: Not applicable.
+% \item Data availability: The CWRU bearing dataset used in this study is publicly available at \url{https://engineering.case.edu/bearingdatacenter/welcome}.
+% \item Materials availability: Not applicable.
+% \item Code availability: The code is available from the corresponding author upon reasonable request.
+% \item Author contribution: All authors contributed to the study conception and design. Material preparation, data collection and analysis were performed by Chen Yang, Zonglong Bai, Zhiyuan Xie, Chenggang Liu, and Junyan Zhang. The first draft of the manuscript was written by Chen Yang and all authors commented on previous versions of the manuscript. All authors read and approved the final manuscript.
+% \end{itemize}
 
-\printcredits
-
-%% Loading bibliography style file (sorted by citation order)
-\bibliographystyle{unsrtnat}
-
-% Loading bibliography database
+%% Loading bibliography database
 \bibliography{references}
-
-\bio{}
-% TODO: Fill in author biographies
-% Author biography for Chen Yang.
-% Author biography for Zonglong Bai.
-% Author biography for Zhiyuan Xie.
-% Author biography for Chenggang Liu.
-% Author biography for Junyan Zhang.
-% Author biography for Yihe Guo.
-\endbio
 
 \end{document}
